@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.idea/
+*.env
+
+# keep a few for sample
+data/raw/*.json
+!data/raw/match_001.json
+!data/raw/match_002.json
+
+data/processed/*.parquet
