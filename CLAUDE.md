@@ -80,7 +80,8 @@ Run from this folder. Use `.venv/bin/python -m pip` (the venv was moved from
 PycharmProjects, so `.venv/bin/pip` is broken).
 
 ```bash
-.venv/bin/python -m pytest -q                      # all tests
+.venv/bin/python -m pytest -q                      # all Python tests
+node --test dashboard/tests                        # dashboard link/preset logic
 .venv/bin/python -m src.analytics.possessions match_001 [--kickoff us]
 .venv/bin/python -m src.analytics.metrics <match id | path.json> [--write]
 FA_MATCH_DIR=/Users/mathi/Projects/laureats-tagger/exports .venv/bin/python -m uvicorn src.api.app:app --port 8000
