@@ -22,6 +22,7 @@ from src.analytics.metrics import match_metrics, possession_row, outcome, time_t
 from src.analytics.possessions import possessions_from_match, format_ms, US, THEM
 from src.analytics.quality import quality_report
 from src.analytics.report import match_report
+from src.analytics.phases import phases_report
 from src.analytics.clips import review_clips
 from src.analytics.video import veo_info, video_url
 
@@ -160,6 +161,14 @@ def report(match_id: str):
     and generated key points (French)."""
     match, ps = analyse(match_id)
     return {"match": match_info(match_id, match), **match_report(match, ps)}
+
+
+@app.get("/matches/{match_id}/phases")
+def phases(match_id: str):
+    """What the possession engine adds: possession splits, durations,
+    progression, counter-press, defensive phases, finishing, game time."""
+    match, ps = analyse(match_id)
+    return phases_report(match, ps)
 
 
 @app.get("/matches/{match_id}/clips")

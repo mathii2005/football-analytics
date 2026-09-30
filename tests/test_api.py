@@ -72,3 +72,21 @@ def test_clips_without_video(client):
     c = client.get("/matches/match_001/clips").json()
     assert c["has_video"] is False
     assert all(clip["video_url"] is None for clip in c["selection"])
+
+
+def test_phases_endpoint(client):
+    r = client.get("/matches/champlain_15min/phases")
+    assert r.status_code == 200
+    assert {"splits", "profile", "progression", "counter_press", "defence", "finishing", "game_time"} <= set(r.json())
+    assert client.get("/matches/nope/phases").status_code == 404
+
+
+def test_report_has_classic_blocks(client):
+    r = client.get("/matches/match_001/report").json()
+    assert {"transition_speed", "funnel", "couloir_origins", "recovery_distribution", "tempo", "cards",
+            "actions_by_type", "box_entries_by_type", "attack_style", "actions_by_arrival_zone"} <= set(r)
+
+
+def test_clips_library_facets(client):
+    c = client.get("/matches/champlain_15min/clips").json()
+    assert c["library"] and all("state" in x and "period" in x for x in c["library"])
