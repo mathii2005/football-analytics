@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Chart palette: reference categorical slots 1 (blue) and 2 (orange),
+   each stepped separately for light and dark surfaces. */
+:root {
+  color-scheme: light;
+  --surface: #f4f3f0;
+  --card: #fcfcfb;
+  --line: #e4e2dd;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #85837d;
+  --us: #2a78d6;
+  --them: #eb6834;
+  --warning: #b86e00;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface: #111110;
+    --card: #1a1a19;
+    --line: #2e2e2c;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #8f8e86;
+    --us: #3987e5;
+    --them: #d95926;
+    --warning: #e0a030;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #111110;
+  --card: #1a1a19;
+  --line: #2e2e2c;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #8f8e86;
+  --us: #3987e5;
+  --them: #d95926;
+  --warning: #e0a030;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* inferred possession: same hue, hatched, so it never reads as exact */
+.hatched {
+  background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--card) 3px 5px);
+}

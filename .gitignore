@@ -14,3 +14,7 @@ data/raw/*.json
 
 # generated outputs
 data/processed/*
+
+# dashboard
+dashboard/node_modules/
+dashboard/dist/

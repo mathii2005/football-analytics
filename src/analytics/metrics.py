@@ -185,6 +185,8 @@ def possession_row(p) -> dict:
         final_third_ms=sum(v for z, v in zt.items() if z in FINAL_THIRD),
         known_zone_ms=sum(v for z, v in zt.items() if z is not None),
         couloirs=" ".join(sorted(couloirs(p))),
+        shot_ms=[e["timestamp_ms"] for e in p.events if e["code"] in SHOT_CODES and e["code"] not in GOAL_CODES],
+        goal_ms=[e["timestamp_ms"] for e in p.events if e["code"] in GOAL_CODES],
         event_ids=" ".join(str(i) for i in p.event_ids),
         codes=" ".join(p.codes),
     )
