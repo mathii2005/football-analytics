@@ -1,7 +1,7 @@
 import { plural } from "../format.js";
 
 // Set pieces, ours vs theirs, and how many goals came from them.
-export default function SetPieces({ sp }) {
+export default function SetPieces({ sp, onSelect }) {
   const rows = sp.counts.filter((r) => r.us + r.them > 0);
   return (
     <div>
@@ -29,6 +29,12 @@ export default function SetPieces({ sp }) {
         <span className="font-semibold text-ink">{plural(sp.goals_from_set_piece, "but")}</span>.
         Encaissés sur coup de pied arrêté adverse : <span className="font-semibold text-ink">{sp.conceded_from_set_pieces}</span>.
       </p>
+      {onSelect && (
+        <div className="mt-3 flex gap-4 text-sm font-semibold text-gold-deep">
+          <button type="button" onClick={() => onSelect("us")} className="hover:text-ink">Voir nos coups de pied arrêtés</button>
+          <button type="button" onClick={() => onSelect("them")} className="hover:text-ink">Voir les leurs</button>
+        </div>
+      )}
       <p className="mt-1 text-sm text-ink-2">Corners : <span className="font-semibold text-ink tabular">{sp.corner_asymmetry.us}</span> obtenus contre <span className="font-semibold text-ink tabular">{sp.corner_asymmetry.them}</span> concédés.</p>
     </div>
   );

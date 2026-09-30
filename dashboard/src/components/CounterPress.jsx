@@ -1,7 +1,8 @@
+import { Play } from "lucide-react";
 import { ZONE_LABELS, pct, secs, plural } from "../format.js";
 
 // After each of our losses: how fast we win the ball back, by loss zone.
-export default function CounterPress({ cp }) {
+export default function CounterPress({ cp, onZone }) {
   const figs = [
     { label: "Repris en ≤ 5 s", value: pct(cp.within_5s) },
     { label: "Repris en ≤ 10 s", value: pct(cp.within_10s) },
@@ -28,7 +29,11 @@ export default function CounterPress({ cp }) {
         <tbody>
           {cp.by_zone.filter((z) => z.n).map((z) => (
             <tr key={z.zone} className="border-t border-rule">
-              <td className="py-2 text-ink">{ZONE_LABELS[z.zone]}</td>
+              <td className="py-2 text-ink">
+                {onZone ? <button type="button" onClick={() => onZone(z.zone)} className="inline-flex items-center gap-1.5 hover:text-gold-deep"
+                  title="Voir les clips de contre-pressing de cette zone">{ZONE_LABELS[z.zone]} <Play size={11} className="text-gold-deep" aria-hidden="true" /></button>
+                  : ZONE_LABELS[z.zone]}
+              </td>
               <td className="py-2 text-right text-ink">{z.n}</td>
               <td className="py-2 text-right text-ink">{pct(z.within_5s)}</td>
               <td className="py-2 text-right text-ink">{pct(z.within_10s)}</td>

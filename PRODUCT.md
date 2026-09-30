@@ -26,7 +26,7 @@ Built on the team's own definitions (what counts as a loss, a cheap loss, a high
 
 - Tagging: one analyst, live, ~150–250 events per match, our team's actions mostly; tags lag the action by a few seconds (clips open 8 s early).
 - Video: Veo; links open `…/#t=MM:SS` with separate kickoff offsets per half.
-- The staff already used per-match HTML dashboards (tabs Aperçu / En profondeur / Vue complète / Terrain, handwritten match summary). This app replaces them with an automated version: three analysis tabs + a Veo clips tab.
+- The staff already used per-match HTML dashboards (tabs Aperçu / En profondeur / Vue complète / Terrain, handwritten match summary). This app replaces them with an automated version: five tabs (Aperçu, Possession, Attaque, Terrain, Clips Veo) that keep every old view and add the possession-engine layer.
 - Six matches tagged so far this season; samples per match are small.
 
 ## Capabilities and Constraints
@@ -51,7 +51,7 @@ Built on the team's own definitions (what counts as a loss, a cheap loss, a high
 ## Product Principles
 
 1. From number to video in one click: every finding that can be tied to a moment links to it.
-2. Fewer, sharper numbers in coaching language over exhaustive statistics.
+2. Dense and technical: every stat the tagging can honestly support, in coaching language, organised so each tab still leads with its key figures (user decision, 2026-09-30).
 3. Honest about uncertainty: small samples and inferred data are labelled, never hidden.
 4. Automatic by default: nothing a coach sees should require the analyst to rebuild it per match.
 5. Works as well on a phone before training as on a laptop at the desk.

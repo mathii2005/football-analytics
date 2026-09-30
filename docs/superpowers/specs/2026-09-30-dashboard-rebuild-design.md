@@ -64,8 +64,9 @@ From `laureats-tagger/pipeline/build_dashboard.py`:
   goals from a set piece = our set piece ≤ 20 s before the shot with no PERTE
   in between** (replaces the possession-based rule in `report.py` so numbers
   match the old dashboard).
-- **Summary**: generated French paragraph + key points (replaces the
-  handwritten narrative; factual sentences only).
+- **Summary**: generated key points (replace the handwritten narrative;
+  factual sentences only). *Amended during build: no separate paragraph – it
+  would repeat the key points.*
 
 ## 2. New possession-engine layer (new module `src/analytics/phases.py`)
 
@@ -109,6 +110,9 @@ boundaries are excluded from any duration statistic and counted in "n".
 - API returns the flat library with facet fields; the dashboard filters by
   category, half, zone, game state and sorts by priority or time.
 - Analyst tagging check (long silences with links, inferred transitions) stays.
+- *Added during build:* `loss` (every PERTE) and `recup` (every RECUP)
+  categories, and stat → clips links: zone rows, pitch zones, funnel stages,
+  counter-press zones and set pieces open the library pre-filtered.
 
 ## 4. API
 
@@ -134,7 +138,8 @@ boundaries are excluded from any duration statistic and counted in "n".
 - TDD per new metric on synthetic events; fixtures: match_001, Champlain
   (stoppages), plus a Vanier regression test asserting the old dashboard's
   numbers (balance −6, 23 dangerous actions, 2.9 actions/shot, 8/5/2 shots,
-  field tilt 56 %, high recoveries 33 %, recovery height 2.1, zone balances
+  field tilt 54 % on the current export (the old sheet shows 56 %: it was built
+  before the export was re-saved with 5 card events), high recoveries 33 %, recovery height 2.1, zone balances
   −20/−13/+15/+12, transition median 7.9 s over 16, buckets 4/7/5, 1 goal and 1
   shot from a set piece). Vanier export copied into `tests/fixtures/`.
 - API tests for new endpoints; frontend build; impeccable detector and the

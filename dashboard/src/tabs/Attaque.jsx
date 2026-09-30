@@ -9,13 +9,15 @@ import SetPieces from "../components/SetPieces.jsx";
 import { dec } from "../format.js";
 
 // Attack and finishing: the old staff views, plus halves side by side.
-export default function Attaque({ d }) {
+const FUNNEL_CLIPS = { "Entrées surface": ["box_entry"], Tirs: ["shot"], "Cadrés": ["shot"], Buts: ["goal_for"] };
+
+export default function Attaque({ d, openClips }) {
   const r = d.report, h = r.headline;
   return (
     <div className="space-y-10">
       <div className="grid gap-10 lg:grid-cols-2">
         <Section title="Entonnoir des tirs" note="De l'action dangereuse au but, avec le taux de passage.">
-          <ShotFunnel stages={r.funnel} />
+          <ShotFunnel stages={r.funnel} onSelect={(stage) => openClips({ cats: FUNNEL_CLIPS[stage] })} />
         </Section>
         <Section title="Actions par type" note={`${h.dangerous_actions} actions dangereuses · ${dec(h.actions_per_shot)} par tir.`}>
           <ActionsByType rows={r.actions_by_type} />
@@ -37,7 +39,7 @@ export default function Attaque({ d }) {
           <HalvesTable halves={r.halves} />
         </Section>
         <Section title="Coups de pied arrêtés">
-          <SetPieces sp={r.set_pieces} />
+          <SetPieces sp={r.set_pieces} onSelect={(team) => openClips({ cats: [team === "us" ? "set_piece_us" : "set_piece_them"] })} />
         </Section>
       </div>
     </div>

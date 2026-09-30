@@ -139,7 +139,7 @@ A three-colour club palette (gold, black, white) extended with warm greys; gold 
 
 ### Primary
 - **Lauréats Gold** (`gold`): the brand gold. As text and line it sits on the black band: scoreboard figures, the score in the title, the wordmark, the active-tab underline, focus rings. On white it appears only as a solid fill under ink: the "Voir" clip buttons and our goal discs. On black it reaches about 8:1.
-- **Deep Gold** (`gold-deep`): gold for text and marks on white (about 5:1): key-point numerals, "Tous les clips" link, the better half in the halves table, goal/shot bars in the outcome chart, notice icons, the "limite déduite" note, and the top of the attack-origins ramp.
+- **Deep Gold** (`gold-deep`): gold for text and marks on white (about 5:1): key-point numerals, the "Bibliothèque" link and "clips" links on stats, the better half in the halves table, goal/shot bars in the outcome chart, notice icons, the "limite déduite" note, and the top of the attack-origins ramp.
 - **Gold Tint** (`gold-tint`): text selection only.
 - **Gold Lift** (`gold-lift`): hover and focus fill of gold buttons.
 
@@ -156,7 +156,7 @@ A three-colour club palette (gold, black, white) extended with warm greys; gold 
 - **Them** (`them`): the opponent's possessions and goals, and our losses in the zone chart.
 
 ### Named Rules
-**The Gold Means Good Rule.** Gold marks a number that matters, a positive, or a place to act. It never marks a loss or an opponent's event; those use Them grey or ink with weight. (The zone chart deliberately avoids gold; the outcome chart bolds the most frequent loss rather than colouring it.)
+**The Gold Means Good Rule.** Gold marks a number that matters, a positive, or a place to act. It never marks a loss or an opponent's event; those use Them grey or ink with weight. (Zone charts use gold only for zones we win — control ≥ 50 %, positive balance; losses are Them grey. The outcome chart bolds the most frequent loss rather than colouring it. The four dangerous-action types use four ink steps — #0a0a0a, #5c5a55, #a8a49c, #dcd8d0 — never gold.)
 
 **The Two Golds Rule.** Bright gold text lives on black only. On white, gold text, numerals and thin marks use Deep Gold. Bright gold appears on white only as a solid fill carrying ink (the Voir button, the "B" goal disc), where the legible contrast is ink-on-gold.
 
@@ -213,7 +213,7 @@ Few and purposeful; the gold button always means "go to the video".
 - **Shape:** gently squared (4px).
 - **Primary (gold):** gold fill, ink text, 600 weight, 14px, with a lucide Play icon; 6–8px × 12px padding. "Voir les clips (n)" in the band, "Voir" on each clip row (icon only on phones, with a screen-reader label).
 - **Hover / Focus:** fill shifts to Gold Lift; global focus ring is a 2px gold outline at 2px offset.
-- **Text action:** "Tous les clips (n) →" in Deep Gold, turning ink on hover.
+- **Text action:** "Bibliothèque (n clips) →" and small "▶ clips" links on stats, in Deep Gold, turning ink on hover. A stat that can be tied to moments opens the clip library pre-filtered.
 - **Band link:** "Match sur Veo" in paper with a band-rule underline that turns gold on hover, plus an external-link icon.
 
 ### Chips
@@ -230,7 +230,7 @@ Few and purposeful; the gold button always means "go to the video".
 The row of four to six figures inside the band: caps label in Band Grey, 3rem gold figure, one-line caption in Band Grey (balanced wrapping). Figures change per tab. When the tab or match changes, each figure flips up into place (520ms, `cubic-bezier(0.16, 1, 0.3, 1)`, from 40% below with a 2px blur, staggered 45ms per figure); reduced-motion turns it off. This is the only authored motion in the system.
 
 ### Section
-A hairline on top, condensed caps title, optional aside on the right (e.g. the "Tous les clips" link), optional grey note, then content. This replaces cards everywhere.
+A hairline on top, condensed caps title, optional aside on the right (e.g. the "Bibliothèque" link), optional grey note, then content. This replaces cards everywhere.
 
 ### Clip row
 Time in display numerals with "MT1 · 0–0" beneath, title and reason, chips, and the gold Voir button on the right; rows divided by hairlines. When no video is linked, the button becomes a grey VideoOff icon.

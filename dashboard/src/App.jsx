@@ -84,6 +84,9 @@ export default function App() {
   });
   const setTab = (id) => { setTabState(id); window.history.replaceState(null, "", `#${id}`); };
   const [data, setData] = useState(null);
+  // a stat can open the clip library pre-filtered (category / zone)
+  const [clipPreset, setClipPreset] = useState(null);
+  const openClips = (preset) => { setClipPreset({ ...preset, key: Date.now() }); setTab("clips"); window.scrollTo(0, 0); };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -185,10 +188,10 @@ export default function App() {
           <p className="flex items-center gap-2 text-sm text-ink-3"><Loader2 size={16} className="animate-spin" aria-hidden="true" /> Chargement du match…</p>
         )}
         {data && tab === "apercu" && <Apercu d={data} goClips={() => setTab("clips")} />}
-        {data && tab === "possession" && <Possession d={data} />}
-        {data && tab === "attaque" && <Attaque d={data} />}
-        {data && tab === "terrain" && <Terrain d={data} />}
-        {data && tab === "clips" && <ClipsView clips={data.clips} quality={data.quality} />}
+        {data && tab === "possession" && <Possession d={data} openClips={openClips} />}
+        {data && tab === "attaque" && <Attaque d={data} openClips={openClips} />}
+        {data && tab === "terrain" && <Terrain d={data} openClips={openClips} />}
+        {data && tab === "clips" && <ClipsView clips={data.clips} quality={data.quality} preset={clipPreset} />}
       </main>
     </div>
   );

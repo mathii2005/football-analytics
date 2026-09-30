@@ -1,9 +1,9 @@
 // The four dangerous-action types share one fixed colour order across every
-// chart (ink, gold-deep, grey, light grey) so a type keeps its colour.
+// chart (four ink steps, light to dark by type) so a type keeps its colour;
+// gold is not used here because it means "positive / in the box" elsewhere.
 import { ACTION_TYPES, ACTION_LABELS } from "../format.js";
 
-export const ACTION_COLORS = { PASSE_PROF: "var(--ink)", CONDUITE: "var(--gold-deep)", CENTRE: "var(--them)", SWITCH: "#cfcbc3" };
-export const ACTION_HEX = { PASSE_PROF: "#0a0a0a", CONDUITE: "#85601a", CENTRE: "#9a968e", SWITCH: "#cfcbc3" };
+export const ACTION_COLORS = { PASSE_PROF: "#0a0a0a", CONDUITE: "#5c5a55", CENTRE: "#a8a49c", SWITCH: "#dcd8d0" };
 
 export default function ActionLegend() {
   return (

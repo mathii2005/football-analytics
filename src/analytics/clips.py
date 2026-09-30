@@ -36,6 +36,8 @@ DEFINITIONS (proposed; the staff owns them - change deliberately)
       set_piece_them  35  every opponent set piece
       long_buildup    30  our possessions of LONG_BUILDUP_MS+ live time
       set_piece_us    30  every one of our set pieces
+      loss            25  every PERTE (so a count of losses opens as many clips)
+      recup           20  every RECUP
     facets        : zone, game state ("menée"/"égalité"/"en avance" from
                     the score at that moment), 15-minute period, positive.
     selection     : the top SELECTION_SIZE clips by priority, dropping any
@@ -46,6 +48,7 @@ Tagging lag is handled by video.CLIP_LEAD_MS (links open early).
 from src.analytics.metrics import CHEAP_LOSS_MS, HIGH_PRESS_ZONES, reached_box, is_box_event
 from src.analytics.possessions import US, THEM, SHOT_CODES, GOAL_CODES, SET_PIECE_CODES, \
     HALF_LENGTH_MS, format_ms
+from src.analytics.classic import SET_PIECE_WINDOW_MS
 from src.analytics.phases import regain_ms, REGAIN_FAST_MS, REGAIN_MS, PERIOD_MIN
 from src.analytics.video import video_url
 
@@ -71,6 +74,8 @@ CATEGORIES = {
     "set_piece_them": ("Coups de pied arrêtés adverses", 35),
     "long_buildup": ("Longues possessions", 30),
     "set_piece_us": ("Nos coups de pied arrêtés", 30),
+    "loss": ("Toutes les pertes", 25),
+    "recup": ("Toutes les récupérations", 20),
 }
 POSITIVE = {"goal_for", "press_win", "quick_regain"}
 ZONE_FR = {1: "zone 1", 2: "zone 2", 3: "zone 3", 4: "zone 4", "BOX": "la surface"}
@@ -165,8 +170,9 @@ def goal_for_clips(veo, ps):
         for e in p.events:
             if e["code"] not in GOAL_CODES:
                 continue
-            sp = next((x for x in reversed(p.events) if x["code"] in SET_PIECE_CODES
-                       and x["timestamp_ms"] <= e["timestamp_ms"]), None)
+            # same rule as classic.set_pieces: our set piece <= 20 s before, no loss between
+            sp = next((x for x in reversed(p.events) if x["code"] in SET_PIECE_CODES and x.get("team") != THEM
+                       and e["timestamp_ms"] - SET_PIECE_WINDOW_MS <= x["timestamp_ms"] <= e["timestamp_ms"]), None)
             if sp is not None:
                 start = sp["timestamp_ms"]
                 title = f"But sur {SET_PIECE_FR[sp['code']].lower()}"
@@ -291,9 +297,16 @@ def event_clips(veo, ps):
                          "CENTRE": "Centre", "SWITCH": "Changement de jeu"}[code]
                 out.append(make_clip(veo, ps, "box_entry", p.half, t, f"Entrée surface : {label.lower()}",
                                      "Action dangereuse qui arrive dans la surface.", score, p.possession_id, zone="BOX"))
-            elif code == "RECUP" and zone in HIGH_PRESS_ZONES:
-                out.append(make_clip(veo, ps, "high_recup", p.half, t, f"Récupération haute ({ZONE_FR[zone]})",
-                                     "Ballon gagné haut sur le terrain.", score, p.possession_id, zone=zone))
+            elif code == "RECUP":
+                if zone in HIGH_PRESS_ZONES:
+                    out.append(make_clip(veo, ps, "high_recup", p.half, t, f"Récupération haute ({ZONE_FR[zone]})",
+                                         "Ballon gagné haut sur le terrain.", score, p.possession_id, zone=zone))
+                out.append(make_clip(veo, ps, "recup", p.half, t, f"Récupération en {ZONE_FR.get(zone, 'zone ?')}",
+                                     "Ballon gagné.", score, p.possession_id, zone=zone))
+            elif code == "PERTE":
+                out.append(make_clip(veo, ps, "loss", p.half, t, f"Perte en {ZONE_FR.get(zone, 'zone ?')}",
+                                     "Ballon rendu à l'adversaire.", score, p.possession_id, zone=zone,
+                                     is_loss_own_half=zone in (1, 2)))
             elif code in SET_PIECE_CODES:
                 cat = "set_piece_them" if e.get("team") == THEM else "set_piece_us"
                 who = "adverse" if cat == "set_piece_them" else ""

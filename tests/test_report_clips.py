@@ -163,3 +163,21 @@ def test_new_categories_registered():
     for key in ("shot", "box_entry", "high_recup", "quick_regain", "failed_press", "long_buildup",
                 "set_piece_us", "set_piece_them"):
         assert key in CATEGORIES
+
+
+def test_goal_title_uses_20s_set_piece_rule():
+    # corner 25 s before the goal: same possession, but not a set-piece goal
+    far = [ev(10, "RECUP", zone=2), ev(20, "CORNER", "us"), ev(45, "BUT")]
+    near = [ev(10, "RECUP", zone=2), ev(40, "CORNER", "us"), ev(47, "BUT")]
+    t = lambda evs: review_clips({}, reconstruct_possessions(evs, kickoff_team="them"), VEO)["categories"][1]["clips"][0]["title"]
+    assert t(far) == "But"
+    assert t(near) == "But sur corner"
+
+
+def test_every_loss_and_recovery_is_a_clip():
+    events = [ev(10, "RECUP", zone=2), ev(20, "PERTE", zone=4), ev(30, "RECUP", zone=3), ev(40, "PERTE", zone=4)]
+    clips = lib(events)
+    losses = [c for c in clips if c["category"] == "loss"]
+    recups = [c for c in clips if c["category"] == "recup"]
+    assert [c["zone"] for c in losses] == ["4", "4"]
+    assert [c["zone"] for c in recups] == ["2", "3"]

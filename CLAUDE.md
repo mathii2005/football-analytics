@@ -30,13 +30,16 @@ never changes a definition silently.
 2. **Validation** – `src/validation/` (incomplete, see known issues).
 3. **Analytics engine** – `src/analytics/`: `possessions.py` (state machine
    rebuilding us/them possessions), `metrics.py` (match metrics),
-   `report.py` (tab data + French key points), `clips.py` (Veo moments worth
+   `classic.py` (the old staff dashboard formulas, verbatim), `phases.py`
+   (possession-engine layer: splits, durations, progression, counter-press,
+   defence, game time), `report.py` (composes classic + halves + French key
+   points), `clips.py` (Veo moments worth
    reviewing, by cost/benefit and game context), `video.py` (Veo `#t=MM:SS`
    links with per-half kickoff offsets), `quality.py` (automatic tagging checks).
 4. **Stable data API** – `src/api/app.py` (FastAPI). No football logic here.
 5. **Frontend** – `dashboard/` (Vite + React + Tailwind + Recharts, port 3000,
-   `/api` proxied to :8000). No football logic here either. French UI, tabs
-   Aperçu / En profondeur / Terrain / Clips Veo (addressable as `#clips` etc.).
+   `/api` proxied to :8000). No football logic here either. French UI, tabs Aperçu / Possession / Attaque / Terrain / Clips Veo (addressable as `#clips` etc.);
+   stats link into the clip library pre-filtered.
    Replaces the tagger project's per-match HTML dashboards. Design context for
    the impeccable skill lives in `PRODUCT.md` and `.impeccable/`; brand is
    gold `#c79741`, black, white. Logo goes in `dashboard/public/logo.png`.
@@ -84,7 +87,7 @@ FA_MATCH_DIR=/Users/mathi/Projects/laureats-tagger/exports .venv/bin/python -m u
 npm --prefix dashboard run dev                     # http://localhost:3000
 ```
 
-API: `/matches`, `/matches/{id}/summary|report|clips|possessions|transitions|losses|quality`,
+API: `/matches`, `/matches/{id}/summary|report|phases|clips|possessions|transitions|losses|quality`,
 docs at `/docs`. A match id is the export file name without `.json`.
 
 ## Tests and fixtures

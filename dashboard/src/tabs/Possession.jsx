@@ -11,7 +11,7 @@ import { START_GROUP_LABELS, STATE_LABELS, ZONE_LABELS, pct, secs, dec, mmss } f
 
 // What only the possession engine can tell: when we had the ball, how long,
 // what it turned into, and how fast we win it back.
-export default function Possession({ d }) {
+export default function Possession({ d, openClips }) {
   const ph = d.phases, r = d.report;
   const halves = ph.splits.by_half.map((h) => ({ label: h.half === 1 ? "1re mi-temps" : "2e mi-temps", ...h }));
   const periods = ph.splits.by_period.map((p) => ({ label: `${p.label}'`, ...p }));
@@ -57,9 +57,9 @@ export default function Possession({ d }) {
 
       <div className="grid gap-10 lg:grid-cols-2">
         <Section title="Contre-pressing" note="Après chacune de nos pertes : temps pour récupérer le ballon.">
-          <CounterPress cp={ph.counter_press} />
+          <CounterPress cp={ph.counter_press} onZone={(zone) => openClips({ cats: ["failed_press", "quick_regain"], zone })} />
         </Section>
-        <Section title="Vitesse de transition" note="Définition de l'ancien tableau de bord.">
+        <Section title="Vitesse de transition" note="Temps entre une récupération et la prochaine action dangereuse.">
           <TransitionSpeed t={r.transition_speed} />
         </Section>
       </div>

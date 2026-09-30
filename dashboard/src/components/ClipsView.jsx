@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Play } from "lucide-react";
 import ClipFilters from "./ClipFilters.jsx";
 import ClipRow from "./ClipRow.jsx";
@@ -19,8 +19,14 @@ function NoVideo() {
 const EMPTY = { cats: [], half: "", zone: "", state: "", tone: "", sort: "time" };
 const PAGE = 40;
 
-function Library({ library }) {
-  const [f, setF] = useState(EMPTY);
+function Library({ library, preset }) {
+  const [f, setF] = useState(() => (preset ? { ...EMPTY, cats: preset.cats ?? [], zone: preset.zone ?? "" } : EMPTY));
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!preset) return;
+    setF({ ...EMPTY, cats: preset.cats ?? [], zone: preset.zone ?? "" });
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [preset?.key]);
   const [shown, setShown] = useState(PAGE);
   const set = (next) => { setF(next); setShown(PAGE); };
   const categories = useMemo(() => {
@@ -49,6 +55,7 @@ function Library({ library }) {
     return f.sort === "priority" ? [...rows].sort((a, b) => b.priority - a.priority) : rows;
   }, [library, f]);
   return (
+    <div ref={ref} className="scroll-mt-4">
     <Section title="Bibliothèque de clips" aside={<span className="text-sm text-ink-3 tabular">{rows.length} moments · {library.length} clips</span>}
       note="Tous les moments tagués, liés à Veo (8 s avant le tag). Filtre par thème, mi-temps, zone ou score.">
       <ClipFilters categories={categories} f={f} set={set} reset={() => set(EMPTY)} />
@@ -69,10 +76,11 @@ function Library({ library }) {
         </>
       )}
     </Section>
+    </div>
   );
 }
 
-export default function ClipsView({ clips, quality }) {
+export default function ClipsView({ clips, quality, preset }) {
   return (
     <div className="space-y-10">
       {!clips.has_video && <NoVideo />}
@@ -84,7 +92,7 @@ export default function ClipsView({ clips, quality }) {
           : <p className="text-sm text-ink-3">Aucun moment à revoir selon les règles actuelles.</p>}
       </Section>
 
-      <Library library={clips.library} />
+      <Library library={clips.library} preset={preset} />
 
       <Section title="Contrôle du tagging" note="Pour l'analyste : passages longs sans tag dans nos possessions et transitions déduites.">
         {quality.long_gaps.length === 0 && quality.inferred_transitions.length === 0
