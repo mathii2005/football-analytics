@@ -43,3 +43,9 @@ export const COULOIR_LABELS = { left: "Gauche", center: "Axe", right: "Droite" }
 
 // French plural: plural(2, "but") -> "2 buts"; custom plural form optional.
 export const plural = (n, one, many = `${one}s`) => `${n} ${n > 1 ? many : one}`;
+
+export const START_GROUP_LABELS = { recup: "Récupération", set_piece: "Coup de pied arrêté", kickoff: "Engagement", other: "Autre" };
+export const STATE_LABELS = { "menée": "Menés", "égalité": "À égalité", "en avance": "En avance" };
+export const ACTION_TYPES = ["PASSE_PROF", "CONDUITE", "CENTRE", "SWITCH"];
+export const ACTION_LABELS = { PASSE_PROF: "Passe profondeur", CONDUITE: "Conduite", CENTRE: "Centre", SWITCH: "Changement de jeu" };
+export const mmss = (ms) => (ms == null ? "–" : clock(ms));

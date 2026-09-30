@@ -11,12 +11,13 @@ export const fetchMatches = () => get("/matches");
 
 export async function fetchMatch(id) {
   const m = encodeURIComponent(id);
-  const [report, possessions, losses, quality, clips] = await Promise.all([
+  const [report, possessions, losses, quality, clips, phases] = await Promise.all([
     get(`/matches/${m}/report`),
     get(`/matches/${m}/possessions`),
     get(`/matches/${m}/losses`),
     get(`/matches/${m}/quality`),
     get(`/matches/${m}/clips`),
+    get(`/matches/${m}/phases`),
   ]);
-  return { report, possessions, losses, quality, clips };
+  return { report, possessions, losses, quality, clips, phases };
 }

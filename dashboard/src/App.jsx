@@ -1,25 +1,18 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, ArrowRight, ExternalLink, Loader2, Play } from "lucide-react";
+import { AlertTriangle, ExternalLink, Loader2, Play } from "lucide-react";
 import { fetchMatch, fetchMatches } from "./api.js";
-import { pct, dec, secs, signed, plural, matchDate, VENUE, ZONE_LABELS } from "./format.js";
+import { pct, dec, secs, signed, plural, mmss, matchDate, VENUE, ZONE_LABELS, COULOIR_LABELS } from "./format.js";
 import Scoreboard from "./components/Scoreboard.jsx";
-import Section from "./components/Section.jsx";
-import KeyPoints from "./components/KeyPoints.jsx";
-import PossessionTimeline from "./components/PossessionTimeline.jsx";
-import HalvesTable from "./components/HalvesTable.jsx";
-import ThreatChart from "./components/ThreatChart.jsx";
-import OutcomeChart from "./components/OutcomeChart.jsx";
-import SetPieces from "./components/SetPieces.jsx";
-import PitchZones from "./components/PitchZones.jsx";
-import AttackOrigins from "./components/AttackOrigins.jsx";
-import CouloirTable from "./components/CouloirTable.jsx";
 import ClipsView from "./components/ClipsView.jsx";
-import ClipRow from "./components/ClipRow.jsx";
-import PossessionTable from "./components/PossessionTable.jsx";
+import Apercu from "./tabs/Apercu.jsx";
+import Possession from "./tabs/Possession.jsx";
+import Attaque from "./tabs/Attaque.jsx";
+import Terrain from "./tabs/Terrain.jsx";
 
 const TABS = [
   { id: "apercu", label: "Aperçu" },
-  { id: "profondeur", label: "En profondeur" },
+  { id: "possession", label: "Possession" },
+  { id: "attaque", label: "Attaque" },
   { id: "terrain", label: "Terrain" },
   { id: "clips", label: "Clips Veo" },
 ];
@@ -33,117 +26,52 @@ function Wordmark() {
 }
 
 function figuresFor(tab, d) {
-  const { report: r, clips } = d;
+  const { report: r, clips, phases: ph } = d;
   const m = r.metrics, h = r.headline;
-  const losses = r.metrics.outcomes;
-  const ourLosses = d.losses.losses.length;
-  const oppHalf = d.losses.losses.filter((l) => l.zone === 3 || l.zone === 4 || l.zone === "BOX").length;
-  const count = (k) => clips.categories.find((c) => c.key === k)?.clips.length ?? 0;
   const score = r.match.final_score;
   if (tab === "apercu") return [
-    { label: "Possession", value: pct(m.possession_pct.strict), sub: `${pct(m.possession_pct.inclusive)} avec les phases déduites · fiable sur ${pct(m.possession_pct.coverage)} du jeu` },
+    { label: "Possession", value: pct(m.possession_pct.strict), sub: `${pct(m.possession_pct.inclusive)} avec les phases déduites` },
     { label: "Tirs", value: h.shots, sub: `${plural(h.shots_on_target, "cadré")} · ${plural(h.goals, "but")}` },
-    { label: "Pertes dans leur moitié", value: pct(ourLosses ? oppHalf / ourLosses : null), sub: `${oppHalf} sur ${ourLosses} pertes` },
-    { label: "Bilan récup / perte", value: signed(h.recups - h.losses), sub: `${h.recups} récup · ${h.losses} pertes` },
-    { label: "Possessions avec tir", value: m.shot_sequences, sub: `${pct(m.shot_sequence_rate)} de nos possessions` },
+    { label: "Bilan récup / perte", value: signed(h.balance), sub: `${h.recups} récup · ${h.losses} pertes` },
+    { label: "Field tilt", value: pct(h.field_tilt), sub: "évènements dans leur moitié" },
+    { label: "Récup hautes", value: pct(h.high_recup_share), sub: `${h.high_recups} en zone 3, 4 ou surface` },
   ];
-  if (tab === "profondeur") {
-    const [a, b] = r.halves;
+  if (tab === "possession") {
+    const cp = ph.counter_press, t = r.transition_speed;
     return [
-      { label: "Récupération → tir", value: secs(m.turnover_to_shot_ms.median), sub: `médiane sur ${plural(m.turnover_to_shot_ms.n, "action")}` },
-      { label: "Pertes rapides", value: losses.cheap_loss, sub: "reperdu en moins de 5 s" },
-      { label: "Direct / construit", value: `${m.direct}/${m.sustained}`, sub: "attaques jusqu'à la surface" },
-      { label: "Menace MT1 → MT2", value: b ? `${a.threat}→${b.threat}` : a?.threat ?? "–", sub: "score pondéré, pas un xG" },
-      { label: "Actions par tir", value: dec(h.actions_per_shot), sub: `${h.dangerous_actions} actions dangereuses` },
+      { label: "Possession médiane", value: secs(ph.profile.us.median_ms), sub: `${ph.profile.us.n} possessions · eux ${secs(ph.profile.them.median_ms)}` },
+      { label: "Repris en ≤ 10 s", value: pct(cp.within_10s), sub: `après nos ${cp.n_losses} pertes · ≤ 5 s ${pct(cp.within_5s)}` },
+      { label: "Récup → action", value: t.median_s == null ? "–" : `${dec(t.median_s)} s`, sub: `médiane sur ${plural(t.n, "transition")}` },
+      { label: "Tirs par possession", value: dec(ph.finishing.shots_per_possession), sub: `1 tir toutes les ${dec(ph.finishing.possessions_per_shot)} poss.` },
+      { label: "Temps effectif", value: mmss(ph.game_time.live_ms), sub: `arrêts tagués ${mmss(ph.game_time.dead_ms)}` },
     ];
   }
+  if (tab === "attaque") return [
+    { label: "Actions dangereuses", value: h.dangerous_actions, sub: `${dec(h.actions_per_shot)} actions par tir` },
+    { label: "Entrées surface", value: r.funnel[1].n, sub: `${h.box_shots} tirs dans la surface` },
+    { label: "Possessions avec tir", value: m.shot_sequences, sub: `${pct(m.shot_sequence_rate)} de nos possessions` },
+    { label: "Jeu vertical", value: pct(r.attack_style.vertical_pct), sub: "passes prof. + conduites" },
+    { label: "Buts sur CPA", value: r.set_pieces.goals_from_set_piece, sub: `${plural(r.set_pieces.shots_from_set_piece, "tir")} après un CPA` },
+  ];
   if (tab === "terrain") {
     const worst = [...r.zones].sort((x, y) => y.losses - x.losses)[0];
+    const main = [...r.couloir_origins].sort((x, y) => y.n - x.n)[0];
     return [
+      { label: "Field tilt", value: pct(h.field_tilt), sub: "évènements dans leur moitié" },
       { label: "Dernier tiers", value: pct(m.field_tilt), sub: "de notre temps de possession" },
       { label: "Hauteur de récup", value: dec(h.recovery_height), sub: "de 1 (zone 1) à 5 (surface)" },
-      { label: "Récupérations hautes", value: m.high_recups, sub: `${pct(h.recups ? m.high_recups / h.recups : null)} de nos récupérations` },
       { label: "Zone la plus perdue", value: worst?.losses ? ZONE_LABELS[worst.zone].replace("Zone ", "Z") : "–", sub: worst?.losses ? `${worst.losses} pertes` : "" },
-      { label: "Intensité du pressing", value: dec(m.ppda_lite), sub: "poss. adverses par récup haute · bas = fort" },
+      { label: "Couloir principal", value: main?.n ? COULOIR_LABELS[main.couloir] : "–", sub: main?.n ? `${pct(main.share)} des actions` : "" },
     ];
   }
+  const count = (k) => clips.library.filter((c) => c.category === k).length;
   return [
-    { label: "À revoir", value: clips.selection.length, sub: "clips choisis par contexte" },
+    { label: "Bibliothèque", value: clips.library.length, sub: "clips liés à Veo" },
+    { label: "À revoir", value: clips.selection.length, sub: "choisis par contexte" },
     { label: "Buts", value: score ? score.us + score.them : "–", sub: score ? `${score.us} pour · ${score.them} contre` : "" },
-    { label: "Occasions", value: count("chance"), sub: "tirs cadrés ou dans la surface" },
-    { label: "Pertes à revoir", value: count("costly_loss"), sub: "notre moitié ou rapides" },
-    { label: "Pressing réussi", value: count("press_win"), sub: "récup haute → surface" },
+    { label: "Contre-pressing raté", value: count("failed_press"), sub: `${count("quick_regain")} réussis en ≤ 5 s` },
+    { label: "Tirs", value: count("shot"), sub: `${count("box_entry")} entrées surface` },
   ];
-}
-
-function Apercu({ d, goClips }) {
-  const top = [...d.clips.selection].sort((a, b) => b.priority - a.priority).slice(0, 3);
-  return (
-    <div className="space-y-10">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <Section title="Points clés" note="Générés automatiquement à partir des tags.">
-          <KeyPoints points={d.report.key_points} />
-        </Section>
-        <Section title="Qui avait le ballon" note="Possessions reconstruites ; survoler ou tabuler pour le détail. Les temps d'arrêt longs sont exclus des durées.">
-          <PossessionTimeline possessions={d.possessions} />
-        </Section>
-      </div>
-      <Section title="Les moments à revoir d'abord"
-        aside={<button type="button" onClick={goClips} className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep hover:text-ink">
-          Tous les clips ({d.clips.selection.length}) <ArrowRight size={15} aria-hidden="true" /></button>}>
-        {top.length ? <ul>{top.map((c) => <ClipRow key={`${c.half}-${c.t_ms}`} clip={c} />)}</ul>
-          : <p className="text-sm text-ink-3">Aucun moment sélectionné.</p>}
-      </Section>
-    </div>
-  );
-}
-
-function Profondeur({ d }) {
-  const r = d.report;
-  return (
-    <div className="space-y-10">
-      <div className="grid gap-10 lg:grid-cols-2">
-        <Section title="Mi-temps contre mi-temps" note="En or : la meilleure mi-temps quand l'écart est net.">
-          <HalvesTable halves={r.halves} />
-        </Section>
-        <Section title="Comment finissent nos possessions" note="Une issue par possession, la meilleure d'abord. En or : buts et tirs ; en gras : le type de perte le plus fréquent.">
-          <OutcomeChart outcomes={r.metrics.outcomes} rates={r.metrics.outcome_rates} />
-        </Section>
-      </div>
-      <Section title="Menace par tranche de 5 minutes" note="Action dangereuse 1 pt (+2 dans la surface), tir non cadré 3, cadré 4, but 6.">
-        <ThreatChart threat={r.threat} />
-      </Section>
-      <div className="grid gap-10 lg:grid-cols-2">
-        <Section title="Coups de pied arrêtés"><SetPieces sp={r.set_pieces} /></Section>
-        <Section title="Après nos pertes" note="Ce que l'adversaire a fait du ballon (ses actions sont peu taguées).">
-          <p className="text-[15px] text-ink">
-            <span className="display text-3xl font-semibold tabular">{d.losses.conceded_after_loss}</span>{" "}
-            {d.losses.conceded_after_loss > 1 ? "buts encaissés" : "but encaissé"} directement après une perte, sur {plural(d.losses.losses.length, "perte")}.
-          </p>
-        </Section>
-      </div>
-      <PossessionTable possessions={d.possessions} />
-    </div>
-  );
-}
-
-function Terrain({ d }) {
-  const r = d.report;
-  return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <Section title="Bilan par zone" note="Où on gagne le ballon et où on le rend.">
-        <PitchZones zones={r.zones} />
-      </Section>
-      <div className="space-y-10">
-        <Section title="D'où partent nos attaques" note="Actions dangereuses par couloir et par zone.">
-          <AttackOrigins grid={r.attack_origins} />
-        </Section>
-        <Section title="Valeur par couloir" note="Part des possessions passées par un couloir qui atteignent la surface ou finissent par un tir.">
-          <CouloirTable couloirs={r.metrics.couloirs} />
-        </Section>
-      </div>
-    </div>
-  );
 }
 
 export default function App() {
@@ -257,7 +185,8 @@ export default function App() {
           <p className="flex items-center gap-2 text-sm text-ink-3"><Loader2 size={16} className="animate-spin" aria-hidden="true" /> Chargement du match…</p>
         )}
         {data && tab === "apercu" && <Apercu d={data} goClips={() => setTab("clips")} />}
-        {data && tab === "profondeur" && <Profondeur d={data} />}
+        {data && tab === "possession" && <Possession d={data} />}
+        {data && tab === "attaque" && <Attaque d={data} />}
         {data && tab === "terrain" && <Terrain d={data} />}
         {data && tab === "clips" && <ClipsView clips={data.clips} quality={data.quality} />}
       </main>
