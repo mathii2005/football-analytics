@@ -1,4 +1,6 @@
-import { AlertTriangle, ChevronDown, Play } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Play } from "lucide-react";
+import ClipFilters from "./ClipFilters.jsx";
 import ClipRow from "./ClipRow.jsx";
 import Section from "./Section.jsx";
 
@@ -14,34 +16,61 @@ function NoVideo() {
   );
 }
 
+const EMPTY = { cats: [], half: "", zone: "", state: "", tone: "", sort: "time" };
+const PAGE = 40;
+
+function Library({ library }) {
+  const [f, setF] = useState(EMPTY);
+  const [shown, setShown] = useState(PAGE);
+  const set = (next) => { setF(next); setShown(PAGE); };
+  const categories = useMemo(() => {
+    const seen = new Map();
+    library.forEach((c) => seen.set(c.category, { key: c.category, label: c.category_label, n: (seen.get(c.category)?.n ?? 0) + 1 }));
+    return [...seen.values()].sort((a, b) => b.n - a.n);
+  }, [library]);
+  const rows = useMemo(() => {
+    const out = library.filter((c) => (!f.cats.length || f.cats.includes(c.category))
+      && (!f.half || String(c.half) === f.half) && (!f.zone || c.zone === f.zone)
+      && (!f.state || c.state === f.state) && (!f.tone || (f.tone === "pos") === c.positive));
+    return f.sort === "priority" ? [...out].sort((a, b) => b.priority - a.priority) : out;
+  }, [library, f]);
+  return (
+    <Section title="Bibliothèque de clips" aside={<span className="text-sm text-ink-3 tabular">{rows.length} clips sur {library.length}</span>}
+      note="Tous les moments tagués, liés à Veo (8 s avant le tag). Filtre par thème, mi-temps, zone ou score.">
+      <ClipFilters categories={categories} f={f} set={set} reset={() => set(EMPTY)} />
+      {rows.length === 0 ? (
+        <div className="mt-6 flex items-center gap-3 text-sm text-ink-2">
+          Aucun clip pour ces filtres.
+          <button type="button" onClick={() => set(EMPTY)} className="font-semibold text-gold-deep hover:text-ink">Réinitialiser</button>
+        </div>
+      ) : (
+        <>
+          <ul className="mt-4">{rows.slice(0, shown).map((c) => <ClipRow key={`${c.category}-${c.half}-${c.t_ms}-${c.title}`} clip={c} />)}</ul>
+          {rows.length > shown && (
+            <button type="button" onClick={() => setShown(shown + PAGE)}
+              className="mt-3 w-full rounded border border-rule py-2 text-sm font-medium text-ink hover:border-ink-3">
+              Afficher {Math.min(PAGE, rows.length - shown)} de plus ({rows.length - shown} restants)
+            </button>
+          )}
+        </>
+      )}
+    </Section>
+  );
+}
+
 export default function ClipsView({ clips, quality }) {
   return (
     <div className="space-y-10">
       {!clips.has_video && <NoVideo />}
 
       <Section title="À revoir en priorité"
-        note="Choisis selon ce qu'ils ont coûté ou rapporté et le contexte du match (score, fin de mi-temps), dans l'ordre du match. Chaque lien ouvre Veo 8 s avant le tag.">
+        note="Les 20 moments les plus importants, choisis selon ce qu'ils ont coûté ou rapporté et le contexte (score, fin de mi-temps), dans l'ordre du match.">
         {clips.selection.length
           ? <ul>{clips.selection.map((c) => <ClipRow key={`${c.category}-${c.half}-${c.t_ms}`} clip={c} />)}</ul>
           : <p className="text-sm text-ink-3">Aucun moment à revoir selon les règles actuelles.</p>}
       </Section>
 
-      <Section title="Tous les clips par thème">
-        <div className="divide-y divide-rule border-y border-rule">
-          {clips.categories.filter((cat) => cat.clips.length).map((cat) => (
-            <details key={cat.key} className="group">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 [&::-webkit-details-marker]:hidden">
-                <span className="font-medium text-ink">{cat.label}</span>
-                <span className="flex items-center gap-3 text-sm text-ink-3 tabular">
-                  {cat.clips.length}
-                  <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden="true" />
-                </span>
-              </summary>
-              <ul className="pb-2">{cat.clips.map((c) => <ClipRow key={`${c.half}-${c.t_ms}-${c.title}`} clip={c} showCategory={false} />)}</ul>
-            </details>
-          ))}
-        </div>
-      </Section>
+      <Library library={clips.library} />
 
       <Section title="Contrôle du tagging" note="Pour l'analyste : passages longs sans tag dans nos possessions et transitions déduites.">
         {quality.long_gaps.length === 0 && quality.inferred_transitions.length === 0
