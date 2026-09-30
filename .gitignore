@@ -22,3 +22,4 @@ dashboard/dist/
 # impeccable review captures (regenerable)
 .impeccable/review/
 .impeccable/questions/
+.superpowers/
