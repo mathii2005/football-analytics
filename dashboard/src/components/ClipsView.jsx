@@ -32,10 +32,24 @@ function Library({ library }) {
     const out = library.filter((c) => (!f.cats.length || f.cats.includes(c.category))
       && (!f.half || String(c.half) === f.half) && (!f.zone || c.zone === f.zone)
       && (!f.state || c.state === f.state) && (!f.tone || (f.tone === "pos") === c.positive));
-    return f.sort === "priority" ? [...out].sort((a, b) => b.priority - a.priority) : out;
+    // without a category filter, one row per moment: keep the highest-priority
+    // clip and carry the other categories as extra tags
+    let rows = out;
+    if (!f.cats.length) {
+      const byMoment = new Map();
+      for (const c of out) {
+        const k = `${c.half}-${c.t_ms}`;
+        const prev = byMoment.get(k);
+        if (!prev) byMoment.set(k, { ...c, also: [] });
+        else if (c.priority > prev.priority) byMoment.set(k, { ...c, also: [prev.category_label, ...prev.also] });
+        else prev.also.push(c.category_label);
+      }
+      rows = [...byMoment.values()];
+    }
+    return f.sort === "priority" ? [...rows].sort((a, b) => b.priority - a.priority) : rows;
   }, [library, f]);
   return (
-    <Section title="Bibliothèque de clips" aside={<span className="text-sm text-ink-3 tabular">{rows.length} clips sur {library.length}</span>}
+    <Section title="Bibliothèque de clips" aside={<span className="text-sm text-ink-3 tabular">{rows.length} moments · {library.length} clips</span>}
       note="Tous les moments tagués, liés à Veo (8 s avant le tag). Filtre par thème, mi-temps, zone ou score.">
       <ClipFilters categories={categories} f={f} set={set} reset={() => set(EMPTY)} />
       {rows.length === 0 ? (

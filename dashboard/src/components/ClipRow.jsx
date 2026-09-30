@@ -14,6 +14,7 @@ export default function ClipRow({ clip, showCategory = true }) {
         <div className="mt-0.5 text-sm text-ink-2">{clip.reason}</div>
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {showCategory && <span className="rounded-sm bg-ink px-1.5 py-0.5 text-[11px] font-medium text-paper">{clip.category_label}</span>}
+          {(clip.also ?? []).map((l) => <span key={l} className="rounded-sm bg-ink/10 px-1.5 py-0.5 text-[11px] font-medium text-ink">{l}</span>)}
           {clip.context.map((t) => (
             <span key={t} className="rounded-sm border border-rule px-1.5 py-0.5 text-[11px] text-ink-2">{t}</span>
           ))}

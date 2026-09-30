@@ -157,7 +157,7 @@ export default function App() {
             {TABS.map((t) => (
               <button key={t.id} id={`tab-${t.id}`} role="tab" aria-selected={tab === t.id} aria-controls="tabpanel"
                 tabIndex={tab === t.id ? 0 : -1} type="button" onClick={() => setTab(t.id)}
-                className={`display shrink-0 border-b-2 px-2.5 py-3 text-base font-semibold uppercase tracking-wide transition-colors sm:px-4 sm:text-lg ${
+                className={`display shrink-0 border-b-2 px-2 py-3 text-[15px] font-semibold uppercase tracking-wide transition-colors sm:px-4 sm:text-lg ${
                   tab === t.id ? "border-gold text-paper" : "border-transparent text-band-ink-2 hover:text-paper"}`}>
                 {t.label}
               </button>

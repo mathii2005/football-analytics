@@ -16,11 +16,13 @@ export default function PitchBalance({ zones }) {
     <Pitch label="Bilan territorial par zone">
       {["4", "3", "2", "1"].map((k) => {
         const [y0, y1] = ZONE_Y[k], z = by[k];
+        // text rows chosen to clear the box, centre circle and our box lines
+        const [ty, sy] = { 4: [88, 100], 3: [140, 155], 2: [276, 291], 1: [334, 348] }[k];
         return (
           <g key={k}>
             <rect x={0} y={y0} width={W} height={y1 - y0} fill={tint(z.balance, max)} />
-            <text x={W / 2} y={(y0 + y1) / 2 + (k === "4" ? 18 : 6)} textAnchor="middle" fontFamily="Barlow Condensed" fontWeight={600} fontSize={28} fill="var(--ink)">{signed(z.balance)}</text>
-            <text x={W / 2} y={(y0 + y1) / 2 + (k === "4" ? 34 : 22)} textAnchor="middle" fontSize={10} fill="var(--ink-2)">{z.recups} récup · {z.losses} pertes</text>
+            <text x={W / 2} y={ty} textAnchor="middle" fontFamily="Barlow Condensed" fontWeight={600} fontSize={28} fill="var(--ink)">{signed(z.balance)}</text>
+            <text x={W / 2} y={sy} textAnchor="middle" fontSize={10} fill="var(--ink-2)">{z.recups} récup · {z.losses} pertes</text>
           </g>
         );
       })}

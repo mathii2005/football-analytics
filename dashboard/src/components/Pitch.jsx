@@ -10,7 +10,7 @@ export const COL_X = { left: [0, 100], center: [100, 200], right: [200, 300] };
 export default function Pitch({ children, label }) {
   const line = "var(--ink)";
   return (
-    <svg viewBox={`-14 -6 ${W + 28} ${H + 12}`} className="h-auto w-full max-w-[22rem]" role="img" aria-label={label}>
+    <svg viewBox={`-2 -2 ${W + 4} ${H + 4}`} className="h-auto w-full max-w-[22rem]" role="img" aria-label={label}>
       <rect x={0} y={0} width={W} height={H} fill="var(--paper-2)" />
       {children}
       <g fill="none" stroke={line} strokeWidth={1.2} opacity={0.75} pointerEvents="none">
@@ -25,12 +25,8 @@ export default function Pitch({ children, label }) {
       <g stroke={line} strokeWidth={0.8} strokeDasharray="3 4" opacity={0.35} pointerEvents="none">
         <line x1={0} y1={105} x2={W} y2={105} /><line x1={0} y1={315} x2={W} y2={315} />
       </g>
-      <g fontSize={10} fill="var(--ink-3)" fontFamily="Barlow Condensed" letterSpacing="0.05em">
-        <text x={-10} y={55} textAnchor="middle" transform="rotate(-90 -10 55)">Z4</text>
-        <text x={-10} y={160} textAnchor="middle" transform="rotate(-90 -10 160)">Z3</text>
-        <text x={-10} y={265} textAnchor="middle" transform="rotate(-90 -10 265)">Z2</text>
-        <text x={-10} y={370} textAnchor="middle" transform="rotate(-90 -10 370)">Z1</text>
-        <text x={W + 10} y={H / 2} textAnchor="middle" transform={`rotate(90 ${W + 10} ${H / 2})`}>SENS DE L'ATTAQUE ↑</text>
+      <g fontSize={11} fill="var(--ink-2)" fontFamily="Barlow Condensed" fontWeight={600} letterSpacing="0.06em" pointerEvents="none">
+        <text x={6} y={100}>Z4</text><text x={6} y={205}>Z3</text><text x={6} y={310}>Z2</text><text x={6} y={415}>Z1</text>
       </g>
     </svg>
   );

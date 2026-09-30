@@ -47,14 +47,13 @@ export default function Possession({ d }) {
         <StartOutcomeMatrix cells={ph.profile.start_x_outcome} rowKey="start" rows={starts} />
       </Section>
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        <Section title="Valeur des récupérations" note="Par zone de récupération (nombre entre parenthèses).">
-          <RecoveryValue rows={ph.progression.recovery_value} />
-        </Section>
-        <Section title="Zone de départ → issue" note="Zone de la récupération ou du coup de pied arrêté qui lance la possession.">
-          <StartOutcomeMatrix cells={ph.progression.start_zone_x_outcome} rowKey="zone" rows={zones} />
-        </Section>
-      </div>
+      <Section title="Valeur des récupérations" note="Par zone de récupération (nombre entre parenthèses).">
+        <RecoveryValue rows={ph.progression.recovery_value} />
+      </Section>
+
+      <Section title="Zone de départ → issue" note="Zone de la récupération ou du coup de pied arrêté qui lance la possession.">
+        <StartOutcomeMatrix cells={ph.progression.start_zone_x_outcome} rowKey="zone" rows={zones} />
+      </Section>
 
       <div className="grid gap-10 lg:grid-cols-2">
         <Section title="Contre-pressing" note="Après chacune de nos pertes : temps pour récupérer le ballon.">

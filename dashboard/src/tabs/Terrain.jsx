@@ -15,10 +15,10 @@ export default function Terrain({ d }) {
   return (
     <div className="space-y-10">
       <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-        <Section title="Bilan territorial" note="Récupérations − pertes par zone. Or : on domine la zone ; gris : on la subit.">
+        <Section title="Bilan territorial" note="Récupérations − pertes par zone, attaque vers le haut. Or : on domine la zone ; gris : on la subit.">
           <PitchBalance zones={r.zones} />
         </Section>
-        <Section title="Où on a attaqué" note="Actions dangereuses : couloir × zone d'arrivée, surface nichée dans la Z4.">
+        <Section title="Où on a attaqué" note="Actions dangereuses : couloir × zone d'arrivée, attaque vers le haut, surface nichée dans la Z4.">
           <PitchOrigins grid={r.attack_origins} />
         </Section>
         <Section title="Origine par couloir" note="D'où part l'action dangereuse, par type.">
