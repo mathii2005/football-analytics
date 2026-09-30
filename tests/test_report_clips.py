@@ -105,3 +105,61 @@ def test_selection_is_capped_deduped_and_chronological():
     assert sel == sorted(sel, key=lambda c: (c["half"], c["t_ms"]))
     for a, b in zip(sel, sel[1:]):
         assert a["half"] != b["half"] or b["t_ms"] - a["t_ms"] >= 10_000
+
+
+# ── clip library ───────────────────────────────────────────────────
+
+from src.analytics.clips import CATEGORIES
+
+
+def lib(events, veo=VEO):
+    return review_clips({}, reconstruct_possessions(events, kickoff_team="them"), veo)["library"]
+
+
+def test_library_has_facets():
+    d = json.loads(FIXTURE.read_text())
+    clips = review_clips(d, possessions_from_match(d), VEO)["library"]
+    assert clips
+    for c in clips:
+        assert {"zone", "state", "period", "positive", "category", "video_url"} <= set(c)
+        assert c["state"] in ("menée", "égalité", "en avance")
+
+
+def test_library_without_video():
+    d = json.loads((Path(__file__).parents[1] / "data" / "raw" / "laureats_2026-08-26_match_001_v1.json").read_text())
+    clips = review_clips(d, possessions_from_match(d), {"url": None, "offset1": None, "offset2": None})["library"]
+    assert clips and all(c["video_url"] is None for c in clips)
+
+
+def test_failed_press_and_quick_regain():
+    events = [ev(10, "RECUP", zone=2), ev(20, "PERTE", zone=3), ev(23, "RECUP", zone=3),     # regained in 3 s
+              ev(30, "PERTE", zone=2), ev(45, "COUP_FRANC", "them", zone=2), ev(70, "RECUP", zone=1)]  # not regained, their set piece
+    cats = [c["category"] for c in lib(events)]
+    assert cats.count("quick_regain") == 1
+    assert cats.count("failed_press") == 1
+    qr = next(c for c in lib(events) if c["category"] == "quick_regain")
+    assert qr["positive"] and qr["at"] == "00:20"
+
+
+def test_long_buildup_threshold():
+    short = [ev(10, "RECUP", zone=2), ev(39, "PERTE", zone=3)]
+    long_ = [ev(10, "RECUP", zone=2), ev(41, "PERTE", zone=3)]
+    assert "long_buildup" not in [c["category"] for c in lib(short)]
+    assert "long_buildup" in [c["category"] for c in lib(long_)]
+
+
+def test_selection_size_20():
+    from src.analytics.clips import SELECTION_SIZE
+    assert SELECTION_SIZE == 20
+    events = [ev(10 + 20 * k, "RECUP", zone=4) for k in range(0, 1)]
+    for k in range(40):
+        t = 20 + k * 30
+        events += [ev(t, "RECUP", zone=4), ev(t + 3, "TIR_C")]
+    sel = review_clips({}, reconstruct_possessions(events, kickoff_team="them"), VEO)["selection"]
+    assert len(sel) == 20
+
+
+def test_new_categories_registered():
+    for key in ("shot", "box_entry", "high_recup", "quick_regain", "failed_press", "long_buildup",
+                "set_piece_us", "set_piece_them"):
+        assert key in CATEGORIES
