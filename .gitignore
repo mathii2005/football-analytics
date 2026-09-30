@@ -4,10 +4,13 @@ __pycache__/
 venv/
 .idea/
 *.env
+.DS_Store
+.pytest_cache/
 
-# keep a few for sample
+# real season data stays local; only the sample fixtures are versioned
 data/raw/*.json
-!data/raw/match_001.json
-!data/raw/match_002.json
+!data/raw/*match_001*.json
+!data/raw/*match_002*.json
 
-data/processed/*.parquet
+# generated outputs
+data/processed/*
