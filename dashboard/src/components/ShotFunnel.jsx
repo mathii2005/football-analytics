@@ -1,5 +1,5 @@
 import { ChevronDown, Play } from "lucide-react";
-import { pct } from "../format.js";
+import { funnelStep } from "../links.js";
 
 // Dangerous actions -> box entries -> shots -> on target -> goals, with the
 // conversion from each stage to the next. Not every shot follows a tagged box
@@ -13,7 +13,7 @@ export default function ShotFunnel({ stages, onSelect }) {
           {i > 0 && (
             <div className="flex items-center gap-1 pl-[8.5rem] text-[11px] text-ink-3 tabular">
               <ChevronDown size={11} aria-hidden="true" />
-              {stages[i - 1].n && s.n <= stages[i - 1].n ? pct(s.n / stages[i - 1].n) : "des tirs arrivent sans entrée surface taguée"}
+              {funnelStep(stages[i - 1].n, s.n)}
             </div>
           )}
           <div className="grid grid-cols-[8rem_1fr] items-center gap-2 text-sm">

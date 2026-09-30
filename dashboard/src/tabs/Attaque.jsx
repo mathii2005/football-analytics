@@ -7,10 +7,9 @@ import TempoTable from "../components/TempoTable.jsx";
 import HalvesTable from "../components/HalvesTable.jsx";
 import SetPieces from "../components/SetPieces.jsx";
 import { dec } from "../format.js";
+import { FUNNEL_CLIPS } from "../links.js";
 
 // Attack and finishing: the old staff views, plus halves side by side.
-const FUNNEL_CLIPS = { "Entrées surface": ["box_entry"], Tirs: ["shot"], "Cadrés": ["shot"], Buts: ["goal_for"] };
-
 export default function Attaque({ d, openClips }) {
   const r = d.report, h = r.headline;
   return (

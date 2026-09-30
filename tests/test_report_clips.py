@@ -181,3 +181,9 @@ def test_every_loss_and_recovery_is_a_clip():
     recups = [c for c in clips if c["category"] == "recup"]
     assert [c["zone"] for c in losses] == ["4", "4"]
     assert [c["zone"] for c in recups] == ["2", "3"]
+
+
+def test_on_target_shots_have_their_own_category():
+    d = json.loads((Path(__file__).parent / "fixtures" / "vanier_2026-09-26.json").read_text())
+    lib_ = review_clips(d, possessions_from_match(d), VEO)["library"]
+    assert sum(c["category"] == "shot_on_target" for c in lib_) == 5   # 3 TIR_C + 2 BUT, as the funnel shows

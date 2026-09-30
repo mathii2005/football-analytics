@@ -3,6 +3,7 @@ import { AlertTriangle, ExternalLink, Loader2, Play } from "lucide-react";
 import { fetchMatch, fetchMatches } from "./api.js";
 import { pct, dec, secs, signed, plural, mmss, matchDate, VENUE, ZONE_LABELS, COULOIR_LABELS } from "./format.js";
 import Scoreboard from "./components/Scoreboard.jsx";
+import { nextPreset } from "./links.js";
 import ClipsView from "./components/ClipsView.jsx";
 import Apercu from "./tabs/Apercu.jsx";
 import Possession from "./tabs/Possession.jsx";
@@ -77,16 +78,21 @@ function figuresFor(tab, d) {
 export default function App() {
   const [matches, setMatches] = useState([]);
   const [selected, setSelected] = useState(null);
+  // a stat can open the clip library pre-filtered (category / zone)
+  const [clipPreset, setClipPreset] = useState(null);
   // the tab lives in the URL hash so a coach can be sent straight to #clips
   const [tab, setTabState] = useState(() => {
     const h = window.location.hash.slice(1);
     return TABS.some((t) => t.id === h) ? h : "apercu";
   });
-  const setTab = (id) => { setTabState(id); window.history.replaceState(null, "", `#${id}`); };
+  const moveTo = (id) => { setTabState(id); window.history.replaceState(null, "", `#${id}`); };
+  // plain navigation drops any clip preset; openClips sets one
+  const setTab = (id) => { setClipPreset((p) => nextPreset(p, { type: "tab" })); moveTo(id); };
   const [data, setData] = useState(null);
-  // a stat can open the clip library pre-filtered (category / zone)
-  const [clipPreset, setClipPreset] = useState(null);
-  const openClips = (preset) => { setClipPreset({ ...preset, key: Date.now() }); setTab("clips"); window.scrollTo(0, 0); };
+  const openClips = (preset) => {
+    setClipPreset((p) => nextPreset(p, { type: "open", preset, key: Date.now() }));
+    moveTo("clips"); window.scrollTo(0, 0);
+  };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -116,7 +122,7 @@ export default function App() {
             <Wordmark />
             <label className="flex items-center gap-2 text-xs uppercase tracking-wider text-band-ink-2">
               <span className="hidden sm:inline">Match</span>
-              <select value={selected ?? ""} onChange={(e) => setSelected(e.target.value)}
+              <select value={selected ?? ""} onChange={(e) => { setClipPreset((p) => nextPreset(p, { type: "match" })); setSelected(e.target.value); }}
                 className="max-w-[16rem] rounded border border-band-rule bg-band-2 px-3 py-2 text-sm normal-case tracking-normal text-paper">
                 {matches.map((m) => (
                   <option key={m.id} value={m.id}>

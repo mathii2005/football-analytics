@@ -36,6 +36,7 @@ DEFINITIONS (proposed; the staff owns them - change deliberately)
       set_piece_them  35  every opponent set piece
       long_buildup    30  our possessions of LONG_BUILDUP_MS+ live time
       set_piece_us    30  every one of our set pieces
+      shot_on_target  45  every shot on target (TIR_C and BUT), as the funnel counts them
       loss            25  every PERTE (so a count of losses opens as many clips)
       recup           20  every RECUP
     facets        : zone, game state ("menée"/"égalité"/"en avance" from
@@ -74,6 +75,7 @@ CATEGORIES = {
     "set_piece_them": ("Coups de pied arrêtés adverses", 35),
     "long_buildup": ("Longues possessions", 30),
     "set_piece_us": ("Nos coups de pied arrêtés", 30),
+    "shot_on_target": ("Tirs cadrés", 45),
     "loss": ("Toutes les pertes", 25),
     "recup": ("Toutes les récupérations", 20),
 }
@@ -292,6 +294,9 @@ def event_clips(veo, ps):
                 label = {"TIR_C": "Tir cadré", "TIR_HC": "Tir non cadré", "BUT": "But"}[code]
                 out.append(make_clip(veo, ps, "shot", p.half, t, label + (" (surface)" if is_box_event(e) else ""),
                                      "Tir de l'équipe.", score, p.possession_id, zone="BOX" if is_box_event(e) else zone))
+                if code in ("TIR_C", "BUT"):
+                    out.append(make_clip(veo, ps, "shot_on_target", p.half, t, label, "Tir cadré.", score,
+                                         p.possession_id, zone="BOX" if is_box_event(e) else zone))
             elif code in ("PASSE_PROF", "CONDUITE", "CENTRE", "SWITCH") and e.get("is_box"):
                 label = {"PASSE_PROF": "Passe en profondeur", "CONDUITE": "Conduite",
                          "CENTRE": "Centre", "SWITCH": "Changement de jeu"}[code]

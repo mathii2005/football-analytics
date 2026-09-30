@@ -31,7 +31,7 @@ export default function CounterPress({ cp, onZone }) {
             <tr key={z.zone} className="border-t border-rule">
               <td className="py-2 text-ink">
                 {onZone ? <button type="button" onClick={() => onZone(z.zone)} className="inline-flex items-center gap-1.5 hover:text-gold-deep"
-                  title="Voir les clips de contre-pressing de cette zone">{ZONE_LABELS[z.zone]} <Play size={11} className="text-gold-deep" aria-hidden="true" /></button>
+                  title="Voir les pertes de cette zone">{ZONE_LABELS[z.zone]} <Play size={11} className="text-gold-deep" aria-hidden="true" /></button>
                   : ZONE_LABELS[z.zone]}
               </td>
               <td className="py-2 text-right text-ink">{z.n}</td>
