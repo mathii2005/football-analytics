@@ -18,3 +18,7 @@ data/processed/*
 # dashboard
 dashboard/node_modules/
 dashboard/dist/
+
+# impeccable review captures (regenerable)
+.impeccable/review/
+.impeccable/questions/

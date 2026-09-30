@@ -56,3 +56,19 @@ def test_quality(client):
     q = client.get("/matches/champlain_15min/quality").json()
     assert q["score_check"]["our_goals"] == 0
     assert q["long_gaps"] == [] and q["inferred_transitions"] == []
+
+
+def test_report_and_clips(client):
+    r = client.get("/matches/champlain_15min/report").json()
+    assert {"headline", "halves", "zones", "attack_origins", "threat", "set_pieces", "key_points"} <= set(r)
+    c = client.get("/matches/champlain_15min/clips").json()
+    assert c["has_video"] is True
+    assert all(clip["video_url"].startswith("https://app.veo.co/") for clip in c["selection"])
+    losses = client.get("/matches/champlain_15min/losses").json()["losses"]
+    assert all("#t=" in row["video_url"] for row in losses)
+
+
+def test_clips_without_video(client):
+    c = client.get("/matches/match_001/clips").json()
+    assert c["has_video"] is False
+    assert all(clip["video_url"] is None for clip in c["selection"])

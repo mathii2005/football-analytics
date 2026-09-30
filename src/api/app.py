@@ -21,6 +21,9 @@ from fastapi import FastAPI, HTTPException, Query
 from src.analytics.metrics import match_metrics, possession_row, outcome, time_to_shot_ms
 from src.analytics.possessions import possessions_from_match, format_ms, US, THEM
 from src.analytics.quality import quality_report
+from src.analytics.report import match_report
+from src.analytics.clips import review_clips
+from src.analytics.video import veo_info, video_url
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -114,18 +117,21 @@ def next_possession(ps, p):
 def transitions(match_id: str):
     """attacking: every RECUP and what we did with it.
     defensive: every PERTE and what the opponent did with it."""
-    _, ps = analyse(match_id)
+    match, ps = analyse(match_id)
+    veo = veo_info(match)
     attacking = [{
         "possession_id": p.possession_id, "half": p.half, "at": format_ms(p.start_ms),
         "start_ms": p.start_ms, "zone": p.start_zone, "outcome": outcome(p),
         "time_to_shot_ms": time_to_shot_ms(p), "duration_ms": p.duration_ms,
+        "video_url": video_url(veo, p.half, p.start_ms),
     } for p in ps if p.team == US and p.start_type == "recup"]
     return {"attacking": attacking, "defensive": losses(match_id)["losses"]}
 
 
 @app.get("/matches/{match_id}/losses")
 def losses(match_id: str):
-    _, ps = analyse(match_id)
+    match, ps = analyse(match_id)
+    veo = veo_info(match)
     rows = []
     for p in ps:
         if p.team != US or p.end_type != "perte":
@@ -138,6 +144,7 @@ def losses(match_id: str):
             # what the opponent did with it (their actions are mostly untagged)
             "conceded_goal": after is not None and after.team == THEM and after.end_type == "opp_goal",
             "opponent_possession_ms": after.duration_ms if after is not None and after.team == THEM else None,
+            "video_url": video_url(veo, p.half, p.end_ms),
         })
     by_zone = {}
     for r in rows:
@@ -146,7 +153,27 @@ def losses(match_id: str):
             "conceded_after_loss": sum(r["conceded_goal"] for r in rows)}
 
 
+@app.get("/matches/{match_id}/report")
+def report(match_id: str):
+    """Everything the dashboard tabs need beyond the summary: headline
+    numbers, halves, zones, attack origins, threat timeline, set pieces
+    and generated key points (French)."""
+    match, ps = analyse(match_id)
+    return {"match": match_info(match_id, match), **match_report(match, ps)}
+
+
+@app.get("/matches/{match_id}/clips")
+def clips(match_id: str):
+    """Veo moments worth reviewing, chosen by cost/benefit and game context."""
+    match, ps = analyse(match_id)
+    return review_clips(match, ps, veo_info(match))
+
+
 @app.get("/matches/{match_id}/quality")
 def quality(match_id: str):
     match, ps = analyse(match_id)
-    return quality_report(match, ps)
+    q = quality_report(match, ps)
+    veo = veo_info(match)
+    for g in q["long_gaps"]:
+        g["video_url"] = video_url(veo, g["half"], g["from_ms"])
+    return q

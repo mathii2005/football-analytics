@@ -35,7 +35,7 @@ def long_gaps(possessions) -> list[dict]:
         for t0, t1 in zip(times, times[1:]):
             gap = live_between(p, t0, t1)
             if gap > LONG_GAP_MS:
-                out.append({"possession_id": p.possession_id, "half": p.half,
+                out.append({"possession_id": p.possession_id, "half": p.half, "from_ms": t0,
                             "from": format_ms(t0), "to": format_ms(t1), "live_ms": gap})
     return out
 

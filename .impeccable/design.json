@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-30T17:51:17+00:00",
+  "title": "Design System: Lauréats · Analyse de match",
+  "extensions": {
+    "colorMeta": {
+      "gold": {
+        "role": "primary",
+        "displayName": "Lauréats Gold",
+        "canonical": "#c79741",
+        "tonalRamp": [
+          "#3b2c11",
+          "#664d1e",
+          "#926d2b",
+          "#bd8d38",
+          "#cfa75d",
+          "#dcbe89",
+          "#ebdabc",
+          "#f9f4eb"
+        ]
+      },
+      "gold-deep": {
+        "role": "primary",
+        "displayName": "Deep Gold",
+        "canonical": "#85601a",
+        "tonalRamp": [
+          "#402e0d",
+          "#6f5016",
+          "#9e721f",
+          "#cd9428",
+          "#ddac50",
+          "#e6c27f",
+          "#f1ddb6",
+          "#fbf5ea"
+        ]
+      },
+      "gold-tint": {
+        "role": "primary",
+        "displayName": "Gold Tint",
+        "canonical": "#f4ecdc",
+        "tonalRamp": [
+          "#3a2d12",
+          "#654e20",
+          "#906f2d",
+          "#ba903b",
+          "#cda960",
+          "#dac08b",
+          "#eadbbd",
+          "#f9f4ec"
+        ]
+      },
+      "gold-lift": {
+        "role": "primary",
+        "displayName": "Gold Lift",
+        "canonical": "#d6a755",
+        "tonalRamp": [
+          "#3e2d0f",
+          "#6b4d1a",
+          "#986e25",
+          "#c58f30",
+          "#d6a857",
+          "#e1bf84",
+          "#eedbb9",
+          "#faf4ea"
+        ],
+        "note": "Hard-coded in App.jsx and ClipRow.jsx; not yet a CSS custom property."
+      },
+      "band": {
+        "role": "neutral",
+        "displayName": "Scoreboard Black",
+        "canonical": "#0a0a0a",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b2b2b2",
+          "#d4d4d4",
+          "#f2f2f2"
+        ]
+      },
+      "band-2": {
+        "role": "neutral",
+        "displayName": "Board Panel",
+        "canonical": "#1c1b19",
+        "tonalRamp": [
+          "#282724",
+          "#46443f",
+          "#646059",
+          "#817d73",
+          "#9c9891",
+          "#b7b4ae",
+          "#d6d4d1",
+          "#f3f2f2"
+        ]
+      },
+      "band-rule": {
+        "role": "neutral",
+        "displayName": "Band Rule",
+        "canonical": "#2e2c28",
+        "tonalRamp": [
+          "#292724",
+          "#47443e",
+          "#656158",
+          "#837d72",
+          "#9e998f",
+          "#b8b4ad",
+          "#d7d5d1",
+          "#f3f3f1"
+        ]
+      },
+      "band-ink-2": {
+        "role": "neutral",
+        "displayName": "Band Grey",
+        "canonical": "#b9b4aa",
+        "tonalRamp": [
+          "#2a2723",
+          "#49443c",
+          "#676155",
+          "#867e6f",
+          "#a19a8c",
+          "#bab5ab",
+          "#d8d5cf",
+          "#f3f3f1"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b2b2b2",
+          "#d4d4d4",
+          "#f2f2f2"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Paper Shade",
+        "canonical": "#f6f5f2",
+        "tonalRamp": [
+          "#2d2a1f",
+          "#4e4836",
+          "#70674d",
+          "#918664",
+          "#a9a083",
+          "#c0b9a5",
+          "#dcd8cc",
+          "#f5f3f0"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#e5e3de",
+        "tonalRamp": [
+          "#2b2822",
+          "#4a463a",
+          "#6a6353",
+          "#89816c",
+          "#a39c8a",
+          "#bcb6a9",
+          "#d9d6cf",
+          "#f4f3f1"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#0a0a0a",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b2b2b2",
+          "#d4d4d4",
+          "#f2f2f2"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#45433f",
+        "tonalRamp": [
+          "#282725",
+          "#45433f",
+          "#63605a",
+          "#807c75",
+          "#9b9892",
+          "#b6b4af",
+          "#d6d4d2",
+          "#f3f2f2"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#6f6c66",
+        "tonalRamp": [
+          "#282725",
+          "#45433f",
+          "#62605a",
+          "#807c75",
+          "#9b9892",
+          "#b6b4af",
+          "#d5d4d2",
+          "#f3f2f2"
+        ]
+      },
+      "us": {
+        "role": "data",
+        "displayName": "Us",
+        "canonical": "#0a0a0a",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b2b2b2",
+          "#d4d4d4",
+          "#f2f2f2"
+        ]
+      },
+      "them": {
+        "role": "data",
+        "displayName": "Them",
+        "canonical": "#9a968e",
+        "tonalRamp": [
+          "#282724",
+          "#46443f",
+          "#646059",
+          "#817d74",
+          "#9c9891",
+          "#b7b4ae",
+          "#d6d4d1",
+          "#f3f2f2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Match title in the band; wordmark fallback."
+      },
+      "headline": {
+        "displayName": "Scoreboard figure",
+        "purpose": "Gold figures in the scoreboard row; smaller display numerals reuse the face."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings on white and band tabs, condensed caps."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text, key points, clip titles."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Notes, clip reasons, table cells, buttons."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Caps data labels naming an adjacent value only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tooltip-chart",
+        "value": "0 4px 16px rgba(10,10,10,0.08)",
+        "purpose": "Recharts tooltip, floating only."
+      },
+      {
+        "name": "tooltip-timeline",
+        "value": "0 6px 20px rgba(10,10,10,0.10)",
+        "purpose": "Possession timeline tooltip, floating only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "board-in",
+        "value": "520ms cubic-bezier(0.16, 1, 0.3, 1); translateY(40%) + blur(2px) + opacity 0.35 to rest; 45ms stagger",
+        "purpose": "The one authored motion: scoreboard figures flip in on tab or match change. Disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "state-color",
+        "value": "150ms color / background-color",
+        "purpose": "Hover and focus colour shifts on tabs, buttons, links; timeline dimming to 40% opacity."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "patterns": [
+      {
+        "name": "hatched",
+        "value": "repeating-linear-gradient(135deg, transparent 0 3px, var(--paper) 3px 5px)",
+        "purpose": "Inferred possessions: never drawn as exact."
+      }
+    ],
+    "assets": [
+      {
+        "path": "dashboard/public/logo.png",
+        "status": "absent; user-supplied later",
+        "fallback": "Gold LAURÉATS wordmark in Barlow Condensed 700 caps"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Gold Video Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The only filled button: opens the clips or a Veo moment.",
+      "html": "<button class=\"ds-btn-gold\" type=\"button\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polygon points=\"6 3 20 12 6 21 6 3\"/></svg> Voir les clips (12)</button>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-btn-gold{font-family:'Barlow',system-ui,sans-serif;display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:var(--ink);border:0;border-radius:4px;padding:6px 12px;font-size:14px;font-weight:600;cursor:pointer;transition:background-color .15s;} .ds-btn-gold:hover,.ds-btn-gold:focus-visible{background:#d6a755;} .ds-btn-gold:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px;}"
+    },
+    {
+      "name": "Text Action",
+      "kind": "button",
+      "refersTo": "link-action",
+      "description": "Secondary action on white, in Deep Gold.",
+      "html": "<a class=\"ds-link-action\" href=\"#clips\">Tous les clips (12) <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-link-action{font-family:'Barlow',system-ui,sans-serif;display:inline-flex;align-items:center;gap:6px;color:var(--gold-deep);font-size:14px;font-weight:600;text-decoration:none;transition:color .15s;} .ds-link-action:hover{color:var(--ink);} .ds-link-action:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px;}"
+    },
+    {
+      "name": "Band Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Condensed caps tabs in the black band; active tab gets a gold underline.",
+      "html": "<nav class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Aperçu</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">En profondeur</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Terrain</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Clips Veo</button></nav>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-tabs{display:flex;background:var(--band);padding:0 16px;overflow-x:auto;} .ds-tab{font-family:'Barlow Condensed','Barlow',sans-serif;background:none;border:0;border-bottom:2px solid transparent;padding:12px 16px;font-size:18px;font-weight:600;text-transform:uppercase;letter-spacing:.025em;color:var(--band-ink-2);cursor:pointer;transition:color .15s;} .ds-tab:hover{color:var(--paper);} .ds-tab[aria-selected=true]{color:var(--paper);border-bottom-color:var(--gold);} .ds-tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px;}"
+    },
+    {
+      "name": "Scoreboard",
+      "kind": "custom",
+      "refersTo": "scoreboard-figure",
+      "description": "Signature: hairline-divided gold figures in the band, flipping into place on tab or match change.",
+      "html": "<dl class=\"ds-board\"><div class=\"ds-cell\"><dt>Possession</dt><dd class=\"ds-fig\">56 %</dd><dd class=\"ds-sub\">fiable sur 91 % du jeu</dd></div><div class=\"ds-cell\"><dt>Tirs</dt><dd class=\"ds-fig\" style=\"animation-delay:45ms\">8</dd><dd class=\"ds-sub\">5 cadrés · 2 buts</dd></div><div class=\"ds-cell\"><dt>Possessions avec tir</dt><dd class=\"ds-fig\" style=\"animation-delay:90ms\">7</dd><dd class=\"ds-sub\">9 % de nos possessions</dd></div></dl>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-board{display:grid;grid-template-columns:repeat(3,1fr);margin:0;background:var(--band-2);border-top:1px solid var(--band-rule);} .ds-cell{padding:16px 20px;border-left:1px solid var(--band-rule);overflow:hidden;} .ds-cell:first-child{border-left:0;} .ds-cell dt{font-family:'Barlow',system-ui,sans-serif;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--band-ink-2);} .ds-fig{font-family:'Barlow Condensed','Barlow',sans-serif;margin:4px 0 0;font-size:48px;font-weight:600;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums;animation:ds-board-in 520ms cubic-bezier(.16,1,.3,1) both;} .ds-sub{font-family:'Barlow',system-ui,sans-serif;margin:6px 0 0;font-size:12px;line-height:1.375;color:var(--band-ink-2);font-variant-numeric:tabular-nums;} @keyframes ds-board-in{from{transform:translateY(40%);filter:blur(2px);opacity:.35;}to{transform:none;filter:none;opacity:1;}} @media (prefers-reduced-motion:reduce){.ds-fig{animation:none;}}"
+    },
+    {
+      "name": "Section",
+      "kind": "card",
+      "refersTo": "",
+      "description": "The no-card container: hairline on top, condensed caps title, grey note.",
+      "html": "<section class=\"ds-section\"><h2>Points clés</h2><p class=\"ds-note\">Générés automatiquement à partir des tags.</p><ol class=\"ds-points\"><li><span>1</span>Nos 2 buts viennent de coups de pied arrêtés.</li><li><span>2</span>1 but encaissé sur coup de pied arrêté adverse.</li></ol></section>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-section{font-family:'Barlow',system-ui,sans-serif;background:var(--paper);border-top:1px solid var(--rule);padding-top:20px;color:var(--ink);} .ds-section h2{font-family:'Barlow Condensed','Barlow',sans-serif;margin:0;font-size:20px;font-weight:600;text-transform:uppercase;letter-spacing:.025em;} .ds-note{margin:4px 0 0;font-size:14px;color:var(--ink-3);max-width:70ch;} .ds-points{list-style:none;margin:16px 0 0;padding:0;} .ds-points li{display:grid;grid-template-columns:1.5rem 1fr;gap:8px;font-size:15px;line-height:1.375;margin-top:12px;} .ds-points span{font-family:'Barlow Condensed','Barlow',sans-serif;font-size:18px;font-weight:600;color:var(--gold-deep);font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Clip Row",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "One review moment with time, reason, chips and the gold Voir button.",
+      "html": "<div class=\"ds-clip\"><div><div class=\"ds-clip-t\">23:08</div><div class=\"ds-clip-m\">MT1 · 0–0</div></div><div><div class=\"ds-clip-title\">Perte en zone 3, but adverse ensuite</div><div class=\"ds-clip-why\">La possession adverse qui mène au but commence sur cette perte.</div><div class=\"ds-chips\"><span class=\"ds-chip-cat\">Buts encaissés</span><span class=\"ds-chip\">À égalité</span></div></div><a class=\"ds-voir\" href=\"#\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polygon points=\"6 3 20 12 6 21 6 3\"/></svg> Voir</a></div>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-clip{font-family:'Barlow',system-ui,sans-serif;display:grid;grid-template-columns:3.75rem 1fr auto;gap:16px;align-items:start;padding:12px 0;border-top:1px solid var(--rule);background:var(--paper);} .ds-clip-t{font-family:'Barlow Condensed','Barlow',sans-serif;font-size:20px;font-weight:600;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;} .ds-clip-m{margin-top:4px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);} .ds-clip-title{font-weight:500;color:var(--ink);} .ds-clip-why{margin-top:2px;font-size:14px;color:var(--ink-2);} .ds-chips{display:flex;gap:6px;margin-top:6px;} .ds-chip-cat{background:var(--ink);color:var(--paper);border-radius:2px;padding:2px 6px;font-size:11px;font-weight:500;} .ds-chip{border:1px solid var(--rule);color:var(--ink-2);border-radius:2px;padding:2px 6px;font-size:11px;} .ds-voir{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:var(--ink);border-radius:4px;padding:8px 12px;font-size:14px;font-weight:600;text-decoration:none;transition:background-color .15s;} .ds-voir:hover,.ds-voir:focus-visible{background:#d6a755;} .ds-voir:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px;}"
+    },
+    {
+      "name": "Match Select",
+      "kind": "input",
+      "refersTo": "select-band",
+      "description": "The match picker inside the black band.",
+      "html": "<div class=\"ds-band\"><label class=\"ds-sel-l\">Match <select class=\"ds-sel\"><option>26 septembre 2026 · Vanier 2–1</option><option>18 septembre 2026 · Montmorency 3–2</option></select></label></div>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-band{background:var(--band);padding:16px;} .ds-sel-l{font-family:'Barlow',system-ui,sans-serif;display:flex;align-items:center;gap:8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--band-ink-2);} .ds-sel{font-family:'Barlow',system-ui,sans-serif;background:var(--band-2);color:var(--paper);border:1px solid var(--band-rule);border-radius:4px;padding:8px 12px;font-size:14px;text-transform:none;letter-spacing:normal;} .ds-sel:hover{border-color:var(--band-ink-2);} .ds-sel:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px;}"
+    },
+    {
+      "name": "Chips",
+      "kind": "chip",
+      "refersTo": "tag-category",
+      "description": "Category chip (ink) and context chip (hairline) under a clip.",
+      "html": "<div class=\"ds-chiprow\"><span class=\"ds-c1\">Nos buts</span><span class=\"ds-c2\">À égalité</span><span class=\"ds-c2\">Fin de match</span></div>",
+      "css": ":host{--paper:#ffffff;--paper-2:#f6f5f2;--rule:#e5e3de;--ink:#0a0a0a;--ink-2:#45433f;--ink-3:#6f6c66;--gold:#c79741;--gold-deep:#85601a;--band:#0a0a0a;--band-2:#1c1b19;--band-rule:#2e2c28;--band-ink-2:#b9b4aa;--them:#9a968e;} .ds-chiprow{font-family:'Barlow',system-ui,sans-serif;display:flex;gap:6px;background:var(--paper);} .ds-c1{background:var(--ink);color:var(--paper);border-radius:2px;padding:2px 6px;font-size:11px;font-weight:500;} .ds-c2{border:1px solid var(--rule);color:var(--ink-2);border-radius:2px;padding:2px 6px;font-size:11px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Le tableau d'affichage",
+    "overview": "**Creative North Star: \"Le tableau d'affichage\"**\n\nThe dashboard is a stadium scoreboard bolted over a coach's notebook. Every tab opens on a full-width black band carrying the wordmark, the score, the tabs and a row of four to six large gold figures; below it, on plain white, the evidence reads like a well-kept analyst's sheet: hairline rules, tabular figures, condensed capitals for headings, no containers. The band is loud and brief, the page is quiet and dense.\n\nThe club colours (gold, black, white) are binding, and gold is treated as a signal rather than a decoration: it marks the numbers that matter, the active tab, and the moments to act on (open the clips, watch in Veo). Everything that is \"them\" or \"a loss\" drops to warm grey. Uncertainty has its own visual: inferred possessions are hatched, never drawn as solid fact. The interface is French throughout.\n\nRejected by the build: the grid of equal KPI cards, gradients, glass, decorative shadows, invented logos.",
+    "keyCharacteristics": [
+      "Black scoreboard band at the top of every tab; white evidence page below.",
+      "Gold carries meaning (good / act here), never losses, never decoration.",
+      "Hairline rules separate blocks; there are no cards.",
+      "Condensed caps for display and headings, a plain workhorse sans for reading, tabular figures everywhere numbers appear.",
+      "One authored motion: the scoreboard figures flip into place."
+    ],
+    "rules": [
+      {
+        "name": "The Gold Means Good Rule",
+        "body": "Gold marks a number that matters, a positive, or a place to act. It never marks a loss or an opponent's event; those use Them grey or ink with weight. (The zone chart deliberately avoids gold; the outcome chart bolds the most frequent loss rather than colouring it.)",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Golds Rule",
+        "body": "Bright gold text lives on black only. On white, gold text, numerals and thin marks use Deep Gold. Bright gold appears on white only as a solid fill carrying ink (the Voir button, the \"B\" goal disc), where the legible contrast is ink-on-gold.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number that can sit next to another number is set with tabular figures, in the band, in tables, in charts, in tooltips.",
+        "section": "typography"
+      },
+      {
+        "name": "The Caps Are Structure Rule",
+        "body": "Uppercase belongs to the display face (titles, tabs) and to data labels naming a value directly below or beside them. It is not used for decorative lead-ins above headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Level Rule",
+        "body": "Nothing rests on a shadow. A shadow means \"this is floating above the data right now\" and disappears with it.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** open every tab on the black band with the scoreboard row; put the evidence on white below.",
+      "**Do** use bright Lauréats Gold only on black and Deep Gold for any gold text or mark on white.",
+      "**Do** separate blocks with 1px hairlines and a condensed caps title (the Section pattern).",
+      "**Do** set every number in tabular figures, and hatch anything inferred.",
+      "**Do** use lucide-react icons at 12–18px, marked `aria-hidden` when a label is present.",
+      "**Do** write all interface text in French with the tagger's vocabulary.",
+      "**Do** show the user's logo from `dashboard/public/logo.png` when present, and fall back to the gold \"LAURÉATS\" wordmark otherwise."
+    ],
+    "donts": [
+      "**Don't** colour a loss, a concession or an opponent event in gold; use Them grey, or ink with weight.",
+      "**Don't** wrap sections in cards or give resting elements a shadow.",
+      "**Don't** add gradients, glass or background imagery.",
+      "**Don't** add a second authored animation; the scoreboard flip is the motion.",
+      "**Don't** invent or redraw a logo."
+    ]
+  }
+}

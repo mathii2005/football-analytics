@@ -1,58 +1,66 @@
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow-condensed/500.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Chart palette: reference categorical slots 1 (blue) and 2 (orange),
-   each stepped separately for light and dark surfaces. */
+/* Lauréats: gold, black, white. Bright gold only on black (8:1);
+   on white, gold text and marks use the deep step (5.0:1). Gold always
+   means "good / act here", never a loss. */
 :root {
   color-scheme: light;
-  --surface: #f4f3f0;
-  --card: #fcfcfb;
-  --line: #e4e2dd;
-  --text-primary: #0b0b0b;
-  --text-secondary: #52514e;
-  --text-muted: #85837d;
-  --us: #2a78d6;
-  --them: #eb6834;
-  --warning: #b86e00;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --surface: #111110;
-    --card: #1a1a19;
-    --line: #2e2e2c;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted: #8f8e86;
-    --us: #3987e5;
-    --them: #d95926;
-    --warning: #e0a030;
-  }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --surface: #111110;
-  --card: #1a1a19;
-  --line: #2e2e2c;
-  --text-primary: #ffffff;
-  --text-secondary: #c3c2b7;
-  --text-muted: #8f8e86;
-  --us: #3987e5;
-  --them: #d95926;
-  --warning: #e0a030;
+  --paper: #ffffff;
+  --paper-2: #f6f5f2;
+  --rule: #e5e3de;
+  --ink: #0a0a0a;
+  --ink-2: #45433f;
+  --ink-3: #6f6c66;
+  --gold: #c79741;
+  --gold-deep: #85601a;
+  --gold-tint: #f4ecdc;
+  --gold-lift: #d6a755;
+  --band: #0a0a0a;
+  --band-2: #1c1b19;
+  --band-rule: #2e2c28;
+  --band-ink-2: #b9b4aa;
+  --us: #0a0a0a;
+  --them: #9a968e;
 }
 
+html { background: var(--band); }
 body {
-  background: var(--surface);
-  color: var(--text-primary);
-  font-family: Inter, system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Barlow", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  caret-color: var(--gold-deep);
 }
+::selection { background: var(--gold-tint); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 2px; }
+a { text-underline-offset: 3px; }
+* { scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
+.band * { scrollbar-color: var(--band-rule) transparent; }
 
 .tabular { font-variant-numeric: tabular-nums; }
+.display { font-family: "Barlow Condensed", "Barlow", sans-serif; letter-spacing: 0.01em; }
 
-/* inferred possession: same hue, hatched, so it never reads as exact */
+/* inferred possession: hatched, never reads as exact */
 .hatched {
-  background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--card) 3px 5px);
+  background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--paper) 3px 5px);
 }
+
+/* the one authored motion: scoreboard figures flip up into place when the
+   board changes (tab or match), like a stadium board updating */
+@keyframes board-in {
+  from { transform: translateY(40%); filter: blur(2px); opacity: 0.35; }
+  to { transform: none; filter: none; opacity: 1; }
+}
+.board-in { animation: board-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) { .board-in { animation: none; } }

@@ -195,6 +195,11 @@ def possession_row(p) -> dict:
 
 # ── match level ────────────────────────────────────────────────────
 
+def pct_text(x) -> str:
+    """French-style percentage for generated text: 0.56 -> '56 %'."""
+    return f"{round(x * 100)} %"
+
+
 def share(part, whole):
     return part / whole if whole else None
 

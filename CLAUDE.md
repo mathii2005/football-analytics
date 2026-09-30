@@ -16,7 +16,12 @@ never changes a definition silently.
   tests. Changing one = update the docstring, the constant, the tests, and say
   so explicitly to the user.
 - Confirmed thresholds: cheap loss < 5 s, direct = box within 15 s, high
-  recovery = zone 3/4/BOX, final third = zone 4 + BOX, long gap > 90 s.
+  recovery = zone 3/4/BOX, final third = zone 4 + BOX, long gap > 90 s,
+  Veo links open 8 s before the tag (tagging lag; user asked for 5–10 s).
+- `report.py` reuses the staff dashboard's existing definitions (threat
+  weights, recovery height, dangerous actions) so known numbers don't move.
+- `clips.py` review-clip rules (categories, priorities, context bonuses) are
+  a proposal the user delegated – keep them documented and pinned by tests.
 
 ## Architecture (5 layers, never mix them)
 
@@ -25,17 +30,23 @@ never changes a definition silently.
 2. **Validation** – `src/validation/` (incomplete, see known issues).
 3. **Analytics engine** – `src/analytics/`: `possessions.py` (state machine
    rebuilding us/them possessions), `metrics.py` (match metrics),
-   `quality.py` (automatic tagging checks).
+   `report.py` (tab data + French key points), `clips.py` (Veo moments worth
+   reviewing, by cost/benefit and game context), `video.py` (Veo `#t=MM:SS`
+   links with per-half kickoff offsets), `quality.py` (automatic tagging checks).
 4. **Stable data API** – `src/api/app.py` (FastAPI). No football logic here.
 5. **Frontend** – `dashboard/` (Vite + React + Tailwind + Recharts, port 3000,
-   `/api` proxied to :8000). No football logic here either.
+   `/api` proxied to :8000). No football logic here either. French UI, tabs
+   Aperçu / En profondeur / Terrain / Clips Veo (addressable as `#clips` etc.).
+   Replaces the tagger project's per-match HTML dashboards. Design context for
+   the impeccable skill lives in `PRODUCT.md` and `.impeccable/`; brand is
+   gold `#c79741`, black, white. Logo goes in `dashboard/public/logo.png`.
 
 Video / YOLO work sits **beside** the pipeline (`src/video/`, later on the
 user's other computer) and only feeds in if it proves reliable. If it fails,
 nothing in the main pipeline may break.
 
 Build order (vertical slices, each working end to end): possessions ✅ →
-metrics ✅ → API ✅ → dashboard page ✅ → video clip links → season trends →
+metrics ✅ → API ✅ → dashboard ✅ → video clip links ✅ → season trends →
 diagnosis engine → training priorities.
 
 ## Tagger data – facts that are easy to get wrong
@@ -73,7 +84,7 @@ FA_MATCH_DIR=/Users/mathi/Projects/laureats-tagger/exports .venv/bin/python -m u
 npm --prefix dashboard run dev                     # http://localhost:3000
 ```
 
-API: `/matches`, `/matches/{id}/summary|possessions|transitions|losses|quality`,
+API: `/matches`, `/matches/{id}/summary|report|clips|possessions|transitions|losses|quality`,
 docs at `/docs`. A match id is the export file name without `.json`.
 
 ## Tests and fixtures

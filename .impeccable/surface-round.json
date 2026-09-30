@@ -1,0 +1,59 @@
+{
+  "title": "Choisir la structure du tableau de bord",
+  "question": "Même monde Lauréats (or, noir, papier), trois façons d'organiser les 3 onglets + l'onglet Clips. Garde la première, choisis une alternative, ou relance.",
+  "options": [
+    {
+      "id": "scoreboard",
+      "label": "Tableau d'affichage",
+      "kicker": "THE ROLL",
+      "lineage": "Le tableau de score du stade, chiffres or sur fond noir",
+      "thesis": "Chaque onglet s'ouvre sur un tableau noir aux chiffres or : les 4-6 chiffres qui comptent, puis le détail sur papier en dessous.",
+      "palette": ["#0a0a0a", "#c79741", "#faf9f5", "#8b2b2b"],
+      "materials": ["panneau noir mat", "chiffres or tabulaires", "papier clair pour le détail"],
+      "viewport": "Bandeau noir pleine largeur : score, adversaire, puis une rangée de gros chiffres or (possession, tirs, pertes camp adverse…) ; sous le bandeau, points clés et graphiques sur papier.",
+      "risk": "Peut sembler 'télé sportive' si les chiffres sont trop nombreux ; il faut rester à 4-6 par onglet.",
+      "wireframe": {"cols": 12, "rows": 10, "regions": [
+        {"label": "score + onglets", "x": 0, "y": 0, "w": 12, "h": 1, "accent": true},
+        {"label": "tableau or : chiffres clés", "x": 0, "y": 1, "w": 12, "h": 3, "accent": true},
+        {"label": "points clés", "x": 0, "y": 4, "w": 4, "h": 6},
+        {"label": "chronologie possession", "x": 4, "y": 4, "w": 8, "h": 3},
+        {"label": "graphiques", "x": 4, "y": 7, "w": 8, "h": 3}
+      ]}
+    },
+    {
+      "id": "split-sheet",
+      "label": "Fiche MT1 | MT2",
+      "lineage": "La fiche technique de match, deux colonnes par mi-temps",
+      "thesis": "Le match se lit en miroir : chaque statistique montrée côte à côte MT1 / MT2, pour voir tout de suite ce qui a changé.",
+      "palette": ["#faf9f5", "#0a0a0a", "#c79741", "#1f5f3d"],
+      "materials": ["grille stricte à deux colonnes", "filets fins", "chiffres tabulaires"],
+      "viewport": "Titre du match, puis une grille à deux colonnes MT1 | MT2 avec une colonne centrale d'étiquettes ; les écarts importants soulignés en or.",
+      "risk": "Moins adapté aux statistiques qui n'ont pas de sens par mi-temps (couloirs, zones sur petits échantillons).",
+      "wireframe": {"cols": 12, "rows": 10, "regions": [
+        {"label": "score + onglets", "x": 0, "y": 0, "w": 12, "h": 1, "accent": true},
+        {"label": "MT1", "x": 0, "y": 1, "w": 5, "h": 9},
+        {"label": "stat", "x": 5, "y": 1, "w": 2, "h": 9, "accent": true},
+        {"label": "MT2", "x": 7, "y": 1, "w": 5, "h": 9}
+      ]}
+    },
+    {
+      "id": "tactics-board",
+      "label": "Tableau tactique",
+      "lineage": "Le tableau magnétique de l'entraîneur, le terrain au centre",
+      "thesis": "Le terrain est la toile : zones, pertes, récupérations et couloirs sont dessinés directement dessus, les chiffres autour.",
+      "palette": ["#0a0a0a", "#c79741", "#faf9f5", "#1f5f3d"],
+      "materials": ["terrain vertical tracé au trait", "marqueurs ronds", "légendes à la main levée"],
+      "viewport": "Un grand terrain vertical à gauche (zones 1-4 + surface) avec les pertes/récups en marqueurs ; à droite, les chiffres clés et la liste des moments.",
+      "risk": "Sur téléphone le terrain doit passer au-dessus des chiffres ; l'onglet Aperçu risque d'être moins direct.",
+      "wireframe": {"cols": 12, "rows": 10, "regions": [
+        {"label": "score + onglets", "x": 0, "y": 0, "w": 12, "h": 1, "accent": true},
+        {"label": "terrain (zones, marqueurs)", "x": 0, "y": 1, "w": 6, "h": 9, "accent": true},
+        {"label": "chiffres clés", "x": 6, "y": 1, "w": 6, "h": 3},
+        {"label": "points clés / moments", "x": 6, "y": 4, "w": 6, "h": 6}
+      ]}
+    }
+  ],
+  "reroll": true,
+  "buildPath": {"value": "code", "toggle": false},
+  "steer": true
+}
