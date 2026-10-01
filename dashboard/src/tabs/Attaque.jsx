@@ -1,46 +1,36 @@
-import Section from "../components/Section.jsx";
-import ShotFunnel from "../components/ShotFunnel.jsx";
+import Tile from "../charts/Tile.jsx";
+import Funnel from "../charts/Funnel.jsx";
+import HalvesDumbbell from "../charts/HalvesDumbbell.jsx";
+import SetPieceButterfly from "../charts/SetPieceButterfly.jsx";
 import ActionsByType from "../components/ActionsByType.jsx";
-import HBars from "../components/HBars.jsx";
 import AttackStyle from "../components/AttackStyle.jsx";
-import TempoTable from "../components/TempoTable.jsx";
-import HalvesTable from "../components/HalvesTable.jsx";
-import SetPieces from "../components/SetPieces.jsx";
-import { dec } from "../format.js";
 import { FUNNEL_CLIPS } from "../links.js";
+import { dec, plural } from "../format.js";
 
-// Attack and finishing: the old staff views, plus halves side by side.
+// Attack and finishing.
 export default function Attaque({ d, openClips }) {
-  const r = d.report, h = r.headline;
+  const r = d.report, h = r.headline, sp = r.set_pieces;
   return (
-    <div className="space-y-10">
-      <div className="grid gap-10 lg:grid-cols-2">
-        <Section title="Entonnoir des tirs" note="De l'action dangereuse au but, avec le taux de passage.">
-          <ShotFunnel stages={r.funnel} onSelect={(stage) => openClips({ cats: FUNNEL_CLIPS[stage] })} />
-        </Section>
-        <Section title="Actions par type" note={`${h.dangerous_actions} actions dangereuses · ${dec(h.actions_per_shot)} par tir.`}>
-          <ActionsByType rows={r.actions_by_type} />
-        </Section>
-      </div>
-      <div className="grid gap-10 lg:grid-cols-3">
-        <Section title="Entrées surface" note="Par type d'action.">
-          <HBars rows={r.box_entries_by_type.map((b) => ({ label: b.label, value: b.n }))} labelWidth="8.5rem" />
-        </Section>
-        <Section title="Style d'attaque">
-          <AttackStyle s={r.attack_style} />
-        </Section>
-        <Section title="Tempo par mi-temps" note="Actions par tir bas = plus clinique.">
-          <TempoTable rows={r.tempo} />
-        </Section>
-      </div>
-      <div className="grid gap-10 lg:grid-cols-2">
-        <Section title="Mi-temps contre mi-temps" note="En or : la meilleure mi-temps quand l'écart est net.">
-          <HalvesTable halves={r.halves} />
-        </Section>
-        <Section title="Coups de pied arrêtés">
-          <SetPieces sp={r.set_pieces} onSelect={(team) => openClips({ cats: [team === "us" ? "set_piece_us" : "set_piece_them"] })} />
-        </Section>
-      </div>
+    <div className="grid gap-3 lg:grid-cols-12">
+      <Tile className="lg:col-span-5" title="Où nos attaques s'arrêtent-elles ?" note="De l'action dangereuse au but, taux de passage entre étapes.">
+        <Funnel stages={r.funnel} onSelect={(stage) => openClips({ cats: FUNNEL_CLIPS[stage] })} />
+      </Tile>
+      <Tile className="lg:col-span-7" title="Qu'est-ce qui a changé à la mi-temps ?" note="Chaque ligne sur sa propre échelle.">
+        <HalvesDumbbell halves={r.halves} tempo={r.tempo} />
+      </Tile>
+      <Tile className="lg:col-span-4" title="Comment attaque-t-on ?" note={`${h.dangerous_actions} actions dangereuses · ${dec(h.actions_per_shot)} par tir.`}>
+        <ActionsByType rows={r.actions_by_type} />
+      </Tile>
+      <Tile className="lg:col-span-4" title="Vertical ou latéral ?" note="Passes en profondeur + conduites contre changements de jeu + centres.">
+        <AttackStyle s={r.attack_style} />
+      </Tile>
+      <Tile className="lg:col-span-4" title="Qui a gagné les coups de pied arrêtés ?"
+        note={`Issus de nos CPA (≤ 20 s, sans perte) : ${plural(sp.shots_from_set_piece, "tir")}, ${plural(sp.goals_from_set_piece, "but")} · encaissés : ${sp.conceded_from_set_pieces}.`}
+        aside={<div className="flex shrink-0 gap-2 text-[11px] font-semibold text-gold-deep">
+          <button type="button" onClick={() => openClips({ cats: ["set_piece_us"] })} className="hover:text-ink">nos CPA</button>
+          <button type="button" onClick={() => openClips({ cats: ["set_piece_them"] })} className="hover:text-ink">les leurs</button></div>}>
+        <SetPieceButterfly counts={sp.counts} />
+      </Tile>
     </div>
   );
 }
