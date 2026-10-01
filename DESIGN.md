@@ -1,6 +1,6 @@
 ---
 name: Lauréats · Analyse de match
-description: Match-analysis dashboard for the Lauréats staff, set as a stadium scoreboard band over a white evidence page.
+description: Analytical match dashboard for the Lauréats staff; a black brand band over a dense grid of question-titled chart tiles.
 colors:
   gold: "#c79741"
   gold-deep: "#85601a"
@@ -11,102 +11,145 @@ colors:
   band-rule: "#2e2c28"
   band-ink-2: "#b9b4aa"
   paper: "#ffffff"
-  paper-2: "#f6f5f2"
+  paper-2: "#f3f3f3"
   rule: "#e5e3de"
   ink: "#0a0a0a"
   ink-2: "#45433f"
   ink-3: "#6f6c66"
-  us: "#0a0a0a"
-  them: "#9a968e"
+  data-us: "#b8862e"
+  data-them: "#2a6aa8"
+  data-mid: "#e8e6e1"
+  gold-ramp-low: "#f7f1e3"
+  gold-ramp-high: "#7a5512"
+  blue-ramp-low: "#eaf1f8"
+  blue-ramp-high: "#163f6b"
+  diverging-us-end: "#8a6117"
+  diverging-them-end: "#1f4f80"
+  card-yellow: "#d4a017"
+  card-red: "#c62828"
 typography:
   display:
     fontFamily: "Barlow Condensed, Barlow, sans-serif"
-    fontSize: "3rem"
+    fontSize: "2.25rem"
     fontWeight: 700
     lineHeight: 1
     letterSpacing: "0.025em"
-  headline:
+  figure:
     fontFamily: "Barlow Condensed, Barlow, sans-serif"
-    fontSize: "3rem"
+    fontSize: "1.875rem"
     fontWeight: 600
     lineHeight: 1
     letterSpacing: "0.01em"
     fontFeature: "tnum"
-  title:
+  tab:
     fontFamily: "Barlow Condensed, Barlow, sans-serif"
-    fontSize: "1.25rem"
+    fontSize: "1.125rem"
     fontWeight: 600
     lineHeight: 1.4
     letterSpacing: "0.025em"
+  tile-title:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 600
+    lineHeight: 1.25
+  tile-note:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 400
+    lineHeight: 1.375
   body:
     fontFamily: "Barlow, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: 1.5
-  body-sm:
+  data-row:
     fontFamily: "Barlow, system-ui, sans-serif"
-    fontSize: "0.875rem"
+    fontSize: "12px"
     fontWeight: 400
-    lineHeight: 1.43
+    lineHeight: 1.33
+    fontFeature: "tnum"
   label:
     fontFamily: "Barlow, system-ui, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 500
     lineHeight: 1.33
     letterSpacing: "0.05em"
+  axis:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "10px"
+    fontWeight: 400
+    lineHeight: 1.2
 rounded:
   sm: "2px"
   md: "4px"
   full: "9999px"
 spacing:
-  gutter: "16px"
-  gutter-sm: "24px"
-  block: "20px"
-  stack: "16px"
-  section: "40px"
-  page-y: "32px"
-  container: "1152px"
+  tile-gap: "12px"
+  tile-pad: "12px"
+  tile-pad-sm: "16px"
+  page-x: "12px"
+  page-x-sm: "20px"
+  page-y: "16px"
+  container: "1280px"
 components:
+  tile:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    typography: "{typography.tile-title}"
+    rounded: "{rounded.sm}"
+    padding: "16px"
   button-primary:
     backgroundColor: "{colors.gold}"
     textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
     rounded: "{rounded.md}"
-    padding: "8px 12px"
+    padding: "6px 12px"
   button-primary-hover:
     backgroundColor: "{colors.gold-lift}"
     textColor: "{colors.ink}"
   link-action:
     textColor: "{colors.gold-deep}"
-    typography: "{typography.body-sm}"
+    typography: "{typography.data-row}"
   link-action-hover:
     textColor: "{colors.ink}"
   tab:
     textColor: "{colors.band-ink-2}"
-    typography: "{typography.title}"
+    typography: "{typography.tab}"
     padding: "12px 16px"
   tab-active:
     textColor: "{colors.paper}"
   scoreboard-figure:
     backgroundColor: "{colors.band-2}"
     textColor: "{colors.gold}"
-    typography: "{typography.headline}"
-    padding: "16px 20px"
+    typography: "{typography.figure}"
+    padding: "10px 20px"
   select-band:
     backgroundColor: "{colors.band-2}"
     textColor: "{colors.paper}"
     rounded: "{rounded.md}"
     padding: "8px 12px"
-  tag-category:
+  chip-category:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.paper}"
     rounded: "{rounded.sm}"
     padding: "2px 6px"
-  tag-context:
+  chip-context:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink-2}"
     rounded: "{rounded.sm}"
     padding: "2px 6px"
+  filter-chip:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink-2}"
+    rounded: "{rounded.full}"
+    padding: "4px 12px"
+  filter-chip-on:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
+  tooltip:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.sm}"
+    padding: "6px 10px"
   notice:
     backgroundColor: "{colors.paper-2}"
     textColor: "{colors.ink-2}"
@@ -118,149 +161,158 @@ components:
 
 ## Overview
 
-**Creative North Star: "Le tableau d'affichage"**
+**Creative North Star: "Le poste d'analyse"**
 
-The dashboard is a stadium scoreboard bolted over a coach's notebook. Every tab opens on a full-width black band carrying the wordmark, the score, the tabs and a row of four to six large gold figures; below it, on plain white, the evidence reads like a well-kept analyst's sheet: hairline rules, tabular figures, condensed capitals for headings, no containers. The band is loud and brief, the page is quiet and dense.
+An analyst's workstation in the Tableau / Power BI / StatsBomb sense. Each view answers one question with the chart form the data calls for, and the views sit in a dense grid of white tiles on a light grey ground. The club is present as a frame, not as the content. A black band at the top carries the wordmark, the score, the match select, the tabs and a compact strip of five gold figures. Everything below the band is evidence: charts, pitches, tables, clip rows.
 
-The club colours (gold, black, white) are binding, and gold is treated as a signal rather than a decoration: it marks the numbers that matter, the active tab, and the moments to act on (open the clips, watch in Veo). Everything that is "them" or "a loss" drops to warm grey. Uncertainty has its own visual: inferred possessions are hatched, never drawn as solid fact. The interface is French throughout.
+Data honesty comes before looks. The tagging is precise in time and coarse in space, so time views get the most investment and pitch views are drawn at the data's true resolution (4 zone bands, or a 4 × 3 couloir grid with the box nested in zone 4). Small samples are shown with their n and visibly weakened. Any smoothing is stated in the tile. Colour shows identity (us / them), magnitude (ramps) or direction (diverging, dumbbell), and never says whether something is good or bad: that is the staff's call. The interface is in French.
 
-Rejected by the build: the grid of equal KPI cards, gradients, glass, decorative shadows, invented logos.
+The build rejects gradients, glass, decorative shadows, invented logos, smoothed spatial blobs, shot maps and chart animation.
 
 **Key Characteristics:**
-- Black scoreboard band at the top of every tab; white evidence page below.
-- Gold carries meaning (good / act here), never losses, never decoration.
-- Hairline rules separate blocks; there are no cards.
-- Condensed caps for display and headings, a plain workhorse sans for reading, tabular figures everywhere numbers appear.
+- Black brand band with a compact five-figure gold strip; a grey ground with white tiles below.
+- Two palettes: the brand palette for chrome, a validated data palette for marks.
+- Every tile is titled with the question it answers, with a one-line note on how to read it.
+- The chart form is chosen per question, from a fixed vocabulary.
+- Pitches at true resolution only; small n hatched or faded; smoothing disclosed.
 - One authored motion: the scoreboard figures flip into place.
 
 ## Colors
 
-A three-colour club palette (gold, black, white) extended with warm greys; gold appears in two steps depending on the ground it sits on.
+Two palettes that never trade jobs: the club's black / white / gold for the interface, and a validated gold-and-slate-blue data palette for everything plotted.
 
 ### Primary
-- **Lauréats Gold** (`gold`): the brand gold. As text and line it sits on the black band: scoreboard figures, the score in the title, the wordmark, the active-tab underline, focus rings. On white it appears only as a solid fill under ink: the "Voir" clip buttons and our goal discs. On black it reaches about 8:1.
-- **Deep Gold** (`gold-deep`): gold for text and marks on white (about 5:1): key-point numerals, the "Bibliothèque" link and "clips" links on stats, the better half in the halves table, goal/shot bars in the outcome chart, notice icons, the "limite déduite" note, and the top of the attack-origins ramp.
-- **Gold Tint** (`gold-tint`): text selection only.
-- **Gold Lift** (`gold-lift`): hover and focus fill of gold buttons.
+- **Lauréats Gold** (`gold`): chrome gold. It appears on the black band as the wordmark, the score, the scoreboard figures, the active-tab underline and focus rings. On white it is used only as a solid fill under ink: the "Voir" / "Voir les clips" video buttons.
+- **Deep Gold** (`gold-deep`): chrome gold for text on white. Used for action links ("Bibliothèque →", "clips", "nos CPA"), key-point numerals, notice icons and the "limite déduite" line in tooltips.
+- **Gold Lift** (`gold-lift`) and **Gold Tint** (`gold-tint`): the button hover fill and the text selection.
+
+### Secondary (data palette)
+- **Data Gold** (`data-us`): Lauréats in every chart: the threat area, the radar fill, the bullet marker, the beeswarm dots, our density curve, our goal lines, the butterfly's left bars, the "higher in MT2" dumbbell.
+- **Slate Blue** (`data-them`): the opponent, the season average (radar outline, bullet tick), losses in the Sankey, the "lower in MT2" dumbbell. It passed the validator against Data Gold on white, including colour-vision-deficiency separation.
+- **Mid Grey** (`data-mid`): the diverging midpoint, the bullet's season-range bar and empty cells.
+
+### Tertiary (ramps)
+- **Gold ramp** (`gold-ramp-low` → `gold-ramp-high`, linear in RGB): sequential magnitude for our actions and recoveries (recovery pitch, recovery-value pitch, couloir lanes, zone × couloir grid).
+- **Blue ramp** (`blue-ramp-low` → `blue-ramp-high`): sequential magnitude for losses.
+- **Diverging** (`diverging-them-end` ← `data-mid` → `diverging-us-end`): signed balances such as recoveries minus losses per zone. Negative values go blue and positive values go gold, scaled to the largest absolute value.
+- **Referee cards** (`card-yellow`, `card-red`): dashed event lines in the match story only.
 
 ### Neutral
-- **Scoreboard Black** (`band`) and **Board Panel** (`band-2`): the header band and the slightly lifted strip holding the scoreboard figures and the match select. `html` is also black so overscroll never flashes white above the band.
-- **Band Rule** (`band-rule`): hairlines inside the band (between figures, select border, link underline at rest).
-- **Band Grey** (`band-ink-2`): secondary text on black: figure labels and captions, inactive tabs, date and venue.
-- **Paper** (`paper`) and **Paper Shade** (`paper-2`): the page ground, and the faint fill for notices and empty heat-map cells.
-- **Rule** (`rule`): every hairline on white, table row separators, empty bar tracks, chart gridlines.
-- **Ink** (`ink`), **Ink 2** (`ink-2`), **Ink 3** (`ink-3`): primary text; secondary text and chart labels; notes, table headers, axis ticks.
-
-### Data roles
-- **Us** (`us`, same black as ink): our possessions, recoveries, shots, couloir rate bars.
-- **Them** (`them`): the opponent's possessions and goals, and our losses in the zone chart.
+- **Ink** (`ink`): text, pitch lines, the Sankey start nodes, funnel bars, the possession-share line, shots on target.
+- **Ink 2 / Ink 3** (`ink-2`, `ink-3`): row labels, then notes, axis ticks and legends. Ink 3 is also the chart muting colour (reference lines, unresolved outcomes).
+- **Paper** (`paper`): tile and tooltip surface. **Paper Shade** (`paper-2`): the page ground under the tiles, the empty pitch and notices.
+- **Hairline** (`rule`): tile borders, table rules and chart gridlines.
+- **Band set** (`band`, `band-2`, `band-rule`, `band-ink-2`): the black header, the scoreboard strip, its dividers and its secondary text.
 
 ### Named Rules
-**The Gold Means Good Rule.** Gold marks a number that matters, a positive, or a place to act. It never marks a loss or an opponent's event; those use Them grey or ink with weight. (Zone charts use gold only for zones we win — control ≥ 50 %, positive balance; losses are Them grey. The outcome chart bolds the most frequent loss rather than colouring it. The four dangerous-action types use four ink steps — #0a0a0a, #5c5a55, #a8a49c, #dcd8d0 — never gold.)
+**The Chrome / Data Split Rule.** Brand gold (`gold`, `gold-deep`) belongs to the interface: buttons, links, tabs, figures. Marks in a chart use only `data-us`, `data-them`, `data-mid`, the ramps and the neutrals. A new chart imports from the data palette, never the chrome tokens.
 
-**The Two Golds Rule.** Bright gold text lives on black only. On white, gold text, numerals and thin marks use Deep Gold. Bright gold appears on white only as a solid fill carrying ink (the Voir button, the "B" goal disc), where the legible contrast is ink-on-gold.
+**The Identity, Magnitude, Direction Rule.** Gold means "us", "more of ours" or "positive / higher". Blue means "them", "more losses" or "negative / lower". Neither colour means better or worse. Grey means unresolved, empty or reference.
+
+**The Ink-on-Ramp Rule.** Labels printed on a ramp cell switch to white past 55 % of a sequential ramp. On the diverging ramp they switch to white below −0.4 and above +0.6, so both dark ends get white. Every cell prints its value; colour is never the only carrier.
 
 ## Typography
 
-**Display Font:** Barlow Condensed (with Barlow, sans-serif), weights 500/600/700
-**Body Font:** Barlow (with system-ui, sans-serif), weights 400/500/600
-Both are self-hosted through `@fontsource`; nothing loads from a font CDN.
+**Display Font:** Barlow Condensed (fallback Barlow, sans-serif)
+**Body Font:** Barlow (fallback system-ui, sans-serif)
 
-**Character:** Barlow Condensed gives the scoreboard its stadium-board capitals and packs big numbers into narrow columns; Barlow, from the same family, keeps reading text calm and legible at 14–16px.
+**Character:** Condensed capitals for the scoreboard, the tabs and the big numbers on pitches; a plain workhorse sans for everything read at length. Figures are tabular wherever numbers appear.
 
 ### Hierarchy
-- **Display** (700, 2.25rem rising to 3rem at 640px, line-height 1, caps, 0.025em): the match title "LAURÉATS 2–1 VANIER" in the band. The wordmark fallback uses the same face at 1.5rem, 700, caps, 0.12em tracking, in gold.
-- **Headline** (600, 3rem, line-height 1, tabular): scoreboard figures. Smaller display numerals reuse the face: halves-table values (1.5rem), clip times, zone balances and section titles (1.25rem), key-point numerals (1.125rem).
-- **Title** (600, 1.25rem, caps, 0.025em): section headings on white; tabs in the band (1rem, 1.125rem from 640px).
-- **Body** (400, 16px, 1.5): default reading text; key points at 15px, snug leading. Clip titles at 500.
-- **Body small** (400, 0.875rem): section notes (capped at 70ch), clip reasons, table cells, buttons (600).
-- **Label** (500, 0.75rem, caps, 0.05em): data labels only: scoreboard figure labels, table headers, half headings ("1re mi-temps"), zone names. Chip text and tick labels drop to 11px without caps.
+- **Display** (700, 1.875rem → 2.25rem from `sm`, line-height 1, caps): the match title in the band, "Lauréats 2–1 Vanier", with the score in gold.
+- **Figure** (600, 1.875rem, tabular): scoreboard values, counter-press headline figures, and pitch cell values in SVG (18–30px condensed 600).
+- **Tab** (600, 15px → 18px, caps): the band navigation.
+- **Tile title** (600, 13px): the question the tile answers, in sentence case and phrased as a question.
+- **Tile note** (400, 11px, Ink 3): how to read the chart, with n, method and window.
+- **Data row** (12px, tabular): bullet, dumbbell, butterfly, state-dot and key-value rows.
+- **Label** (500, 12px, 0.05em, caps): scoreboard labels, table headers and half labels.
+- **Axis** (10px, Ink 3): chart ticks, reference-line labels and bullet range ends (9px).
 
 ### Named Rules
-**The Tabular Figures Rule.** Every number that can sit next to another number is set with tabular figures, in the band, in tables, in charts, in tooltips.
-
-**The Caps Are Structure Rule.** Uppercase belongs to the display face (titles, tabs) and to data labels naming a value directly below or beside them. It is not used for decorative lead-ins above headings.
+**The Question Title Rule.** A tile title is the question, not a topic ("Où perd-on le ballon ?", not "Pertes"). The note underneath says how to read the answer.
 
 ## Layout
 
-One centred column (max 1152px) with a 16px gutter, 24px from 640px. The band spans the full viewport width; its contents align to the same column as the page.
+The band spans the full width; content sits in a 1280px container with 12px side padding (20px from `sm`). Each tab is a 12-column tile grid from `lg`, with 12px gaps and tiles spanning 4, 5, 7 or 8 columns, mostly paired 8+4 / 7+5 / 4+4+4. Terrain switches to 2 columns at `md`. Below `lg` the tiles stack to one column. A tall tile may span two rows (the recovery-value pitch). The scoreboard strip is 2 columns on phones (an odd last figure spans both), 3 at `sm` and 5 at `lg`, with compact rows (10px vertical padding). The full possession table closes the Possession tab as a collapsible. The Clips tab is a single column of hairline-separated sections rather than tiles.
 
-- **Band:** wordmark and match select on one row; title, date/venue, Veo link and the gold clips button on the next (wrapping on phones); tabs on a hairline-free row with a 2px underline for the active tab, horizontally scrollable on narrow screens. The scoreboard strip below it is a grid of hairline-divided cells: 2 columns on phones, 3 from 640px, 5 from 1024px.
-- **Page:** 32px top padding, sections stacked with 40px between them. Two-column arrangements appear only from 1024px: 1/3 + 2/3 on Aperçu (key points / timeline), halves on En profondeur and Terrain. Everything collapses to one column below.
-- **Section rhythm:** 20px from the hairline to the title, 4px to the note, 16px to the content.
-- **Rows:** clip rows are a three-column grid (time 3.75rem / content / action), 12px vertical padding; table rows 8–10px.
-
-Breakpoints are Tailwind's defaults: 640, 768, 1024px.
+**The Density Rule.** Tiles are packed: 12px gutters, 12–16px padding, small type. Don't add whitespace to make a chart breathe; give it a wider span instead.
 
 ## Elevation & Depth
 
-Flat. Depth comes from tone, not shadow: black band over white page, the Board Panel strip slightly lifted inside the band, Paper Shade for notices. The only shadows are the soft ambient ones under the two floating tooltips (possession timeline and chart tooltip), because those genuinely float over data.
+Flat. Tiles are separated from the grey ground by a 1px hairline border and tone, not by shadow. The only shadows are on floating readouts (chart and timeline tooltips), which disappear with the hover.
 
 ### Shadow Vocabulary
-- **Tooltip** (`0 4px 16px rgba(10,10,10,0.08)` for chart tooltips, `0 6px 20px rgba(10,10,10,0.10)` for the timeline tooltip): floating readouts only.
+- **Tooltip** (`0 4px 14px–16px rgba(10,10,10,0.08–0.10)`; timeline `0 6px 20px rgba(10,10,10,0.10)`): floating readouts only.
 
 ### Named Rules
-**The One Level Rule.** Nothing rests on a shadow. A shadow means "this is floating above the data right now" and disappears with it.
+**The One Level Rule.** Nothing at rest has a shadow. A shadow means "floating over the data right now".
 
 ## Shapes
 
-Near-square. Buttons, the select, notices and tooltips use a 4px corner; chips, legend swatches, heat-map cells and bar ends use 2–3px; only markers (shot dots, goal "B" discs) and the couloir rate tracks are fully round. Blocks are separated by 1px hairlines (`rule` on white, `band-rule` on black) rather than enclosed. Inferred data uses a 135° hatch (3px gap, 2px stripe) cut from the paper colour.
+Near-square. Tiles, chips, tooltips, bars and bullet ranges have a 2px corner. Buttons, selects and notices have 4px. Only markers (bullet and dot-plot dots, dumbbell ends, beeswarm dots, goal discs) and filter chips are fully round. Pitches are drawn vertically with attack upward, on a 300 × 420 grid: 4 equal zone bands, the box inside zone 4, dashed zone dividers and Z1–Z4 labels in condensed caps. Small samples are hatched with white 45° stripes (6px pitch); inferred possession limits use a 135° paper-coloured hatch.
 
 ## Components
 
-### Buttons
-Few and purposeful; the gold button always means "go to the video".
-- **Shape:** gently squared (4px).
-- **Primary (gold):** gold fill, ink text, 600 weight, 14px, with a lucide Play icon; 6–8px × 12px padding. "Voir les clips (n)" in the band, "Voir" on each clip row (icon only on phones, with a screen-reader label).
-- **Hover / Focus:** fill shifts to Gold Lift; global focus ring is a 2px gold outline at 2px offset.
-- **Text action:** "Bibliothèque (n clips) →" and small "▶ clips" links on stats, in Deep Gold, turning ink on hover. A stat that can be tied to moments opens the clip library pre-filtered.
-- **Band link:** "Match sur Veo" in paper with a band-rule underline that turns gold on hover, plus an external-link icon.
+### Tile (the unit of the dashboard)
+- **Anatomy:** a white surface with a hairline border and 2px corner, padded 12px (16px from `sm`). Then the question title (13px 600), an optional aside on the right (clip links), a one-line note in Ink 3 (11px) stating n, method, window or smoothing, and the chart 12px below.
+- **Rule:** every chart lives in a tile; a tile holds one question.
 
-### Chips
-- **Category:** ink fill, paper text, 11px, 2px corner.
-- **Context:** hairline border, Ink 2 text, same size. Both sit under the clip reason.
+### Chart vocabulary (form chosen per question)
+- **Match story:** for "when were we on top?". Two stacked panels on a shared minute axis with a synced tooltip. The top panel is threat per 5 min, Gaussian-smoothed (σ = 2.5 min, stated on the panel), drawn as a Data Gold line with area and shots as ink dots on the baseline (filled = on target). The bottom panel is the rolling 5-minute possession share as an ink line around a 50 % reference, filled gold above and blue below. Event lines run through both panels: goals solid (gold ours, blue theirs), cards dashed in card colours, half-time dashed ink.
+- **Radar vs own season range:** for "what kind of match was this?". Eight axes, each scaled from our lowest tagged match (0.15) to our highest (1). This match is filled Data Gold; the season average is a dashed Slate Blue outline. The tooltip gives raw values and the range. It is not a league percentile, and the legend says so.
+- **Bullets:** for "how does each KPI sit in context?". Each row has a Mid Grey season range bar, a Slate Blue average tick, a Data Gold match dot and the value on the right. Shares share one fixed 0–100 % axis; counts and ratios run 0 → max × 1.1.
+- **Band pitch:** for "where do we win / lose / dominate?". Four zone bands plus the box, filled from the gold ramp (recoveries), blue ramp (losses) or diverging ramp (balance). The value is printed per band, and the bands are clickable through to clips.
+- **Zone × couloir grid:** for "where do dangerous actions arrive?". A 4 × 3 grid with three box cells, gold ramp, counts printed. Empty cells are left blank with a grey 0.
+- **Couloir pitch:** three lanes shaded by share, with a big % and n per lane and an ink arrow whose width scales with the share. The type breakdown sits underneath.
+- **Sankey:** for "how do possessions start and end?". Ink start nodes on the left. Outcomes are coloured gold for danger (goal / shot, box), blue for losses and grey for the rest. Links take the target colour at 28 % opacity.
+- **Survival curve:** for "how fast do we win it back?". A step line of the share of losses not yet regained, 0–60 s. The overall line is thick Data Gold, with lines per loss zone and dashed references at 5 s and 10 s. n appears in the legend.
+- **Beeswarm:** for "how direct are we after a recovery?". One Data Gold dot per transition, stacked in 1 s bins on a 0–60 s axis. Shaded bands mark Contre (0–5), Rapide (5–15) and Construit (15–60), with an ink median line.
+- **KDE density with rug:** for "who keeps the ball longer?". Overlaid us / them densities on a log axis (1–120 s), dashed median lines, n and median in the legend, and a rug of one tick per possession. The smoothing is disclosed under the chart.
+- **Dumbbell:** for "what changed at half-time?". MT1 is a hollow dot and MT2 a filled dot, each row on its own 0 → max scale. Colour shows direction only: gold higher, blue lower, grey unchanged.
+- **Butterfly:** for "who won the restarts?". Ours to the left in Data Gold, theirs to the right in Slate Blue, on one shared scale with counts at the outer ends.
+- **Dot plot:** possession by score state on 0–100 % with a 50 % line and n printed.
+- **Funnel:** centred ink bars stepping lighter by stage, the goal stage in Data Gold, conversion rates between stages and clip links per stage.
+- **Possession timeline:** one strip per half of reconstructed possessions, with shots and goal discs above and minute ticks below. Hover or focus dims the others to 40 %. Inferred limits are hatched.
 
-### Inputs / Fields
-- **Match select:** Board Panel fill, band-rule border, paper text, 4px corner, inside the band next to a "MATCH" label (hidden on phones).
+### Scoreboard strip (signature)
+Five figures per tab inside the band: a caps label in Band Grey, a gold condensed figure and a one-line balanced caption. When the tab or match changes, each figure flips up into place: 520ms, `cubic-bezier(0.16, 1, 0.3, 1)`, starting 40 % below with a 2px blur, staggered 45ms per figure. Reduced motion turns it off. This is the only authored motion; every chart sets animation off.
+
+### Buttons and links
+- **Primary (gold):** gold fill, ink text, 600 weight, 14px, with a Play icon. It always means "go to the video": "Voir les clips (n)" in the band, "Voir" on each clip row (icon only on phones, with a screen-reader label). Hover fills with Gold Lift. Focus is a 2px gold outline at 2px offset.
+- **Action link:** Deep Gold text that turns ink on hover. Any countable stat or tile aside opens the clip library pre-filtered.
 
 ### Navigation
-- **Tabs:** Barlow Condensed caps, 600. Inactive in Band Grey, hover to paper; active in paper with a 2px gold underline. Arrow keys move between tabs; the active tab is stored in the URL hash.
+- **Tabs:** condensed caps, Band Grey when inactive, paper on hover and when active, with a 2px gold underline. Arrow keys move between tabs; the active tab lives in the URL hash.
+- **Match select:** a Board Panel fill and band-rule border inside the band.
 
-### Scoreboard (signature)
-The row of four to six figures inside the band: caps label in Band Grey, 3rem gold figure, one-line caption in Band Grey (balanced wrapping). Figures change per tab. When the tab or match changes, each figure flips up into place (520ms, `cubic-bezier(0.16, 1, 0.3, 1)`, from 40% below with a 2px blur, staggered 45ms per figure); reduced-motion turns it off. This is the only authored motion in the system.
+### Chips and filters
+- **Category chip:** ink fill, paper text, 11px. **Context chip:** hairline border, Ink 2 text.
+- **Filter chip (Clips):** round, hairline border; when on, it becomes an ink fill with paper text and a muted count.
 
-### Section
-A hairline on top, condensed caps title, optional aside on the right (e.g. the "Bibliothèque" link), optional grey note, then content. This replaces cards everywhere.
-
-### Clip row
-Time in display numerals with "MT1 · 0–0" beneath, title and reason, chips, and the gold Voir button on the right; rows divided by hairlines. When no video is linked, the button becomes a grey VideoOff icon.
-
-### Possession timeline
-Per-half strip of possession blocks (Us black, Them grey, inferred hatched) with shot dots and "B" goal discs above, minute ticks below. Hover or focus dims the others to 40% and shows a floating tooltip; the full table of possessions sits in a collapsible below on En profondeur.
-
-### Data displays
-- **Halves table:** MT1 and MT2 values mirrored around the stat name; the better half of a clear swing turns Deep Gold.
-- **Zone chart:** losses grow left in Them grey, recoveries grow right in ink, signed balance at the edge; no gold.
-- **Attack origins:** a single-hue ramp from white to Deep Gold, count always printed, text flips to white on dark cells.
-- **Charts (Recharts):** ink bars; gold marks only goal windows and goal/shot outcomes (Deep Gold on white, per the Two Golds Rule); rule-coloured gridlines; no animation.
+### Tooltip
+A paper surface with a hairline border and small corner. The value or minute leads in 600 weight; the context follows in Ink 2 / Ink 3.
 
 ### Notices
-Paper Shade block, hairline border, 4px corner, a Deep Gold AlertTriangle icon, a bold lead sentence then the instruction.
+A Paper Shade block with a hairline border and 4px corner, a Deep Gold warning icon, a bold lead sentence, then the instruction.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** open every tab on the black band with the scoreboard row; put the evidence on white below.
-- **Do** use bright Lauréats Gold only on black and Deep Gold for any gold text or mark on white.
-- **Do** separate blocks with 1px hairlines and a condensed caps title (the Section pattern).
-- **Do** set every number in tabular figures, and hatch anything inferred.
-- **Do** use lucide-react icons at 12–18px, marked `aria-hidden` when a label is present.
-- **Do** write all interface text in French with the tagger's vocabulary.
-- **Do** show the user's logo from `dashboard/public/logo.png` when present, and fall back to the gold "LAURÉATS" wordmark otherwise.
+- **Do** title every tile with the question it answers and state n, method, window and any smoothing in its note.
+- **Do** pick the chart form for the question from the vocabulary above before adding a new one.
+- **Do** draw pitch views at true resolution only: 4 zone bands, or the 4 × 3 couloir × zone grid with the box nested in zone 4.
+- **Do** weaken small samples visibly: hatch pitch cells under n = 5 and mark their value with "*", and fade dots under n = 10, saying so in the note or legend.
+- **Do** use the data palette (`data-us`, `data-them`, `data-mid`, gold / blue / diverging ramps) for marks and the brand palette for chrome.
+- **Do** print the value on every ramp cell, switching to white ink per the Ink-on-Ramp Rule.
+- **Do** compare against our own tagged matches (range, average), and label it that way.
+- **Do** set every number in tabular figures, turn chart animation off, and write all interface text in French.
 
 ### Don't:
-- **Don't** colour a loss, a concession or an opponent event in gold; use Them grey, or ink with weight.
-- **Don't** wrap sections in cards or give resting elements a shadow.
-- **Don't** add gradients, glass or background imagery.
+- **Don't** let colour, wording or ordering judge better or worse in the frontend; direction and identity only.
+- **Don't** invent positions: no shot maps, no smoothed heat blobs, no coordinates the tagging doesn't record.
+- **Don't** smooth silently; a smoothed curve names its kernel or window.
+- **Don't** use chrome gold (`gold`, `gold-deep`) as a data mark, or data gold as interface chrome.
+- **Don't** add an opponent threat line; opponent actions are barely tagged.
+- **Don't** give resting elements a shadow, or add gradients, glass or background imagery.
 - **Don't** add a second authored animation; the scoreboard flip is the motion.
-- **Don't** invent or redraw a logo.
+- **Don't** invent or redraw a logo; use `dashboard/public/logo.png` when present and the gold wordmark otherwise.

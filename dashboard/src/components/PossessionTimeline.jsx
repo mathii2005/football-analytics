@@ -85,8 +85,8 @@ export default function PossessionTimeline({ possessions }) {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-ink-2">
-        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-ink" />Lauréats</span>
-        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-them" />Adversaire</span>
+        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm" style={{ background: "var(--us)" }} />Lauréats</span>
+        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm" style={{ background: "var(--them)" }} />Adversaire</span>
         <span className="flex items-center gap-1.5"><span className="hatched h-3 w-3 rounded-sm bg-ink-3" />Limite déduite</span>
         <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-ink" />Tir</span>
         <span className="flex items-center gap-1.5"><span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-gold text-[8px] font-bold text-ink">B</span>But</span>

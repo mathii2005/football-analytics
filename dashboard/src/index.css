@@ -10,8 +10,8 @@
 @tailwind utilities;
 
 /* Lauréats: gold, black, white. Bright gold only on black (8:1);
-   on white, gold text and marks use the deep step (5.0:1). Gold always
-   means "good / act here", never a loss. */
+   on white, gold text and marks use the deep step (5.0:1). Data marks use the validated palette in
+   charts/palette.js (--us / --them mirror it); brand gold is chrome only. */
 :root {
   color-scheme: light;
   --paper: #ffffff;
@@ -28,8 +28,8 @@
   --band-2: #1c1b19;
   --band-rule: #2e2c28;
   --band-ink-2: #b9b4aa;
-  --us: #0a0a0a;
-  --them: #9a968e;
+  --us: #b8862e;
+  --them: #2a6aa8;
 }
 
 html { background: var(--band); }

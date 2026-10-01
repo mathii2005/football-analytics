@@ -42,7 +42,7 @@ export default function Possession({ d, openClips }) {
         <FlowSankey flow={ph.flow} />
       </Tile>
       <Tile className="lg:col-span-5" title="À quelle vitesse récupère-t-on le ballon après l'avoir perdu ?"
-        note="Part des pertes pas encore reprises, seconde par seconde. Une chute rapide = bon contre-pressing.">
+        note="Part des pertes pas encore reprises, seconde par seconde : plus la courbe descend tôt, plus on récupère vite.">
         <RegainCurve curve={ph.regain_curve} />
       </Tile>
       <Tile className="lg:col-span-7" title="Sommes-nous directs après une récupération ?"

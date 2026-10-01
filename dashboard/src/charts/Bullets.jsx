@@ -33,7 +33,7 @@ export default function Bullets({ profile, summary }) {
               <div className="absolute top-0 h-4 w-0.5" style={{ left: `${x(s.mean)}%`, background: THEM }} />
               <div className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-paper" style={{ left: `${x(v)}%`, background: US }} />
               <span className="absolute -bottom-3 -translate-x-1/2 text-[9px] text-ink-3 tabular" style={{ left: `${x(s.min)}%` }}>{fmt(s.min)}</span>
-              <span className="absolute -bottom-3 -translate-x-1/2 text-[9px] text-ink-3 tabular" style={{ left: `${x(s.max)}%` }}>{fmt(s.max)}</span>
+              {x(s.max) - x(s.min) > 14 && <span className="absolute -bottom-3 -translate-x-1/2 text-[9px] text-ink-3 tabular" style={{ left: `${x(s.max)}%` }}>{fmt(s.max)}</span>}
             </div>
             <span className="text-right font-semibold text-ink tabular">{fmt(v)}</span>
           </li>
