@@ -19,7 +19,9 @@ export async function fetchMatch(id) {
     get(`/matches/${m}/clips`),
     get(`/matches/${m}/phases`),
     get(`/matches/${m}/timeline`),
-    get("/season"),
+    // the season baseline is optional: if it fails only the radar and
+    // bullets say "indisponible", the match page still loads
+    get("/season").catch(() => null),
   ]);
   return { report, possessions, losses, quality, clips, phases, timeline, season };
 }

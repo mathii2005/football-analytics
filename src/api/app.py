@@ -187,8 +187,8 @@ def season():
     for path in sorted(match_dir().glob("*.json")):
         try:
             match, ps = analyse(path.stem)
-        except (json.JSONDecodeError, KeyError, TypeError, AttributeError):
-            continue
+        except (ValueError, KeyError, TypeError, AttributeError, HTTPException):
+            continue   # not a readable tagger export
         if isinstance(match, dict) and isinstance(match.get("events"), list) and isinstance(match.get("match"), dict):
             items.append((path.stem, match, ps))
     return season_from(items)

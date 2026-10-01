@@ -24,3 +24,12 @@ test("preset is cleared by plain navigation and match change, kept by openClips"
   assert.equal(nextPreset(p, { type: "match" }), null);
   assert.deepEqual(nextPreset(null, { type: "open", preset: { zone: "4" }, key: 2 }), { zone: "4", key: 2 });
 });
+
+import { profileFor } from "../src/links.js";
+
+test("season profile found by any file of the match, null when missing", () => {
+  const season = { matches: [{ ids: ["v copy", "v"], metrics: { shots: 8 } }] };
+  assert.deepEqual(profileFor(season, "v"), { shots: 8 });
+  assert.equal(profileFor(season, "other"), null);
+  assert.equal(profileFor(null, "v"), null);
+});

@@ -6,12 +6,14 @@ import Bullets from "../charts/Bullets.jsx";
 import KeyPoints from "../components/KeyPoints.jsx";
 import PossessionTimeline from "../components/PossessionTimeline.jsx";
 import ClipRow from "../components/ClipRow.jsx";
+import { profileFor } from "../links.js";
 
 // The match in one screen, as a tile grid: story over time, profile vs our
 // season, KPIs in context, who had the ball, first clips.
 export default function Apercu({ d, goClips }) {
-  const me = d.season.matches.find((m) => m.id === d.report.match.id)?.metrics;
-  const n = d.season.matches.length;
+  const me = profileFor(d.season, d.report.match.id);
+  const n = d.season?.matches.length ?? 0;
+  const none = <p className="text-sm text-ink-3">Profil de saison indisponible pour ce match.</p>;
   const top = [...d.clips.selection].sort((a, b) => b.priority - a.priority).slice(0, 5);
   return (
     <div className="grid gap-3 lg:grid-cols-12">
@@ -20,10 +22,10 @@ export default function Apercu({ d, goClips }) {
         <MatchStory timeline={d.timeline} />
       </Tile>
       <Tile className="lg:col-span-4" title="Quel type de match était-ce ?" note={`Profil comparé à nos ${n} matchs tagués.`}>
-        <TeamRadar profile={me} summary={d.season.summary} n={n} />
+        {me ? <TeamRadar profile={me} summary={d.season.summary} n={n} /> : none}
       </Tile>
       <Tile className="lg:col-span-4" title="Les chiffres clés, dans leur contexte" note="Ce match face à la moyenne et à l'écart de nos matchs.">
-        <Bullets profile={me} summary={d.season.summary} />
+        {me ? <Bullets profile={me} summary={d.season.summary} /> : none}
       </Tile>
       <Tile className="lg:col-span-8" title="Qui avait le ballon ?" note="Chaque possession reconstruite ; survoler ou tabuler pour le détail. Hachures : limite déduite.">
         <PossessionTimeline possessions={d.possessions} />

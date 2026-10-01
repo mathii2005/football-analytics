@@ -3,8 +3,9 @@ import { US, THEM, GRID, MUTED } from "./palette.js";
 import { pct, dec } from "../format.js";
 
 // Team profile: this match vs our season average on 8 axes. Each axis is
-// scaled from our worst to our best tagged match (0.15 .. 1), so the shape
-// reads "where on our own range was this match" - not a league percentile.
+// scaled from our lowest to our highest tagged match (0.15 .. 1), so the
+// shape reads "where in our own range was this match" - no better/worse
+// judgement and not a league percentile.
 const AXES = [
   ["possession", "Possession", pct],
   ["field_tilt", "Field tilt", pct],
@@ -56,7 +57,7 @@ export default function TeamRadar({ profile, summary, n }) {
       <div className="flex flex-wrap gap-x-4 text-[11px] text-ink-3">
         <span><span className="mr-1 inline-block h-2 w-3 align-middle" style={{ background: US, opacity: 0.6 }} />Ce match</span>
         <span><span className="mr-1 inline-block h-0.5 w-3 border-t-2 border-dashed align-middle" style={{ borderColor: THEM }} />Moyenne de nos {n} matchs</span>
-        <span>Échelle par axe : du moins bon (centre) au meilleur de nos matchs.</span>
+        <span>Échelle par axe : de la valeur la plus basse (centre) à la plus haute de nos matchs.</span>
       </div>
     </div>
   );

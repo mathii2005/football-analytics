@@ -32,7 +32,7 @@ out as a dense tile grid (Tableau / Power BI feel), not a decorated page.
 | # | View | Question | Form |
 |---|------|----------|------|
 | 1 | Match story (Aperçu) | When were we on top, did it turn into goals? | Two stacked panels, shared minute axis: our threat (per-minute threat smoothed with a Gaussian, σ = 2.5 min) as line + area; possession share (rolling ±2.5 min live-time window, inclusive) as line around a 50 % reference. Vertical event lines through both: goals (ours gold / theirs blue), cards, half-time. |
-| 2 | Team radar (Aperçu) | What kind of performance was this vs our usual? | Radar, 8 axes: possession (strict), field tilt, high recoveries %, won back ≤ 10 s, shots per possession, box entries per possession, verticality, possessions not lost cheaply (1 − cheap-loss rate). Each axis scaled 0 → max over our matches. This match (gold, filled) vs season average (blue outline). Tooltip shows raw values. |
+| 2 | Team radar (Aperçu) | What kind of performance was this vs our usual? | Radar, 8 axes: possession (strict), field tilt, high recoveries %, won back ≤ 10 s, shots per possession, box entries per possession, verticality, possessions not lost cheaply (1 − cheap-loss rate). Each axis scaled from the lowest (0.15) to the highest (1) of our matches *(amended during build: 0 → max flattened differences with 5 matches)*; no better/worse wording. This match (gold, filled) vs season average (blue outline). Tooltip shows raw values. |
 | 3 | KPI bullets (Aperçu) | Is each headline number good for us? | Bullet chart per KPI: season min–max range bar, season-average tick, this match's marker + value. |
 | 4 | Couloir usage (Terrain) | Which lane do we attack through? | Pitch with 3 lanes shaded by share (gold ramp), big % per lane, arrows with width ∝ share, n per lane. |
 | 5 | Zone × couloir heat (Terrain) | Where do dangerous actions arrive? | 4 × 3 grid on pitch (+ box row), gold ramp, counts. |
@@ -43,7 +43,7 @@ out as a dense tile grid (Tableau / Power BI feel), not a decorated page.
 | 10 | Transition beeswarm (Possession) | How direct are we after winning it? | Every recovery → next dangerous action time (old definition) as a dot on a 0–60 s axis, bands contre / rapide / construit shaded, median line. |
 | 11 | Possession duration density (Possession) | Who keeps the ball longer? | Overlaid smoothed densities (us gold, them blue) of timed possession durations, log-ish axis capped at 120 s, medians marked. |
 | 12 | Game-state possession (Possession) | Does score change our possession? | Dot plot: possession % per state with n. |
-| 13 | Halves slopegraph (Attaque) | What changed at half-time? | Per metric a line MT1 → MT2, values normalised per row, labels at both ends. |
+| 13 | Halves dumbbell (Attaque) | What changed at half-time? | Per metric MT1 (hollow) → MT2 (filled) on its own scale; colour = direction (up gold / down blue), never better/worse. |
 | 14 | Shot funnel (Attaque) | Where do attacks die? | Recharts funnel with conversion labels. |
 | 15 | Actions / box entries by type (Attaque) | How do we attack? | 100 % stacked bar by type + box share, compact. |
 | 16 | Set pieces (Attaque) | Who won the restarts? | Butterfly chart, ours left / theirs right. |

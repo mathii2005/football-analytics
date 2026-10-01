@@ -21,3 +21,9 @@ export function nextPreset(current, action) {
   if (action.type === "open") return { ...action.preset, key: action.key };
   return null;
 }
+
+// this match's season profile, found through any of its export files; null
+// when the season is unavailable or the match has no profile
+export function profileFor(season, matchId) {
+  return season?.matches?.find((m) => (m.ids ?? [m.id]).includes(matchId))?.metrics ?? null;
+}

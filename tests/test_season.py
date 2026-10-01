@@ -47,3 +47,18 @@ def test_season_ignores_duplicate_exports(tmp_path):
     shutil.copy(FIX / "champlain_15min.json", tmp_path / "b.json")
     shutil.copy(FIX / "champlain_15min.json", tmp_path / "b copy.json")
     assert len(season_profile(sorted(tmp_path.glob("*.json")))["matches"]) == 1
+
+
+def test_season_entry_lists_every_file_of_a_match(tmp_path):
+    shutil.copy(FIX / "champlain_15min.json", tmp_path / "b.json")
+    shutil.copy(FIX / "champlain_15min.json", tmp_path / "b copy.json")
+    s = season_profile(sorted(tmp_path.glob("*.json")))
+    assert sorted(s["matches"][0]["ids"]) == ["b", "b copy"]
+
+
+def test_season_skips_a_match_whose_profile_fails():
+    from src.analytics.season import season_from
+    good = json.loads((FIX / "champlain_15min.json").read_text())
+    bad = {"match": {"id": "x"}, "events": [{"code": "RECUP"}]}   # malformed event: no half / timestamp
+    s = season_from([("good", good, possessions_from_match(good)), ("bad", bad, [])])
+    assert [m["ids"] for m in s["matches"]] == [["good"]]

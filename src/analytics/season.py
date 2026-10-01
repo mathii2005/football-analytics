@@ -14,7 +14,9 @@ RADAR / BULLET METRICS (definitions reuse the existing modules)
     shots                      : our shots
     losses_opp_half_share      : our losses in zone 3/4/box / all our losses
 summary: mean / min / max over matches where the metric exists. The same
-match exported twice (same match.id) counts once.
+match exported twice (same match.id) counts once; its entry lists every file
+stem (`ids`) so the page of any of those files finds its profile. A match
+whose profile cannot be computed (malformed export) is skipped.
 """
 
 import json
@@ -58,15 +60,20 @@ def summarize(profiles: list[dict]) -> dict:
 
 def season_from(items) -> dict:
     """items: [(match_id, match_data, possessions)]"""
-    matches, seen = [], set()
+    matches, by_key = [], {}
     for mid, match, ps in items:
         meta = match.get("match") or {}
         key = meta.get("id") or mid
-        if key in seen:
+        if key in by_key:
+            by_key[key]["ids"].append(mid)
             continue
-        seen.add(key)
-        matches.append({"id": mid, "date": meta.get("date"), "opponent": meta.get("opponent"),
-                        "metrics": match_profile(match, ps)})
+        try:
+            metrics = match_profile(match, ps)
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            continue
+        entry = {"id": mid, "ids": [mid], "date": meta.get("date"), "opponent": meta.get("opponent"), "metrics": metrics}
+        by_key[key] = entry
+        matches.append(entry)
     matches.sort(key=lambda x: x["date"] or "")
     return {"matches": matches, "summary": summarize([x["metrics"] for x in matches])}
 

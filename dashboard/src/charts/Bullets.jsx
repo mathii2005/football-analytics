@@ -2,8 +2,7 @@ import { US, THEM, MID } from "./palette.js";
 import { pct, dec } from "../format.js";
 
 // Bullet chart per KPI: grey bar = range of our matches (min..max), blue
-// tick = season average, gold dot = this match. lowerIsBetter flips the
-// note only (colours never judge good/bad here).
+// tick = season average, gold dot = this match. Colours never judge good/bad.
 const ROWS = [
   ["possession", "Possession", pct],
   ["field_tilt", "Field tilt", pct],
