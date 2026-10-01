@@ -39,10 +39,14 @@ export default function MatchStory({ timeline }) {
   if (!data.length) return <p className="text-sm text-ink-3">Pas de données.</p>;
   const events = timeline.events.filter((e) => data.some((d) => d.k === xKey(e)));
   const tick = { fill: MUTED, fontSize: 10 };
+  // same clock as the possession strip: every 10 min in half 1 (0..40),
+  // every 10 min from 45 in half 2 (45..85)
+  const keys = new Set(data.map((d) => d.k));
+  const ticks = [...[0, 10, 20, 30, 40].map((m) => `1-${m}`), ...[45, 55, 65, 75, 85].map((m) => `2-${m}`)].filter((k) => keys.has(k));
   const fmt = (k) => `${k.split("-")[1]}'`;
   return (
     <div>
-      <div className="text-[11px] font-medium text-ink-2">Menace offensive par 5 min (glissante)</div>
+      <div className="text-[11px] font-medium text-ink-2">Menace offensive, points / 5 min (lissage gaussien σ = 2,5 min)</div>
       <ResponsiveContainer width="100%" height={170}>
         <ComposedChart data={data} syncId="story" margin={{ left: -22, right: 8, top: 18, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={GRID} />
@@ -60,7 +64,7 @@ export default function MatchStory({ timeline }) {
       <ResponsiveContainer width="100%" height={130}>
         <ComposedChart data={data} syncId="story" margin={{ left: -22, right: 8, top: 4, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={GRID} />
-          <XAxis dataKey="k" tick={tick} tickLine={false} axisLine={{ stroke: GRID }} interval={9} tickFormatter={fmt} />
+          <XAxis dataKey="k" tick={tick} tickLine={false} axisLine={{ stroke: GRID }} ticks={ticks} interval={0} tickFormatter={fmt} />
           <YAxis domain={[0, 1]} ticks={[0, 0.5, 1]} tickFormatter={(v) => `${v * 100}%`} tick={tick} tickLine={false} axisLine={false} />
           <Tooltip content={<Tip />} cursor={{ stroke: MUTED, strokeDasharray: "2 2" }} />
           <ReferenceLine y={0.5} stroke={MUTED} />

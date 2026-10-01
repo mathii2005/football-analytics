@@ -17,4 +17,5 @@ export const blueRamp = (t) => rgb(lerp(hex("#eaf1f8"), hex("#163f6b"), Math.max
 // diverging: -1 (blue) .. 0 (mid) .. +1 (gold)
 export const diverging = (t) => (t >= 0 ? rgb(lerp(hex(MID), hex("#8a6117"), Math.min(1, t)))
   : rgb(lerp(hex(MID), hex("#1f4f80"), Math.min(1, -t))));
-export const inkOn = (t) => (t > 0.55 ? "#fff" : INK);   // label colour on a ramp cell
+export const inkOn = (t) => (t > 0.55 ? "#fff" : INK);   // label colour on a sequential ramp cell
+export const inkOnDiverging = (t) => (t < -0.4 || t > 0.6 ? "#fff" : INK);  // both dark ends get white

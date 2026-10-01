@@ -2,7 +2,7 @@ import Tile from "../charts/Tile.jsx";
 import CouloirPitch from "../charts/CouloirPitch.jsx";
 import ZoneGridPitch from "../charts/ZoneGridPitch.jsx";
 import BandPitch from "../charts/BandPitch.jsx";
-import { goldRamp, blueRamp, diverging } from "../charts/palette.js";
+import { goldRamp, blueRamp, diverging, inkOnDiverging } from "../charts/palette.js";
 import CouloirTable from "../components/CouloirTable.jsx";
 import { pct, signed } from "../format.js";
 
@@ -35,7 +35,7 @@ export default function Terrain({ d, openClips }) {
         <BandPitch rows={los} color={blueRamp} label="Pertes par zone" onZone={(zone) => openClips({ zone, cats: ["loss"] })} />
       </Tile>
       <Tile className="lg:col-span-4" title="Qui domine chaque zone ?" note="Récupérations − pertes. Or : on gagne la zone ; bleu : on la perd. Contrôle = récup / (récup + perte).">
-        <BandPitch rows={bal} color={diverging} label="Bilan territorial" onZone={(zone) => openClips({ zone, cats: ["loss", "recup"] })} />
+        <BandPitch rows={bal} color={diverging} ink={inkOnDiverging} label="Bilan territorial" onZone={(zone) => openClips({ zone, cats: ["loss", "recup"] })} />
       </Tile>
     </div>
   );

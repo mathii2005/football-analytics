@@ -44,14 +44,17 @@ function figuresFor(tab, d) {
       { label: "Repris en ≤ 10 s", value: pct(cp.within_10s), sub: `après nos ${cp.n_losses} pertes · ≤ 5 s ${pct(cp.within_5s)}` },
       { label: "Récup → action", value: t.median_s == null ? "–" : `${dec(t.median_s)} s`, sub: `médiane sur ${plural(t.n, "transition")}` },
       { label: "Tirs par possession", value: dec(ph.finishing.shots_per_possession), sub: `1 tir toutes les ${dec(ph.finishing.possessions_per_shot)} poss.` },
-      { label: "Temps effectif", value: mmss(ph.game_time.live_ms), sub: `arrêts tagués ${mmss(ph.game_time.dead_ms)}` },
+      ph.game_time.dead_ms
+        ? { label: "Temps effectif", value: mmss(ph.game_time.live_ms), sub: `arrêts longs tagués ${mmss(ph.game_time.dead_ms)}` }
+        : { label: "Temps total", value: mmss(ph.game_time.live_ms), sub: "aucun arrêt long tagué" },
     ];
   }
   if (tab === "attaque") return [
     { label: "Actions dangereuses", value: h.dangerous_actions, sub: `${dec(h.actions_per_shot)} actions par tir` },
     { label: "Entrées surface", value: r.funnel[1].n, sub: `${h.box_shots} tirs dans la surface` },
     { label: "Possessions avec tir", value: m.shot_sequences, sub: `${pct(m.shot_sequence_rate)} de nos possessions` },
-    { label: "Jeu vertical", value: pct(r.attack_style.vertical_pct), sub: "passes prof. + conduites" },
+    { label: "Jeu vertical", value: pct(r.attack_style.vertical_pct),
+      sub: r.attack_style.lateral === 0 ? "aucun centre / changement tagué" : "passes prof. + conduites" },
     { label: "Buts sur CPA", value: r.set_pieces.goals_from_set_piece, sub: `${plural(r.set_pieces.shots_from_set_piece, "tir")} après un CPA` },
   ];
   if (tab === "terrain") {

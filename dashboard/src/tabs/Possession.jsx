@@ -29,7 +29,7 @@ export default function Possession({ d, openClips }) {
   const rv = ph.progression.recovery_value;
   const maxBox = Math.max(0.01, ...rv.filter((z) => z.n >= MIN_N).map((z) => z.box_rate ?? 0));
   const rvRows = rv.map((z) => ({
-    zone: z.zone, t: z.n ? Math.min(1, (z.box_rate ?? 0) / maxBox) * (z.n < MIN_N ? 0.3 : 1) : 0,
+    zone: z.zone, t: z.n ? Math.min(1, (z.box_rate ?? 0) / maxBox) : 0, hatched: z.n > 0 && z.n < MIN_N,
     big: z.n ? pct(z.box_rate) + (z.n < MIN_N ? "*" : "") : "–",
     small: z.n ? `${z.n} récup · ${pct(z.shot_rate)} finissent par un tir` : "aucune récupération",
   }));
@@ -49,11 +49,11 @@ export default function Possession({ d, openClips }) {
         note={`Chaque point : une récupération suivie d'une action dangereuse (n = ${r.transition_speed.n}, ${pct(r.transition_speed.pct_leading)} de nos récupérations).`}>
         <TransitionSwarm deltas={r.transition_speed.deltas_s} median={r.transition_speed.median_s} />
       </Tile>
-      <Tile className="lg:col-span-5" title="Qui garde le ballon plus longtemps ?" note="Distribution des durées de possession (temps de jeu effectif, échelle logarithmique).">
+      <Tile className="lg:col-span-5" title="Qui garde le ballon plus longtemps ?" note={`Durées des possessions aux limites taguées (${ph.durations.us.length}/${ph.profile.us.n} nôtres, ${ph.durations.them.length}/${ph.profile.them.n} adverses ; les autres ont une limite déduite). Arrêts longs exclus${gt.dead_ms ? "" : " (aucun tagué)"}.`}>
         <DurationDensity us={ph.durations.us} them={ph.durations.them} />
       </Tile>
-      <Tile className="lg:col-span-4" title="Quelles récupérations deviennent dangereuses ?"
-        note={`% de récupérations dont la possession atteint la surface ; * moins de ${MIN_N} récupérations.`}>
+      <Tile className="lg:col-span-4 lg:row-span-2" title="Quelles récupérations deviennent dangereuses ?"
+        note={`% de récupérations dont la possession atteint la surface ; hachuré (*) : moins de ${MIN_N} récupérations.`}>
         <BandPitch rows={rvRows} color={goldRamp} label="Valeur des récupérations par zone"
           onZone={(zone) => openClips({ zone, cats: ["recup"] })} />
       </Tile>
@@ -69,11 +69,10 @@ export default function Possession({ d, openClips }) {
         <KV rows={[["Possession adverse médiane", secs(def.median_opp_ms)], ["Terminées par une récup haute", pct(def.ended_by_high_recup_share)],
           ["Intensité du pressing (PPDA-lite)", dec(def.ppda_lite)]]} />
       </Tile>
-      <Tile className="lg:col-span-4" title="Efficacité selon le départ">
-        <KV rows={f.shot_sequences_by_start.filter((s) => s.n).map((s) => [START_GROUP_LABELS[s.start], `${plural(s.shot_seq, "possession")} avec tir sur ${s.n}`])} />
-      </Tile>
-      <Tile className="lg:col-span-4" title="Temps de jeu">
-        <KV rows={[["Temps effectif", mmss(gt.live_ms)], ["Arrêts longs tagués", mmss(gt.dead_ms)], ["Actions par minute de possession", dec(gt.actions_per_live_min)]]} />
+      <Tile className="lg:col-span-4" title="Efficacité selon le départ et temps de jeu">
+        <KV rows={[...f.shot_sequences_by_start.filter((x) => x.n).map((x) => [START_GROUP_LABELS[x.start], `${plural(x.shot_seq, "possession")} avec tir sur ${x.n}`]),
+          [gt.dead_ms ? "Temps effectif" : "Temps total (aucun arrêt long tagué)", mmss(gt.live_ms)], ["Arrêts longs tagués", mmss(gt.dead_ms)],
+          ["Actions par minute de possession", dec(gt.actions_per_live_min)]]} />
       </Tile>
       <div className="lg:col-span-12"><PossessionTable possessions={d.possessions} /></div>
     </div>

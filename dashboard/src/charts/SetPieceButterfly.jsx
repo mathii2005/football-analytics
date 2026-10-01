@@ -12,14 +12,14 @@ export default function SetPieceButterfly({ counts }) {
       <ul className="space-y-1.5">
         {rows.map((r) => (
           <li key={r.code} className="grid grid-cols-[1fr_7rem_1fr] items-center gap-2 text-[12px]">
-            <div className="flex items-center justify-end gap-1.5">
-              <span className="text-ink tabular">{r.us}</span>
-              <div className="h-3.5 rounded-l-sm" style={{ width: `${(r.us / max) * 100}%`, background: US }} />
+            <div className="flex items-center gap-1.5">
+              <span className="w-6 shrink-0 text-right text-ink tabular">{r.us}</span>
+              <div className="flex flex-1 justify-end"><div className="h-3.5 shrink-0 rounded-l-sm" style={{ width: `${(r.us / max) * 100}%`, background: US }} /></div>
             </div>
             <span className="text-center text-ink-2">{r.label}</span>
             <div className="flex items-center gap-1.5">
-              <div className="h-3.5 rounded-r-sm" style={{ width: `${(r.them / max) * 100}%`, background: THEM }} />
-              <span className="text-ink tabular">{r.them}</span>
+              <div className="flex flex-1"><div className="h-3.5 shrink-0 rounded-r-sm" style={{ width: `${(r.them / max) * 100}%`, background: THEM }} /></div>
+              <span className="w-6 shrink-0 text-ink tabular">{r.them}</span>
             </div>
           </li>
         ))}

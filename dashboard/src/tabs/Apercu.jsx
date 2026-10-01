@@ -18,7 +18,7 @@ export default function Apercu({ d, goClips }) {
   return (
     <div className="grid gap-3 lg:grid-cols-12">
       <Tile className="lg:col-span-8" title="Quand étions-nous dangereux, et avions-nous le ballon ?"
-        note="Menace offensive lissée et part de possession minute par minute, avec buts, cartons et mi-temps.">
+        note="Menace offensive (points / 5 min, lissée) et part de possession sur 5 min glissantes, avec tirs, buts, cartons et mi-temps.">
         <MatchStory timeline={d.timeline} />
       </Tile>
       <Tile className="lg:col-span-4" title="Quel type de match était-ce ?" note={`Profil comparé à nos ${n} matchs tagués.`}>

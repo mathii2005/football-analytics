@@ -29,9 +29,9 @@ export default function CouloirPitch({ rows, onCouloir }) {
                 <title>{`${COULOIR_LABELS[c]} : ${Math.round((r?.share ?? 0) * 100)} % (${r?.n ?? 0} actions)`}</title>
               </rect>
               <Arrow cx={(x0 + x1) / 2} share={r?.share ?? 0} />
-              <text pointerEvents="none" x={(x0 + x1) / 2} y={230} textAnchor="middle" fontFamily="Barlow Condensed" fontWeight={700} fontSize={30} fill={inkOn(t * 0.85)}>
+              <text pointerEvents="none" x={(x0 + x1) / 2} y={292} textAnchor="middle" fontFamily="Barlow Condensed" fontWeight={700} fontSize={30} fill={inkOn(t * 0.85)}>
                 {Math.round((r?.share ?? 0) * 100)}%</text>
-              <text pointerEvents="none" x={(x0 + x1) / 2} y={248} textAnchor="middle" fontSize={10} fill={inkOn(t * 0.85)}>{r?.n ?? 0} actions</text>
+              <text pointerEvents="none" x={(x0 + x1) / 2} y={310} textAnchor="middle" fontSize={10} fill={inkOn(t * 0.85)}>{r?.n ?? 0} actions</text>
             </g>
           );
         })}

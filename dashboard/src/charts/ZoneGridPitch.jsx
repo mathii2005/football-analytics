@@ -12,6 +12,7 @@ export default function ZoneGridPitch({ grid }) {
     return (
       <g key={key}>
         <rect x={x0 + 1.5} y={y0 + 1.5} width={x1 - x0 - 3} height={y1 - y0 - 3} rx={1.5} fill={n ? goldRamp(0.12 + 0.88 * t) : "transparent"}><title>{`${n} actions`}</title></rect>
+        {n === 0 && <text pointerEvents="none" x={(x0 + x1) / 2} y={(y0 + y1) / 2 + 4} textAnchor="middle" fontSize={11} fill="var(--ink-3)">0</text>}
         {n > 0 && <text pointerEvents="none" x={(x0 + x1) / 2} y={(y0 + y1) / 2 + 6} textAnchor="middle" fontFamily="Barlow Condensed" fontWeight={600} fontSize={18} fill={inkOn(0.12 + 0.88 * t)}>{n}</text>}
       </g>
     );

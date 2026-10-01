@@ -11,18 +11,19 @@ const ROWS = [
   ["shots", "Tirs", (v) => (v == null ? "–" : Math.round(v))],
   ["shots_per_possession", "Tirs par possession", (v) => dec(v)],
   ["losses_opp_half_share", "Pertes dans leur moitié", pct],
-  ["not_cheap_loss", "Possessions sans perte rapide", pct],
+  ["not_cheap_loss", "Sans perte rapide", pct],
 ];
 
 export default function Bullets({ profile, summary }) {
   return (
-    <ul className="space-y-2.5">
+    <ul className="space-y-4">
       {ROWS.map(([k, label, fmt]) => {
         const s = summary[k], v = profile?.[k];
         if (!s || v == null) return null;
-        const lo = Math.min(s.min, v), hi = Math.max(s.max, v);
-        const pad = (hi - lo) * 0.08 || 0.05;
-        const x = (val) => ((val - (lo - pad)) / (hi - lo + 2 * pad)) * 100;
+        // shares on a fixed 0-100 % axis, counts and ratios on 0 .. max x 1.1,
+        // so the width of the season range means something
+        const top = fmt === pct ? 1 : Math.max(s.max, v) * 1.1 || 1;
+        const x = (val) => (val / top) * 100;
         return (
           <li key={k} className="grid grid-cols-[9.5rem_1fr_3.2rem] items-center gap-2 text-[12px]"
             title={`${label} : ${fmt(v)} (moyenne ${fmt(s.mean)}, nos matchs ${fmt(s.min)}–${fmt(s.max)})`}>
@@ -31,6 +32,8 @@ export default function Bullets({ profile, summary }) {
               <div className="absolute top-1/2 h-2 -translate-y-1/2 rounded-sm" style={{ left: `${x(s.min)}%`, width: `${x(s.max) - x(s.min)}%`, background: MID }} />
               <div className="absolute top-0 h-4 w-0.5" style={{ left: `${x(s.mean)}%`, background: THEM }} />
               <div className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-paper" style={{ left: `${x(v)}%`, background: US }} />
+              <span className="absolute -bottom-3 -translate-x-1/2 text-[9px] text-ink-3 tabular" style={{ left: `${x(s.min)}%` }}>{fmt(s.min)}</span>
+              <span className="absolute -bottom-3 -translate-x-1/2 text-[9px] text-ink-3 tabular" style={{ left: `${x(s.max)}%` }}>{fmt(s.max)}</span>
             </div>
             <span className="text-right font-semibold text-ink tabular">{fmt(v)}</span>
           </li>
