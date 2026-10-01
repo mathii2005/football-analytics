@@ -54,3 +54,10 @@ def test_events_goals_cards_half():
 def test_timeline_empty():
     tl = match_timeline({"events": [], "match": {}}, [])
     assert tl == {"minutes": [], "events": []}
+
+
+def test_shots_are_events_and_threat_per_5min():
+    tl = run([ev(300, "TIR_HC"), ev(320, "TIR_C", team="them"), ev(600, "PERTE", zone=3)])
+    shots = [e for e in tl["events"] if e["kind"] == "shot"]
+    assert [(s["minute"], s["code"]) for s in shots] == [(5, "TIR_HC")]
+    assert sum(m["threat_5min"] for m in tl["minutes"]) == pytest.approx(5 * 3, rel=0.01)

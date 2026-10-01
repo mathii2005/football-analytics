@@ -115,9 +115,9 @@ export default function App() {
   const score = info?.final_score;
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-paper-2">
       <header className="band bg-band text-paper">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl px-3 sm:px-5">
           <div className="flex flex-wrap items-center justify-between gap-3 py-4">
             <Wordmark />
             <label className="flex items-center gap-2 text-xs uppercase tracking-wider text-band-ink-2">
@@ -134,8 +134,8 @@ export default function App() {
           </div>
 
           {info && (
-            <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pb-5 pt-2">
-              <h1 className="display text-4xl font-bold uppercase leading-none tracking-wide sm:text-5xl">
+            <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pb-3 pt-1">
+              <h1 className="display text-3xl font-bold uppercase leading-none tracking-wide sm:text-4xl">
                 Lauréats <span className="text-gold tabular">{score ? `${score.us}–${score.them}` : "–"}</span> {info.opponent}
               </h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-band-ink-2">
@@ -175,7 +175,7 @@ export default function App() {
         </div>
         {data && (
           <div className="bg-band-2">
-            <div className="mx-auto max-w-6xl sm:px-2">
+            <div className="mx-auto max-w-7xl sm:px-2">
               <Scoreboard figures={figuresFor(tab, data)} boardKey={`${selected}-${tab}`} />
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function App() {
       </header>
 
       <main id="tabpanel" role="tabpanel" aria-labelledby={`tab-${tab}`}
-        className={`mx-auto max-w-6xl px-4 py-8 transition-opacity sm:px-6 ${loading ? "opacity-50" : ""}`}>
+        className={`mx-auto max-w-7xl px-3 py-4 transition-opacity sm:px-5 ${loading ? "opacity-50" : ""}`}>
         {error && (
           <div role="alert" className="mb-8 flex gap-3 rounded border border-rule bg-paper-2 p-4 text-sm text-ink-2">
             <AlertTriangle size={18} className="mt-0.5 shrink-0 text-gold-deep" aria-hidden="true" />

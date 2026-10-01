@@ -8,10 +8,12 @@ DEFINITIONS
                     half with a Gaussian kernel (sigma SMOOTH_SIGMA_MIN),
                     weights renormalised per source minute so the total is
                     preserved exactly.
+    threat_5min   : threat_smooth x 5, read as "threat per 5 minutes" (same
+                    scale as the old 5-minute momentum bars).
     poss_share    : our share of live possession time in a window of
                     POSS_WINDOW_MIN centred on the minute (inclusive: every
                     possession at its bounds); None when no live time.
-    events        : our goals (BUT), opponent goals (possession ending
+    events        : our shots (TIR_C / TIR_HC), our goals (BUT), opponent goals (possession ending
                     opp_goal, at its end bound), cards, and half-time (first
                     minute of half 2).
 """
@@ -69,6 +71,7 @@ def match_timeline(match_data: dict, possessions) -> dict:
             c = (m + 0.5) * 60_000
             half_w = POSS_WINDOW_MIN / 2 * 60_000
             minutes.append({"half": half, "minute": m, "threat": threat[k], "threat_smooth": round(sm[k], 3),
+                            "threat_5min": round(sm[k] * 5, 2),
                             "poss_share": poss_share(hp, c - half_w, c + half_w)})
         if half > 1:
             marks.append({"half": half, "minute": start, "kind": "half", "team": None, "code": None})
@@ -76,6 +79,8 @@ def match_timeline(match_data: dict, possessions) -> dict:
             m = int(e["timestamp_ms"] // 60_000)
             if e["code"] in GOAL_CODES and e.get("team") != THEM:
                 marks.append({"half": half, "minute": m, "kind": "goal", "team": US, "code": e["code"]})
+            elif e["code"] in ("TIR_C", "TIR_HC") and e.get("team") != THEM:
+                marks.append({"half": half, "minute": m, "kind": "shot", "team": US, "code": e["code"]})
             elif e["code"] in CARD_CODES:
                 marks.append({"half": half, "minute": m, "kind": "card", "team": THEM if e.get("team") == THEM else US,
                               "code": e["code"]})
