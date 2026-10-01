@@ -101,3 +101,10 @@ def test_classic_single_half_no_shots():
     assert r["headline"]["actions_per_shot"] is None
     assert [s["n"] for s in r["funnel"]] == [0, 0, 0, 0, 0]
     assert len(r["tempo"]) == 1
+
+
+def test_transition_deltas_listed(vanier):
+    t = classic_report(*vanier)["transition_speed"]
+    assert len(t["deltas_s"]) == 16
+    from statistics import median
+    assert round(median(t["deltas_s"]), 1) == 7.9

@@ -83,3 +83,42 @@ def test_phases_empty_match():
     assert r["counter_press"]["n_losses"] == 0
     assert r["profile"]["us"]["median_ms"] is None
     assert r["finishing"]["shots_per_possession"] is None
+
+
+# ── series for charts ──────────────────────────────────────────────
+
+def test_regain_curve_steps():
+    events = [ev(10, "RECUP", zone=2), ev(20, "PERTE", zone=3), ev(23, "RECUP", zone=3),
+              ev(30, "PERTE", zone=4), ev(42, "RECUP", zone=2)]
+    rc, _ = run(events)
+    c = rc["regain_curve"]
+    assert c["t"][:1] == [0] and len(c["t"]) == 61
+    assert c["overall"][0] == 1.0 and c["overall"][3] == 0.5 and c["overall"][12] == 0.0
+    assert c["n"] == {"overall": 2, "own": 0, "3": 1, "4": 1}
+
+
+def test_regain_curve_not_regained_stays():
+    rc, _ = run([ev(10, "RECUP", zone=2), ev(20, "PERTE", zone=1)])
+    assert rc["regain_curve"]["overall"][-1] == 1.0
+    assert rc["regain_curve"]["by_zone"]["own"][60] == 1.0
+
+
+def test_regain_curve_empty():
+    r = phases_report({"events": [], "match": {}}, [])
+    assert r["regain_curve"]["n"]["overall"] == 0
+    assert r["regain_curve"]["overall"] == []
+
+
+def test_flow_links_sum_to_possessions():
+    m = json.loads((FIX / "vanier_2026-09-26.json").read_text())
+    ps = possessions_from_match(m)
+    r = phases_report(m, ps)
+    assert sum(l["value"] for l in r["flow"]["links"]) == sum(p.team == "us" for p in ps)
+    names = [n["name"] for n in r["flow"]["nodes"]]
+    assert "Récup Z1–2" in names and "But / tir" in names
+
+
+def test_durations_lists_timed_only():
+    events = [ev(10, "RECUP", zone=2), ev(13, "CONDUITE", zone=3), ev(40, "RECUP", zone=2), ev(44, "PERTE", zone=3)]
+    r, _ = run(events)
+    assert r["durations"]["us"] == [4_000]

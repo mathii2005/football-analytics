@@ -30,6 +30,14 @@ DEFINITIONS (new - owned by the staff, change deliberately)
                        within_10s and are left out of the median).
     high regain      : opponent possession ended by one of our recoveries
                        in zone 3, 4 or the box.
+    regain curve     : for t = 0..REGAIN_CURVE_S seconds, the share of our
+                       (exact) losses not yet regained after t seconds;
+                       not-regained losses stay in the numerator. Zones:
+                       "own" (1-2), "3", "4" (4 and box).
+    flow             : our possessions from start group (recovery zone 1-2,
+                       recovery zone 3+, set piece, kickoff, other) to outcome
+                       group (goal/shot, box, cheap loss, loss in their half,
+                       loss in our half, ball out, unknown).
     tempo            : our tagged actions (ACTION_CODES, shots included)
                        per live minute of our possession.
 """
@@ -50,6 +58,12 @@ STATES = ("menée", "égalité", "en avance")
 START_TYPES = ("recup", "set_piece", "kickoff", "other")
 REGAIN_FAST_MS = 5_000
 REGAIN_MS = 10_000
+REGAIN_CURVE_S = 60
+FLOW_START = {"recup_low": "Récup Z1–2", "recup_high": "Récup Z3–surface", "set_piece": "CPA",
+              "kickoff": "Engagement", "other": "Autre"}
+FLOW_END = {"goal": "But / tir", "shot": "But / tir", "box_entry": "Surface", "cheap_loss": "Perte rapide",
+            "loss_opp_half": "Perte leur ½", "loss_own_half": "Perte notre ½", "ball_out": "Sortie",
+            "unknown": "Inconnu"}
 ZONES = (1, 2, 3, 4, "BOX")
 
 
@@ -190,6 +204,43 @@ def counter_press(ps) -> dict:
             "by_zone": [{"zone": str(z), **summary([(i, p) for i, p in losses if p.end_zone == z])} for z in ZONES]}
 
 
+def loss_zone_group(z):
+    return "own" if z in (1, 2) else "3" if z == 3 else "4" if z in (4, "BOX") else None
+
+
+def regain_curve(ps) -> dict:
+    losses = [(i, p) for i, p in enumerate(ps) if p.team == US and p.end_type == "perte" and p.end_exact]
+    t = list(range(REGAIN_CURVE_S + 1)) if losses else []
+
+    def curve(items):
+        times = [regain_ms(ps, i) for i, _ in items]
+        if not items:
+            return []
+        return [sum(1 for r in times if r is None or r > s * 1000) / len(items) for s in t]
+
+    groups = {g: [(i, p) for i, p in losses if loss_zone_group(p.end_zone) == g] for g in ("own", "3", "4")}
+    return {"t": t, "overall": curve(losses), "by_zone": {g: curve(v) for g, v in groups.items()},
+            "n": {"overall": len(losses), **{g: len(v) for g, v in groups.items()}}}
+
+
+def flow(ps) -> dict:
+    counts = {}
+    for p in ps:
+        if p.team != US:
+            continue
+        if p.start_type == "recup":
+            start = "recup_high" if p.start_zone in HIGH_PRESS_ZONES else "recup_low"
+        else:
+            start = start_group(p)
+        key = (FLOW_START[start], FLOW_END[outcome(p)])
+        counts[key] = counts.get(key, 0) + 1
+    names = list(dict.fromkeys(list(FLOW_START.values()) + list(FLOW_END.values())))
+    used = sorted({n for k in counts for n in k}, key=names.index)
+    idx = {n: i for i, n in enumerate(used)}
+    return {"nodes": [{"name": n} for n in used],
+            "links": [{"source": idx[a], "target": idx[b], "value": v} for (a, b), v in counts.items()]}
+
+
 def defence(ps) -> dict:
     theirs = [(i, p) for i, p in enumerate(ps) if p.team == THEM]
     timed = [p.duration_ms for _, p in theirs if p.duration_ms is not None]
@@ -240,4 +291,8 @@ def phases_report(match_data: dict, possessions) -> dict:
         "defence": defence(possessions),
         "finishing": finishing(possessions),
         "game_time": game_time(events, possessions),
+        "regain_curve": regain_curve(possessions),
+        "flow": flow(possessions),
+        "durations": {"us": [p.duration_ms for p in possessions if p.team == US and p.duration_ms is not None],
+                      "them": [p.duration_ms for p in possessions if p.team == THEM and p.duration_ms is not None]},
     }

@@ -215,6 +215,7 @@ def transition_speed(events) -> dict:
                 deltas.append((t1 - t0) / 1000)
     n = len(deltas)
     return {"median_s": round(median(deltas), 1) if n else None, "n": n,
+            "deltas_s": [round(d, 1) for d in deltas],
             "fast": sum(1 for d in deltas if d < 5), "mid": sum(1 for d in deltas if 5 <= d < 15),
             "slow": sum(1 for d in deltas if d >= 15),
             "pct_leading": n / len(recups) if recups else None}
