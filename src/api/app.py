@@ -23,6 +23,8 @@ from src.analytics.possessions import possessions_from_match, format_ms, US, THE
 from src.analytics.quality import quality_report
 from src.analytics.report import match_report
 from src.analytics.phases import phases_report
+from src.analytics.timeline import match_timeline
+from src.analytics.season import season_from
 from src.analytics.clips import review_clips
 from src.analytics.video import veo_info, video_url
 
@@ -169,6 +171,27 @@ def phases(match_id: str):
     progression, counter-press, defensive phases, finishing, game time."""
     match, ps = analyse(match_id)
     return phases_report(match, ps)
+
+
+@app.get("/matches/{match_id}/timeline")
+def timeline(match_id: str):
+    """Minute-by-minute smoothed threat, rolling possession share and events."""
+    match, ps = analyse(match_id)
+    return match_timeline(match, ps)
+
+
+@app.get("/season")
+def season():
+    """One profile per tagged match plus mean/min/max: the radar and bullet baseline."""
+    items = []
+    for path in sorted(match_dir().glob("*.json")):
+        try:
+            match, ps = analyse(path.stem)
+        except (json.JSONDecodeError, KeyError, TypeError, AttributeError):
+            continue
+        if isinstance(match, dict) and isinstance(match.get("events"), list) and isinstance(match.get("match"), dict):
+            items.append((path.stem, match, ps))
+    return season_from(items)
 
 
 @app.get("/matches/{match_id}/clips")

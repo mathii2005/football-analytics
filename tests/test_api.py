@@ -90,3 +90,11 @@ def test_report_has_classic_blocks(client):
 def test_clips_library_facets(client):
     c = client.get("/matches/champlain_15min/clips").json()
     assert c["library"] and all("state" in x and "period" in x for x in c["library"])
+
+
+def test_season_and_timeline_endpoints(client):
+    s = client.get("/season").json()
+    assert {m["id"] for m in s["matches"]} == {"champlain_15min", "match_001"}
+    assert "possession" in s["summary"]
+    t = client.get("/matches/champlain_15min/timeline").json()
+    assert t["minutes"] and "events" in t
