@@ -155,7 +155,7 @@ export default function App() {
             </div>
           )}
 
-          <nav role="tablist" aria-label="Sections" className="-mx-4 flex overflow-x-auto px-4 sm:mx-0 sm:px-0"
+          <nav role="tablist" aria-label="Sections" className="-mx-3 flex overflow-x-auto px-3 sm:mx-0 sm:px-0"
             onKeyDown={(e) => {
               if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
               const i = TABS.findIndex((t) => t.id === tab);
