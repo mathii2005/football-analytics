@@ -1,3 +1,5 @@
+> **Superseded (2026-10-02)** by `docs/pipeline/PIPELINE.md` and `docs/pipeline/CODEBOOK.md`. Kept for history.
+
 # Two-pass tagger (v1.0) – design
 
 Date: 2026-09-30 · Status: designed by Claude on the user's delegation, after
