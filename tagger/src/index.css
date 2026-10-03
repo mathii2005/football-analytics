@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { font-feature-settings: "tnum"; }
+.btn { @apply rounded border border-rule bg-paper px-3 py-1.5 text-sm font-medium text-ink hover:bg-paper-2 active:scale-95 transition; }
+.btn-primary { @apply border-ink bg-ink text-paper hover:bg-ink-2; }
+.field { @apply mt-1 w-full rounded border border-rule bg-paper px-2 py-1.5 text-sm focus:border-ink focus:outline-none; }
+.label { @apply text-xs font-medium uppercase tracking-wide text-ink-3; }
+kbd { @apply rounded border border-rule bg-paper-2 px-1.5 py-0.5 font-mono text-xs; }

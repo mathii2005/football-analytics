@@ -4,14 +4,38 @@
     {
       "name": "api",
       "runtimeExecutable": "env",
-      "runtimeArgs": ["FA_MATCH_DIR=/Users/mathi/Projects/laureats-tagger/exports", ".venv/bin/python", "-m", "uvicorn", "src.api.app:app", "--port", "8000"],
+      "runtimeArgs": [
+        "FA_MATCH_DIR=/Users/mathi/Projects/laureats-tagger/exports",
+        ".venv/bin/python",
+        "-m",
+        "uvicorn",
+        "src.api.app:app",
+        "--port",
+        "8000"
+      ],
       "port": 8000
     },
     {
       "name": "dashboard",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "dashboard", "run", "dev"],
+      "runtimeArgs": [
+        "--prefix",
+        "dashboard",
+        "run",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "tagger",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "tagger",
+        "run",
+        "dev"
+      ],
+      "port": 3100
     }
   ]
 }
