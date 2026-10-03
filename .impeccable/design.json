@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-01T01:49:35.508557+00:00",
+  "title": "Design System: Lauréats · Analyse de match",
+  "extensions": {
+    "colorMeta": {
+      "gold": {
+        "role": "primary",
+        "displayName": "Lauréats Gold",
+        "tonalRamp": [
+          "#3a2a0c",
+          "#5e4415",
+          "#85601a",
+          "#a97d2c",
+          "#c79741",
+          "#d6a755",
+          "#e7c88c",
+          "#f4ecdc"
+        ]
+      },
+      "gold-deep": {
+        "role": "primary",
+        "displayName": "Deep Gold"
+      },
+      "gold-tint": {
+        "role": "primary",
+        "displayName": "Gold Tint"
+      },
+      "gold-lift": {
+        "role": "primary",
+        "displayName": "Gold Lift"
+      },
+      "data-us": {
+        "role": "secondary",
+        "displayName": "Data Gold (Lauréats)",
+        "tonalRamp": [
+          "#7a5512",
+          "#8c6b30",
+          "#9e824e",
+          "#b0986c",
+          "#c1ae89",
+          "#d3c4a7",
+          "#e5dbc5",
+          "#f7f1e3"
+        ]
+      },
+      "data-them": {
+        "role": "secondary",
+        "displayName": "Slate Blue (opponent)",
+        "tonalRamp": [
+          "#163f6b",
+          "#34587f",
+          "#537293",
+          "#718ba7",
+          "#8fa5bc",
+          "#adbed0",
+          "#ccd8e4",
+          "#eaf1f8"
+        ]
+      },
+      "data-mid": {
+        "role": "secondary",
+        "displayName": "Mid Grey (diverging midpoint)",
+        "tonalRamp": [
+          "#8a6117",
+          "#a98d5a",
+          "#c9ba9e",
+          "#e8e6e1",
+          "#a5b4c1",
+          "#6281a0",
+          "#1f4f80"
+        ]
+      },
+      "gold-ramp-low": {
+        "role": "tertiary",
+        "displayName": "Gold ramp, low end",
+        "tonalRamp": [
+          "#7a5512",
+          "#8c6b30",
+          "#9e824e",
+          "#b0986c",
+          "#c1ae89",
+          "#d3c4a7",
+          "#e5dbc5",
+          "#f7f1e3"
+        ]
+      },
+      "gold-ramp-high": {
+        "role": "tertiary",
+        "displayName": "Gold ramp, high end",
+        "tonalRamp": [
+          "#7a5512",
+          "#8c6b30",
+          "#9e824e",
+          "#b0986c",
+          "#c1ae89",
+          "#d3c4a7",
+          "#e5dbc5",
+          "#f7f1e3"
+        ]
+      },
+      "blue-ramp-low": {
+        "role": "tertiary",
+        "displayName": "Blue ramp, low end",
+        "tonalRamp": [
+          "#163f6b",
+          "#34587f",
+          "#537293",
+          "#718ba7",
+          "#8fa5bc",
+          "#adbed0",
+          "#ccd8e4",
+          "#eaf1f8"
+        ]
+      },
+      "blue-ramp-high": {
+        "role": "tertiary",
+        "displayName": "Blue ramp, high end",
+        "tonalRamp": [
+          "#163f6b",
+          "#34587f",
+          "#537293",
+          "#718ba7",
+          "#8fa5bc",
+          "#adbed0",
+          "#ccd8e4",
+          "#eaf1f8"
+        ]
+      },
+      "diverging-us-end": {
+        "role": "tertiary",
+        "displayName": "Diverging, positive end",
+        "tonalRamp": [
+          "#8a6117",
+          "#a98d5a",
+          "#c9ba9e",
+          "#e8e6e1",
+          "#a5b4c1",
+          "#6281a0",
+          "#1f4f80"
+        ]
+      },
+      "diverging-them-end": {
+        "role": "tertiary",
+        "displayName": "Diverging, negative end",
+        "tonalRamp": [
+          "#8a6117",
+          "#a98d5a",
+          "#c9ba9e",
+          "#e8e6e1",
+          "#a5b4c1",
+          "#6281a0",
+          "#1f4f80"
+        ]
+      },
+      "card-yellow": {
+        "role": "tertiary",
+        "displayName": "Yellow card"
+      },
+      "card-red": {
+        "role": "tertiary",
+        "displayName": "Red card"
+      },
+      "band": {
+        "role": "neutral",
+        "displayName": "Band Black"
+      },
+      "band-2": {
+        "role": "neutral",
+        "displayName": "Board Panel"
+      },
+      "band-rule": {
+        "role": "neutral",
+        "displayName": "Band Rule"
+      },
+      "band-ink-2": {
+        "role": "neutral",
+        "displayName": "Band Grey"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper"
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Paper Shade"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "#0a0a0a",
+          "#2a2926",
+          "#45433f",
+          "#5a5853",
+          "#6f6c66",
+          "#9a968e",
+          "#c9c6bf",
+          "#f3f3f3"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2"
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Match title in the band, score in gold."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Scoreboard values and headline figures; condensed tabular."
+      },
+      "tab": {
+        "displayName": "Tab",
+        "purpose": "Band navigation, caps."
+      },
+      "tile-title": {
+        "displayName": "Tile title",
+        "purpose": "The question the tile answers."
+      },
+      "tile-note": {
+        "displayName": "Tile note",
+        "purpose": "How to read the chart: n, method, window, smoothing."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default reading text."
+      },
+      "data-row": {
+        "displayName": "Data row",
+        "purpose": "Rows of bullets, dumbbells, butterfly, key-value lists."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Scoreboard labels, table headers, half labels; caps."
+      },
+      "axis": {
+        "displayName": "Axis",
+        "purpose": "Chart ticks and reference-line labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tooltip",
+        "value": "0 4px 16px rgba(10,10,10,0.08)",
+        "purpose": "Chart tooltips (floating readouts only)."
+      },
+      {
+        "name": "tooltip-chart",
+        "value": "0 4px 14px rgba(10,10,10,0.1)",
+        "purpose": "Match story and radar tooltips."
+      },
+      {
+        "name": "tooltip-timeline",
+        "value": "0 6px 20px rgba(10,10,10,0.10)",
+        "purpose": "Possession timeline tooltip."
+      }
+    ],
+    "motion": [
+      {
+        "name": "board-in",
+        "value": "520ms cubic-bezier(0.16, 1, 0.3, 1), translateY(40%) + blur(2px) + opacity .35 to rest, 45ms stagger",
+        "purpose": "Scoreboard figures flip in on tab/match change; the only authored motion; off under reduced motion."
+      },
+      {
+        "name": "state-fade",
+        "value": "150ms",
+        "purpose": "Hover colour changes and timeline dimming (state feedback, not authored motion)."
+      },
+      {
+        "name": "charts",
+        "value": "none",
+        "purpose": "All charts render with animation off."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "dataPalette": {
+      "source": "dashboard/src/charts/palette.js",
+      "validated": "dataviz validate_palette on #fff, CVD ΔE 23.4",
+      "goldRamp": [
+        "#f7f1e3",
+        "#7a5512"
+      ],
+      "blueRamp": [
+        "#eaf1f8",
+        "#163f6b"
+      ],
+      "diverging": [
+        "#1f4f80",
+        "#e8e6e1",
+        "#8a6117"
+      ],
+      "inkOnSequential": "white when t > 0.55, else ink",
+      "inkOnDiverging": "white when t < -0.4 or t > 0.6, else ink",
+      "smallN": {
+        "pitchHatchBelow": 5,
+        "dotFadeBelow": 10
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Tile",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "The dashboard unit: question title, note with n/method, one chart.",
+      "html": "<section class=\"ds-tile\"><h3 class=\"ds-tile-title\">Où perd-on le ballon ?</h3><p class=\"ds-tile-note\">Cliquer une zone pour voir ces pertes. n = 64.</p><div class=\"ds-tile-body\"><div class=\"ds-band\" style=\"background:#163f6b;color:#fff\">31 pertes</div><div class=\"ds-band\" style=\"background:#adbed0;color:#0a0a0a\">12 pertes</div></div></section>",
+      "css": ".ds-tile{background:var(--paper,#fff);border:1px solid var(--rule,#e5e3de);border-radius:2px;padding:16px;font-family:Barlow,system-ui,sans-serif;max-width:340px}.ds-tile-title{margin:0;font-size:13px;font-weight:600;line-height:1.25;color:#0a0a0a}.ds-tile-note{margin:2px 0 0;font-size:11px;line-height:1.375;color:#6f6c66}.ds-tile-body{margin-top:12px}.ds-band{font-family:'Barlow Condensed',Barlow,sans-serif;font-weight:600;font-size:20px;text-align:center;padding:14px 0;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Primary Button (video)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Gold fill, always means go to the Veo moment.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" aria-hidden=\"true\"><polygon points=\"6 3 20 12 6 21 6 3\"/></svg>Voir les clips (20)</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:6px;background:#c79741;color:#0a0a0a;border:none;border-radius:4px;padding:6px 12px;font:600 14px Barlow,system-ui,sans-serif;cursor:pointer;transition:background-color .15s}.ds-btn-primary:hover{background:#d6a755}.ds-btn-primary:focus-visible{outline:2px solid #c79741;outline-offset:2px}"
+    },
+    {
+      "name": "Action Link",
+      "kind": "custom",
+      "refersTo": "link-action",
+      "description": "Deep gold link that opens the clip library pre-filtered.",
+      "html": "<button class=\"ds-link-action\">Bibliothèque (290) →</button>",
+      "css": ".ds-link-action{background:none;border:none;padding:0;font:600 12px Barlow,system-ui,sans-serif;color:#85601a;cursor:pointer}.ds-link-action:hover{color:#0a0a0a}.ds-link-action:focus-visible{outline:2px solid #c79741;outline-offset:2px}"
+    },
+    {
+      "name": "Band Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Condensed caps tabs in the black band, gold underline when active.",
+      "html": "<nav class=\"ds-tabs\"><button class=\"ds-tab ds-tab-active\">Aperçu</button><button class=\"ds-tab\">Possession</button><button class=\"ds-tab\">Terrain</button></nav>",
+      "css": ".ds-tabs{display:flex;background:#0a0a0a;padding:0 12px}.ds-tab{background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;font:600 18px 'Barlow Condensed',Barlow,sans-serif;letter-spacing:.025em;text-transform:uppercase;color:#b9b4aa;cursor:pointer;transition:color .15s}.ds-tab:hover{color:#fff}.ds-tab-active{color:#fff;border-bottom-color:#c79741}.ds-tab:focus-visible{outline:2px solid #c79741;outline-offset:2px}"
+    },
+    {
+      "name": "Scoreboard Strip",
+      "kind": "custom",
+      "refersTo": "scoreboard-figure",
+      "description": "Five gold figures per tab; the only authored motion (flip in).",
+      "html": "<dl class=\"ds-board\"><div class=\"ds-fig\"><dt>Possession</dt><dd class=\"ds-val\">56 %</dd><dd class=\"ds-sub\">56 % avec les phases déduites</dd></div><div class=\"ds-fig\"><dt>Tirs</dt><dd class=\"ds-val\">8</dd><dd class=\"ds-sub\">5 cadrés · 2 buts</dd></div><div class=\"ds-fig\"><dt>Field tilt</dt><dd class=\"ds-val\">54 %</dd><dd class=\"ds-sub\">évènements dans leur moitié</dd></div></dl>",
+      "css": ".ds-board{display:grid;grid-template-columns:repeat(3,1fr);margin:0;background:#1c1b19;border-top:1px solid #2e2c28;font-family:Barlow,system-ui,sans-serif}.ds-fig{padding:10px 20px;border-left:1px solid #2e2c28}.ds-fig:first-child{border-left:0}.ds-fig dt{font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:#b9b4aa}.ds-val{margin:4px 0 0;font:600 30px/1 'Barlow Condensed',Barlow,sans-serif;color:#c79741;font-variant-numeric:tabular-nums;animation:ds-board-in 520ms cubic-bezier(.16,1,.3,1) both}.ds-fig:nth-child(2) .ds-val{animation-delay:45ms}.ds-fig:nth-child(3) .ds-val{animation-delay:90ms}.ds-sub{margin:4px 0 0;font-size:11px;color:#b9b4aa}@keyframes ds-board-in{from{transform:translateY(40%);filter:blur(2px);opacity:.35}to{transform:none;filter:none;opacity:1}}@media (prefers-reduced-motion:reduce){.ds-val{animation:none}}"
+    },
+    {
+      "name": "Bullet Row",
+      "kind": "custom",
+      "description": "KPI vs own season: grey range, blue average tick, gold match dot.",
+      "html": "<div class=\"ds-bullet\"><span class=\"ds-bl\">Possession</span><div class=\"ds-bt\"><div class=\"ds-br\" style=\"left:43%;width:13%\"></div><div class=\"ds-bm\" style=\"left:49%\"></div><div class=\"ds-bd\" style=\"left:56%\"></div></div><span class=\"ds-bv\">56 %</span></div>",
+      "css": ".ds-bullet{display:grid;grid-template-columns:9.5rem 1fr 3.2rem;align-items:center;gap:8px;font:12px Barlow,system-ui,sans-serif;max-width:420px}.ds-bl{color:#45433f}.ds-bt{position:relative;height:16px}.ds-br{position:absolute;top:4px;height:8px;background:#e8e6e1;border-radius:2px}.ds-bm{position:absolute;top:0;height:16px;width:2px;background:#2a6aa8}.ds-bd{position:absolute;top:2px;width:12px;height:12px;margin-left:-6px;border-radius:9999px;background:#b8862e;box-shadow:0 0 0 2px #fff}.ds-bv{text-align:right;font-weight:600;color:#0a0a0a;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Clip Chips",
+      "kind": "chip",
+      "refersTo": "chip-category",
+      "description": "Category (ink) and context (hairline) chips under a clip reason.",
+      "html": "<span class=\"ds-chip-cat\">Buts encaissés</span> <span class=\"ds-chip-ctx\">À égalité</span>",
+      "css": ".ds-chip-cat,.ds-chip-ctx{display:inline-block;border-radius:2px;padding:2px 6px;font:500 11px Barlow,system-ui,sans-serif}.ds-chip-cat{background:#0a0a0a;color:#fff}.ds-chip-ctx{border:1px solid #e5e3de;color:#45433f;font-weight:400}"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "filter-chip",
+      "description": "Clip-library category toggle with count.",
+      "html": "<button class=\"ds-filter ds-filter-on\">Occasions <span>12</span></button> <button class=\"ds-filter\">Pertes <span>64</span></button>",
+      "css": ".ds-filter{border:1px solid #e5e3de;background:#fff;color:#45433f;border-radius:9999px;padding:4px 12px;font:12px Barlow,system-ui,sans-serif;cursor:pointer;transition:border-color .15s,background-color .15s}.ds-filter span{color:#6f6c66}.ds-filter:hover{border-color:#6f6c66}.ds-filter-on{background:#0a0a0a;border-color:#0a0a0a;color:#fff}.ds-filter-on span{color:rgba(255,255,255,.7)}.ds-filter:focus-visible{outline:2px solid #c79741;outline-offset:2px}"
+    },
+    {
+      "name": "Band Select",
+      "kind": "input",
+      "refersTo": "select-band",
+      "description": "Match selector inside the black band.",
+      "html": "<div class=\"ds-band-wrap\"><select class=\"ds-select-band\"><option>26 septembre 2026 · Vanier 2–1</option></select></div>",
+      "css": ".ds-band-wrap{background:#0a0a0a;padding:12px}.ds-select-band{background:#1c1b19;color:#fff;border:1px solid #2e2c28;border-radius:4px;padding:8px 12px;font:14px Barlow,system-ui,sans-serif}.ds-select-band:focus-visible{outline:2px solid #c79741;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Le poste d'analyse",
+    "overview": "An analyst's workstation in the Tableau / Power BI / StatsBomb sense. Each view answers one question with the chart form the data calls for, and the views sit in a dense grid of white tiles on a light grey ground. The club is present as a frame, not as the content. A black band at the top carries the wordmark, the score, the match select, the tabs and a compact strip of five gold figures. Everything below the band is evidence: charts, pitches, tables, clip rows.\n\nData honesty comes before looks. The tagging is precise in time and coarse in space, so time views get the most investment and pitch views are drawn at the data's true resolution (4 zone bands, or a 4 × 3 couloir grid with the box nested in zone 4). Small samples are shown with their n and visibly weakened. Any smoothing is stated in the tile. Colour shows identity (us / them), magnitude (ramps) or direction (diverging, dumbbell), and never says whether something is good or bad: that is the staff's call. The interface is in French.\n\nThe build rejects gradients, glass, decorative shadows, invented logos, smoothed spatial blobs, shot maps and chart animation.",
+    "keyCharacteristics": [
+      "Black brand band with a compact five-figure gold strip; a grey ground with white tiles below.",
+      "Two palettes: the brand palette for chrome, a validated data palette for marks.",
+      "Every tile is titled with the question it answers, with a one-line note on how to read it.",
+      "The chart form is chosen per question, from a fixed vocabulary.",
+      "Pitches at true resolution only; small n hatched or faded; smoothing disclosed.",
+      "One authored motion: the scoreboard figures flip into place."
+    ],
+    "rules": [
+      {
+        "name": "The Chrome / Data Split Rule",
+        "body": "Brand gold (`gold`, `gold-deep`) belongs to the interface: buttons, links, tabs, figures. Marks in a chart use only `data-us`, `data-them`, `data-mid`, the ramps and the neutrals. A new chart imports from the data palette, never the chrome tokens.",
+        "section": "colors"
+      },
+      {
+        "name": "The Identity, Magnitude, Direction Rule",
+        "body": "Gold means \"us\", \"more of ours\" or \"positive / higher\". Blue means \"them\", \"more losses\" or \"negative / lower\". Neither colour means better or worse. Grey means unresolved, empty or reference.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-on-Ramp Rule",
+        "body": "Labels printed on a ramp cell switch to white past 55 % of a sequential ramp. On the diverging ramp they switch to white below −0.4 and above +0.6, so both dark ends get white. Every cell prints its value; colour is never the only carrier.",
+        "section": "colors"
+      },
+      {
+        "name": "The Question Title Rule",
+        "body": "A tile title is the question, not a topic (\"Où perd-on le ballon ?\", not \"Pertes\"). The note underneath says how to read the answer.",
+        "section": "typography"
+      },
+      {
+        "name": "The Density Rule",
+        "body": "Tiles are packed: 12px gutters, 12–16px padding, small type. Don't add whitespace to make a chart breathe; give it a wider span instead.",
+        "section": "layout"
+      },
+      {
+        "name": "The One Level Rule",
+        "body": "Nothing at rest has a shadow. A shadow means \"floating over the data right now\".",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** title every tile with the question it answers and state n, method, window and any smoothing in its note.",
+      "**Do** pick the chart form for the question from the vocabulary above before adding a new one.",
+      "**Do** draw pitch views at true resolution only: 4 zone bands, or the 4 × 3 couloir × zone grid with the box nested in zone 4.",
+      "**Do** weaken small samples visibly: hatch pitch cells under n = 5 and mark their value with \"*\", and fade dots under n = 10, saying so in the note or legend.",
+      "**Do** use the data palette (`data-us`, `data-them`, `data-mid`, gold / blue / diverging ramps) for marks and the brand palette for chrome.",
+      "**Do** print the value on every ramp cell, switching to white ink per the Ink-on-Ramp Rule.",
+      "**Do** compare against our own tagged matches (range, average), and label it that way.",
+      "**Do** set every number in tabular figures, turn chart animation off, and write all interface text in French."
+    ],
+    "donts": [
+      "**Don't** let colour, wording or ordering judge better or worse in the frontend; direction and identity only.",
+      "**Don't** invent positions: no shot maps, no smoothed heat blobs, no coordinates the tagging doesn't record.",
+      "**Don't** smooth silently; a smoothed curve names its kernel or window.",
+      "**Don't** use chrome gold (`gold`, `gold-deep`) as a data mark, or data gold as interface chrome.",
+      "**Don't** add an opponent threat line; opponent actions are barely tagged.",
+      "**Don't** give resting elements a shadow, or add gradients, glass or background imagery.",
+      "**Don't** add a second authored animation; the scoreboard flip is the motion.",
+      "**Don't** invent or redraw a logo; use `dashboard/public/logo.png` when present and the gold wordmark otherwise."
+    ]
+  }
+}

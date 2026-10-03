@@ -1,0 +1,66 @@
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow-condensed/500.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Lauréats: gold, black, white. Bright gold only on black (8:1);
+   on white, gold text and marks use the deep step (5.0:1). Data marks use the validated palette in
+   charts/palette.js (--us / --them mirror it); brand gold is chrome only. */
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --paper-2: #f3f3f3;
+  --rule: #e5e3de;
+  --ink: #0a0a0a;
+  --ink-2: #45433f;
+  --ink-3: #6f6c66;
+  --gold: #c79741;
+  --gold-deep: #85601a;
+  --gold-tint: #f4ecdc;
+  --gold-lift: #d6a755;
+  --band: #0a0a0a;
+  --band-2: #1c1b19;
+  --band-rule: #2e2c28;
+  --band-ink-2: #b9b4aa;
+  --us: #b8862e;
+  --them: #2a6aa8;
+}
+
+html { background: var(--band); }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Barlow", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  caret-color: var(--gold-deep);
+}
+::selection { background: var(--gold-tint); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 2px; }
+a { text-underline-offset: 3px; }
+* { scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
+.band * { scrollbar-color: var(--band-rule) transparent; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+.display { font-family: "Barlow Condensed", "Barlow", sans-serif; letter-spacing: 0.01em; }
+
+/* inferred possession: hatched, never reads as exact */
+.hatched {
+  background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--paper) 3px 5px);
+}
+
+/* the one authored motion: scoreboard figures flip up into place when the
+   board changes (tab or match), like a stadium board updating */
+@keyframes board-in {
+  from { transform: translateY(40%); filter: blur(2px); opacity: 0.35; }
+  to { transform: none; filter: none; opacity: 1; }
+}
+.board-in { animation: board-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) { .board-in { animation: none; } }
