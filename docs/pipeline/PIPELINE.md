@@ -63,7 +63,7 @@ Show **what happened, with proof**, and track **whether the team is improving on
 4. **One codebook, versioned.** It is stamped in every match. A definition change is a new version, never a silent edit.
 5. **Layers, not rebuilds.** New complexity is a new card, a new metric or a new view on the same log (§13).
 6. **Honest about small samples.** About 15 matches a season: every number carries its n and its review coverage, and shows "trop tôt" (too early) when there isn't enough.
-7. **Definitions belong to the staff.** Items marked [À CONFIRMER] in the codebook are proposals.
+7. **Definitions belong to the staff.** The codebook v1 definitions were confirmed on 2026-10-02; any change follows the codebook's versioning rules.
 
 ---
 
@@ -203,7 +203,7 @@ Keys are read by **physical position** (`event.code`), so the layout works on an
   - inserts an automatic DEAD;
   - sets the pending restart to KICKOFF for the other team.
 - **Restart key:** only accepted while the state is DEAD (otherwise it shows a toast and is ignored). The next `Q`/`W` takes it and applies the automatic band.
-- **Shot while DEAD** (direct free kick, penalty): it belongs to the team that last had the ball live. [À CONFIRMER]
+- **Shot while DEAD** (direct free kick, penalty): it belongs to the team that last had the ball live.
 - **Undo:** adds `U` for the last match press that hasn't been cancelled. It can be repeated.
 - **Inverser:** from MT2, a band press `n` is stored as `5 − n`. The banner shows "Zones inversées".
 

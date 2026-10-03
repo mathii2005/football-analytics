@@ -4,7 +4,7 @@
 > The machine-readable copy is `shared/codebook.v1.json`. It must say exactly what this file says, and a test checks that the two agree.
 > Companion document: [`PIPELINE.md`](PIPELINE.md) (the whole process, from match day to the dashboard).
 >
-> Status: v1.0.0 draft. Definitions marked **[À CONFIRMER]** are proposals the staff have not explicitly confirmed. They are implemented exactly as written until someone says otherwise.
+> Status: v1.0.0. All definitions confirmed by the analyst on behalf of the staff on 2026-10-02. Any change goes through the versioning rules in §0.
 
 ---
 
@@ -196,11 +196,11 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 | Card | Trigger | Questions → values |
 |---|---|---|
 | **SHOT** (Tir) | every `SH` press, both teams | **loc**: `SIX` (6-yard box) / `CENTRAL_BOX` (in the box, lanes HS_L–C–HS_R, outside the 6-yard box) / `WIDE_BOX` (in the box, outside the 18-yard box's inner lanes) / `CENTRAL_OUT` (outside the box, lanes HS_L–C–HS_R) / `WIDE_OUT` · **body**: `FOOT` / `HEAD` / `OTHER` · **situation**: `OPEN` / `FAST_BREAK` (≤ 10 s after a regain) / `SET_PIECE` / `PENALTY` · **assist**: `THROUGH` / `CUTBACK` / `CROSS` / `HS_PASS` / `SET_PIECE_DELIVERY` / `REBOUND` / `SOLO` · **last_pass_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
-| **GOAL** (But) | every `SH:GOAL` press, both teams | Every SHOT question, plus **phase_check**: `TRANSITION` / `BUILD_UP` / `SETTLED` / `SET_PIECE` / `PENALTY` (a check against the computed phase) · **box_lane**: lane where the ball entered the box |
+| **GOAL** (But) | every `SH:GOAL` press, both teams | Every SHOT question, plus **phase_check**: `TRANSITION` / `BUILD_UP` / `SETTLED` / `SET_PIECE` / `PENALTY` (a check against the computed phase) · **box_lane** (lane where the ball entered the box): `L` / `HS_L` / `C` / `HS_R` / `R` |
 | **GAP** (Trou) | every `LOST` window, every low-fidelity block | Re-enter the possession states and bands from the clip, as a patch (§4) |
-| **FLAG** (À revoir) | every `F` press | **type**: `CHANCE_NO_SHOT` / `KEY_DUEL` / `ERROR` / `SET_PIECE_ROUTINE` / `OTHER` · **lane** |
+| **FLAG** (À revoir) | every `F` press | **type**: `CHANCE_NO_SHOT` / `KEY_DUEL` / `ERROR` / `SET_PIECE_ROUTINE` / `OTHER` · **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
 
-**`CHANCE_NO_SHOT` [À CONFIRMER]** = no shot was taken, and in band 5 or on the central edge of the box at least one of these happened:
+**`CHANCE_NO_SHOT`** = no shot was taken, and in band 5 or on the central edge of the box at least one of these happened:
 - a 1v1 with the keeper;
 - a free teammate within ~11 m of goal in lanes HS_L–C–HS_R;
 - a cut-back across the 6-yard box that nobody reached.
@@ -209,8 +209,8 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 
 | Card | Trigger | Questions → values |
 |---|---|---|
-| **ENTRY** (Entrée) | Our band moving 3→4, or into 5 from ≤ 4, while state = US. If over budget: every entry into 5, plus a random 50 % of 3→4 (sampled by the engine, seed = match id) | **lane**: L / HS_L / C / HS_R / R · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` · **between_lines**: "received between their midfield and defensive lines in a half-space?" `YES` / `NO` · **outcome_15s**: `SHOT` / `BOX_ENTRY` / `CORNER` / `LOST` / `RECYCLED` |
-| **LOSS** (Perte) | Our open-play `Q→W` switch in bands 3–5 | **intent**: what were we trying? `PASS_INTO_HS` / `THROUGH` / `CROSS` / `DRIBBLE` / `SHORT_COMBINATION` / `SWITCH` / `CLEARANCE_LONG` / `OTHER` · **intent_lane**: L / HS_L / C / HS_R / R · **cause**: `INTERCEPTED` / `TACKLED` / `BAD_TOUCH` / `OUT` / `FOUL` · **closing_3s**: number of our players closing the ball within 3 s, `0` / `1` / `2` / `3PLUS` · **regain_5s**: pre-filled from the log, confirm `Y` / `N` |
+| **ENTRY** (Entrée) | Our band moving 3→4, or into 5 from ≤ 4, while state = US. If over budget: every entry into 5, plus a random 50 % of 3→4 (sampled by the engine, seed = match id) | **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` · **between_lines**: "received between their midfield and defensive lines in a half-space?" `YES` / `NO` · **outcome_15s**: `SHOT` / `BOX_ENTRY` / `CORNER` / `LOST` / `RECYCLED` |
+| **LOSS** (Perte) | Our open-play `Q→W` switch in bands 3–5 | **intent**: what were we trying? `PASS_INTO_HS` / `THROUGH` / `CROSS` / `DRIBBLE` / `SHORT_COMBINATION` / `SWITCH` / `CLEARANCE_LONG` / `OTHER` · **intent_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **cause**: `INTERCEPTED` / `TACKLED` / `BAD_TOUCH` / `OUT` / `FOUL` · **closing_3s**: number of our players closing the ball within 3 s, `0` / `1` / `2` / `3PLUS` · **regain_5s**: pre-filled from the log, confirm `Y` / `N` |
 
 ### 5.3 Tier 3 — rotating theme (10 min; set pieces → duels → conceding, then repeat)
 
@@ -218,7 +218,7 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 |---|---|---|
 | **SET_PIECE** (CPA) | Every `R:CORNER` / `R:FK` in bands 4–5 (ours) or 0–1 (theirs) | **delivery**: `SHORT` / `NEAR` / `CENTRAL` / `FAR` / `EDGE` · **first_contact**: `US` / `THEM` / `NONE` |
 | **DUEL** | Flags answered `KEY_DUEL` | **result**: `WON` / `LOST` / `NEUTRAL` · **recovery_run**: `Y` / `N` |
-| **OPP_ENTRY** (Entrée adverse) | Their band moving into 0 | **lane** · **method** (same values as ENTRY) |
+| **OPP_ENTRY** (Entrée adverse) | Their band moving into 0 | **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` |
 
 **Priority inside each tier:** chronological order. Tier 1 is always finished before Tier 2 starts.
 
@@ -248,7 +248,7 @@ Re-answering a card appends a new line; the latest line wins.
 - **High regain:** a regain in bands 3–5.
 - **Possession %** = US time ÷ (US time + THEM time). DEAD and UNKNOWN time are excluded.
 
-### 6.3 Phases (each second of possession gets exactly one phase; first matching rule wins) [À CONFIRMER]
+### 6.3 Phases (each second of possession gets exactly one phase; first matching rule wins)
 
 1. **SET_PIECE**: within 20 s after the restart of a corner, free kick or penalty (either team), or a throw-in taken in bands 4–5 (ours) or 0–1 (theirs).
 2. **TRANSITION**: within 10 s after an open-play regain.
@@ -479,4 +479,4 @@ A blocked report still lets the clip list be sent (once G3 passes).
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0.0 | 2026-10-02 | First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
+| 1.0.0 | 2026-10-02 | Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |

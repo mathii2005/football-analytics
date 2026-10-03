@@ -1,0 +1,1562 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-02",
+  "source": "docs/pipeline/CODEBOOK.md",
+  "status": "Definitions confirmed by the analyst on behalf of the staff on 2026-10-02.",
+  "geometry": {
+    "pitch_reference_m": {
+      "length": 105,
+      "width": 68,
+      "box_depth": 16.5,
+      "box_width": 40.32,
+      "six_width": 18.32
+    },
+    "bands": [
+      {
+        "id": 0,
+        "name_fr": "Notre surface",
+        "x_m": [
+          0,
+          16.5
+        ],
+        "box": "ours"
+      },
+      {
+        "id": 1,
+        "name_fr": "Zone 1",
+        "x_m": [
+          0,
+          26.25
+        ],
+        "box": null,
+        "excludes": "our box"
+      },
+      {
+        "id": 2,
+        "name_fr": "Zone 2",
+        "x_m": [
+          26.25,
+          52.5
+        ],
+        "box": null
+      },
+      {
+        "id": 3,
+        "name_fr": "Zone 3",
+        "x_m": [
+          52.5,
+          78.75
+        ],
+        "box": null
+      },
+      {
+        "id": 4,
+        "name_fr": "Zone 4",
+        "x_m": [
+          78.75,
+          105
+        ],
+        "box": null,
+        "excludes": "their box"
+      },
+      {
+        "id": 5,
+        "name_fr": "Leur surface",
+        "x_m": [
+          88.5,
+          105
+        ],
+        "box": "theirs"
+      }
+    ],
+    "red_zone": [
+      4,
+      5
+    ],
+    "end_zone": [
+      5
+    ],
+    "lanes": [
+      {
+        "code": "L",
+        "name_fr": "Couloir gauche",
+        "y_m": [
+          0,
+          13.84
+        ]
+      },
+      {
+        "code": "HS_L",
+        "name_fr": "Couloir intérieur gauche",
+        "y_m": [
+          13.84,
+          24.84
+        ]
+      },
+      {
+        "code": "C",
+        "name_fr": "Axe",
+        "y_m": [
+          24.84,
+          43.16
+        ]
+      },
+      {
+        "code": "HS_R",
+        "name_fr": "Couloir intérieur droit",
+        "y_m": [
+          43.16,
+          54.16
+        ]
+      },
+      {
+        "code": "R",
+        "name_fr": "Couloir droit",
+        "y_m": [
+          54.16,
+          68
+        ]
+      }
+    ],
+    "lane_rule": "Lanes follow the 18-yard and 6-yard box lines extended along the pitch; left/right seen from our attacking direction.",
+    "xt_cells": {
+      "bands": 6,
+      "lanes": 5,
+      "merge": "In bands 0 and 5, L merges into HS_L and R into HS_R (26 valid cells)."
+    }
+  },
+  "teams": [
+    "US",
+    "THEM"
+  ],
+  "clock": {
+    "half1_start_ms": 0,
+    "half2_start_ms": 2700000,
+    "clip_lead_ms": 5000,
+    "veo_formula": {
+      "h1": "offset_h1 + t",
+      "h2": "offset_h2 + (t - 2700000)",
+      "h2_missing": "offset_h1 + t"
+    }
+  },
+  "load": {
+    "target_per_min": 10,
+    "cap_per_min": 12,
+    "block_alarm_per_min": 14,
+    "block_minutes": 15
+  },
+  "keys": {
+    "match": [
+      {
+        "key": "Q",
+        "code": "S:US",
+        "label_fr": "Notre ballon",
+        "definition": "A Lauréats player gains control of the ball (a regain, or the first touch after our restart). Not on a deflection, not when a pass is played. A 50/50 is only pressed once someone controls it.",
+        "per_min": 1.8
+      },
+      {
+        "key": "W",
+        "code": "S:THEM",
+        "label_fr": "Leur ballon",
+        "definition": "The opponent gains control. Same anchor.",
+        "per_min": 1.8
+      },
+      {
+        "key": "E",
+        "code": "S:DEAD",
+        "label_fr": "Ballon mort",
+        "definition": "Ball out of play, or the whistle.",
+        "per_min": 1.0
+      },
+      {
+        "key": "0",
+        "code": "Z:0",
+        "label_fr": "Notre surface",
+        "definition": "Band of the ball. Press it with every change of possession and every time the ball is controlled in a new band (both directions). Not while the ball is in flight.",
+        "per_min": 3.5
+      },
+      {
+        "key": "1",
+        "code": "Z:1",
+        "label_fr": "Zone 1",
+        "definition": "Band of the ball. Press it with every change of possession and every time the ball is controlled in a new band (both directions). Not while the ball is in flight.",
+        "per_min": null
+      },
+      {
+        "key": "2",
+        "code": "Z:2",
+        "label_fr": "Zone 2",
+        "definition": "Band of the ball. Press it with every change of possession and every time the ball is controlled in a new band (both directions). Not while the ball is in flight.",
+        "per_min": null
+      },
+      {
+        "key": "3",
+        "code": "Z:3",
+        "label_fr": "Zone 3",
+        "definition": "Band of the ball. Press it with every change of possession and every time the ball is controlled in a new band (both directions). Not while the ball is in flight.",
+        "per_min": null
+      },
+      {
+        "key": "4",
+        "code": "Z:4",
+        "label_fr": "Zone 4",
+        "definition": "Band of the ball. Press it with every change of possession and every time the ball is controlled in a new band (both directions). Not while the ball is in flight.",
+        "per_min": null
+      },
+      {
+        "key": "5",
+        "code": "Z:5",
+        "label_fr": "Leur surface",
+        "definition": "Band of the ball. Press it with every change of possession and every time the ball is controlled in a new band (both directions). Not while the ball is in flight.",
+        "per_min": null
+      },
+      {
+        "key": "A",
+        "code": "R:THROW",
+        "label_fr": "Touche",
+        "definition": "Throw-in. Pressed while the ball is dead, as soon as the restart is known.",
+        "per_min": null
+      },
+      {
+        "key": "S",
+        "code": "R:CORNER",
+        "label_fr": "Corner",
+        "definition": "Corner.",
+        "per_min": null
+      },
+      {
+        "key": "D",
+        "code": "R:FK",
+        "label_fr": "Coup franc",
+        "definition": "Free kick.",
+        "per_min": null
+      },
+      {
+        "key": "F",
+        "code": "R:GK",
+        "label_fr": "Dégagement (6 m)",
+        "definition": "Goal kick.",
+        "per_min": 1.0
+      },
+      {
+        "key": "Shift+D",
+        "code": "R:PEN",
+        "label_fr": "Penalty",
+        "definition": "Penalty.",
+        "per_min": null
+      },
+      {
+        "key": "Z",
+        "code": "SH:OFF",
+        "label_fr": "Tir non cadré / contré",
+        "definition": "Shot that misses or is blocked. It belongs to the team with the ball.",
+        "per_min": null
+      },
+      {
+        "key": "X",
+        "code": "SH:ON",
+        "label_fr": "Tir cadré",
+        "definition": "On target and not a goal.",
+        "per_min": null
+      },
+      {
+        "key": "C",
+        "code": "SH:GOAL",
+        "label_fr": "But",
+        "definition": "Goal. Updates the score automatically.",
+        "per_min": 0.3
+      },
+      {
+        "key": "R",
+        "code": "F",
+        "label_fr": "À revoir",
+        "definition": "Look at this on video: a chance without a shot, a key duel, an error, a set-piece routine, or a doubt.",
+        "per_min": 0.3
+      },
+      {
+        "key": "T",
+        "code": "LOST",
+        "label_fr": "J'ai perdu le fil",
+        "definition": "Opens an untrusted window (pressed again, or the next Q/W/E, closes it). Left out until the gap card resolves it.",
+        "per_min": 0.05
+      }
+    ],
+    "comfort": [
+      {
+        "keys": [
+          "Space"
+        ],
+        "action": "Start / pause the clock",
+        "log": [
+          "CLOCK:START",
+          "CLOCK:PAUSE"
+        ]
+      },
+      {
+        "keys": [
+          "[",
+          "]"
+        ],
+        "action": "Clock -10 s / +10 s",
+        "log": [
+          "CLOCK:NUDGE"
+        ],
+        "nudge_ms": [
+          -10000,
+          10000
+        ]
+      },
+      {
+        "keys": [
+          "{",
+          "}"
+        ],
+        "action": "Clock -1 min / +1 min",
+        "log": [
+          "CLOCK:NUDGE"
+        ],
+        "nudge_ms": [
+          -60000,
+          60000
+        ]
+      },
+      {
+        "keys": [
+          "M"
+        ],
+        "action": "Half time: pause, switch to MT2, clock to 45:00",
+        "log": [
+          "H:END",
+          "H:START"
+        ]
+      },
+      {
+        "keys": [
+          "+",
+          "="
+        ],
+        "action": "Our score +1 (manual correction)",
+        "log": [
+          "SCORE:US+1"
+        ]
+      },
+      {
+        "keys": [
+          "-"
+        ],
+        "action": "Our score -1",
+        "log": [
+          "SCORE:US-1"
+        ]
+      },
+      {
+        "keys": [
+          "*",
+          ")"
+        ],
+        "action": "Their score +1",
+        "log": [
+          "SCORE:THEM+1"
+        ]
+      },
+      {
+        "keys": [
+          "_"
+        ],
+        "action": "Their score -1",
+        "log": [
+          "SCORE:THEM-1"
+        ]
+      },
+      {
+        "keys": [
+          "Backspace",
+          "Ctrl/Cmd+Z"
+        ],
+        "action": "Cancel the last match press (adds a retraction)",
+        "log": [
+          "U"
+        ]
+      },
+      {
+        "keys": [
+          "Ctrl/Cmd+S"
+        ],
+        "action": "Export the match file now",
+        "log": []
+      },
+      {
+        "keys": [
+          "?"
+        ],
+        "action": "Help overlay",
+        "log": []
+      },
+      {
+        "keys": [
+          "Esc"
+        ],
+        "action": "Close the overlay",
+        "log": []
+      },
+      {
+        "keys": [
+          "Inverser"
+        ],
+        "action": "Button: flip bands from MT2 (stored band = 5 - pressed band)",
+        "log": [
+          "FLIP:ON",
+          "FLIP:OFF"
+        ]
+      },
+      {
+        "keys": [
+          "Fin du match"
+        ],
+        "action": "Button: end of match + forced export",
+        "log": [
+          "H:END"
+        ]
+      }
+    ],
+    "read_by": "event.code (physical key position)"
+  },
+  "restart_team_rule": "The team of the next Q/W press takes the restart.",
+  "shot_while_dead_rule": "A shot pressed while DEAD belongs to the team that last had the ball live.",
+  "auto_bands": {
+    "KICKOFF": {
+      "US": 2,
+      "THEM": 3
+    },
+    "CORNER": {
+      "US": 4,
+      "THEM": 1
+    },
+    "GK": {
+      "US": 0,
+      "THEM": 5
+    },
+    "PEN": {
+      "US": 5,
+      "THEM": 0
+    }
+  },
+  "log": {
+    "file": "events.jsonl",
+    "append_only": true,
+    "fields": [
+      "seq",
+      "t",
+      "half",
+      "k",
+      "v",
+      "auto",
+      "wall",
+      "cb"
+    ],
+    "kinds": [
+      "S",
+      "Z",
+      "R",
+      "SH",
+      "F",
+      "LOST",
+      "U",
+      "H",
+      "CLOCK",
+      "SCORE",
+      "FLIP",
+      "PATCH"
+    ],
+    "retraction_ignored_for": [
+      "H",
+      "U",
+      "CLOCK"
+    ],
+    "order": [
+      "resolve retractions",
+      "apply patches",
+      "sort by (half, t, seq)"
+    ]
+  },
+  "review": {
+    "file": "reviewed.jsonl",
+    "append_only": true,
+    "latest_answer_wins": true,
+    "budget_minutes": 60,
+    "tiers": [
+      {
+        "tier": 1,
+        "name_fr": "Obligatoire",
+        "minutes": 30,
+        "cards": [
+          "SHOT",
+          "GOAL",
+          "GAP",
+          "FLAG"
+        ]
+      },
+      {
+        "tier": 2,
+        "name_fr": "Chaque semaine",
+        "minutes": 20,
+        "cards": [
+          "ENTRY",
+          "LOSS"
+        ]
+      },
+      {
+        "tier": 3,
+        "name_fr": "Thème tournant",
+        "minutes": 10,
+        "cards": [
+          "SET_PIECE",
+          "DUEL",
+          "OPP_ENTRY"
+        ],
+        "rotation": [
+          "SET_PIECE",
+          "DUEL",
+          "OPP_ENTRY"
+        ]
+      }
+    ],
+    "order_within_tier": "chronological",
+    "default_answer": "CANT_SEE",
+    "unanswered": "UNREVIEWED",
+    "keys": {
+      "answer": "1-9",
+      "cant_see": "0",
+      "next": "Enter",
+      "previous": "ArrowLeft",
+      "skip": "K",
+      "move_moment": "V",
+      "reopen_veo": "O"
+    },
+    "entry_sampling": {
+      "over_budget": "all entries into 5 + random 50% of 3->4",
+      "seed": "match id"
+    }
+  },
+  "cards": [
+    {
+      "id": "SHOT",
+      "label_fr": "Tir",
+      "tier": 1,
+      "trigger": "every SH press, both teams",
+      "questions": [
+        {
+          "id": "loc",
+          "label_fr": "Position du tir",
+          "values": [
+            "SIX",
+            "CENTRAL_BOX",
+            "WIDE_BOX",
+            "CENTRAL_OUT",
+            "WIDE_OUT"
+          ]
+        },
+        {
+          "id": "body",
+          "label_fr": "Surface de contact",
+          "values": [
+            "FOOT",
+            "HEAD",
+            "OTHER"
+          ]
+        },
+        {
+          "id": "situation",
+          "label_fr": "Situation",
+          "values": [
+            "OPEN",
+            "FAST_BREAK",
+            "SET_PIECE",
+            "PENALTY"
+          ]
+        },
+        {
+          "id": "assist",
+          "label_fr": "Passe décisive",
+          "values": [
+            "THROUGH",
+            "CUTBACK",
+            "CROSS",
+            "HS_PASS",
+            "SET_PIECE_DELIVERY",
+            "REBOUND",
+            "SOLO"
+          ]
+        },
+        {
+          "id": "last_pass_lane",
+          "label_fr": "Couloir de la dernière passe",
+          "values": [
+            "L",
+            "HS_L",
+            "C",
+            "HS_R",
+            "R"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOAL",
+      "label_fr": "But",
+      "tier": 1,
+      "trigger": "every SH:GOAL press, both teams",
+      "inherits": "SHOT",
+      "questions": [
+        {
+          "id": "phase_check",
+          "label_fr": "Phase (vérification)",
+          "values": [
+            "TRANSITION",
+            "BUILD_UP",
+            "SETTLED",
+            "SET_PIECE",
+            "PENALTY"
+          ]
+        },
+        {
+          "id": "box_lane",
+          "label_fr": "Couloir d'entrée dans la surface",
+          "values": [
+            "L",
+            "HS_L",
+            "C",
+            "HS_R",
+            "R"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GAP",
+      "label_fr": "Trou",
+      "tier": 1,
+      "trigger": "every LOST window and every low-fidelity block",
+      "mode": "patch",
+      "questions": []
+    },
+    {
+      "id": "FLAG",
+      "label_fr": "À revoir",
+      "tier": 1,
+      "trigger": "every F press",
+      "questions": [
+        {
+          "id": "type",
+          "label_fr": "Type",
+          "values": [
+            "CHANCE_NO_SHOT",
+            "KEY_DUEL",
+            "ERROR",
+            "SET_PIECE_ROUTINE",
+            "OTHER"
+          ]
+        },
+        {
+          "id": "lane",
+          "label_fr": "Couloir",
+          "values": [
+            "L",
+            "HS_L",
+            "C",
+            "HS_R",
+            "R"
+          ]
+        }
+      ],
+      "definitions": {
+        "CHANCE_NO_SHOT": "No shot, and in band 5 or on the central edge of the box: a 1v1 with the keeper, a free teammate within ~11 m of goal in lanes HS_L-C-HS_R, or a cut-back across the 6-yard box that nobody reached."
+      }
+    },
+    {
+      "id": "ENTRY",
+      "label_fr": "Entrée",
+      "tier": 2,
+      "trigger": "our band 3->4, or into 5 from <=4, while US",
+      "questions": [
+        {
+          "id": "lane",
+          "label_fr": "Couloir",
+          "values": [
+            "L",
+            "HS_L",
+            "C",
+            "HS_R",
+            "R"
+          ]
+        },
+        {
+          "id": "method",
+          "label_fr": "Méthode",
+          "values": [
+            "PASS",
+            "CARRY",
+            "CROSS",
+            "SET_PIECE",
+            "LOOSE"
+          ]
+        },
+        {
+          "id": "between_lines",
+          "label_fr": "Reçu entre les lignes dans le couloir intérieur ?",
+          "values": [
+            "YES",
+            "NO"
+          ]
+        },
+        {
+          "id": "outcome_15s",
+          "label_fr": "Issue en 15 s",
+          "values": [
+            "SHOT",
+            "BOX_ENTRY",
+            "CORNER",
+            "LOST",
+            "RECYCLED"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "LOSS",
+      "label_fr": "Perte",
+      "tier": 2,
+      "trigger": "our open-play Q->W switch in bands 3-5",
+      "questions": [
+        {
+          "id": "intent",
+          "label_fr": "Que tentait-on ?",
+          "values": [
+            "PASS_INTO_HS",
+            "THROUGH",
+            "CROSS",
+            "DRIBBLE",
+            "SHORT_COMBINATION",
+            "SWITCH",
+            "CLEARANCE_LONG",
+            "OTHER"
+          ]
+        },
+        {
+          "id": "intent_lane",
+          "label_fr": "Couloir visé",
+          "values": [
+            "L",
+            "HS_L",
+            "C",
+            "HS_R",
+            "R"
+          ]
+        },
+        {
+          "id": "cause",
+          "label_fr": "Cause",
+          "values": [
+            "INTERCEPTED",
+            "TACKLED",
+            "BAD_TOUCH",
+            "OUT",
+            "FOUL"
+          ]
+        },
+        {
+          "id": "closing_3s",
+          "label_fr": "Joueurs qui ferment en 3 s",
+          "values": [
+            "0",
+            "1",
+            "2",
+            "3PLUS"
+          ]
+        },
+        {
+          "id": "regain_5s",
+          "label_fr": "Récupéré en 5 s (prérempli)",
+          "values": [
+            "Y",
+            "N"
+          ]
+        }
+      ],
+      "prefill": {
+        "regain_5s": "computed from the log"
+      }
+    },
+    {
+      "id": "SET_PIECE",
+      "label_fr": "CPA",
+      "tier": 3,
+      "trigger": "every R:CORNER / R:FK in bands 4-5 (ours) or 0-1 (theirs)",
+      "questions": [
+        {
+          "id": "delivery",
+          "label_fr": "Livraison",
+          "values": [
+            "SHORT",
+            "NEAR",
+            "CENTRAL",
+            "FAR",
+            "EDGE"
+          ]
+        },
+        {
+          "id": "first_contact",
+          "label_fr": "Premier contact",
+          "values": [
+            "US",
+            "THEM",
+            "NONE"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DUEL",
+      "label_fr": "Duel",
+      "tier": 3,
+      "trigger": "flags answered KEY_DUEL",
+      "questions": [
+        {
+          "id": "result",
+          "label_fr": "Résultat",
+          "values": [
+            "WON",
+            "LOST",
+            "NEUTRAL"
+          ]
+        },
+        {
+          "id": "recovery_run",
+          "label_fr": "Course de repli",
+          "values": [
+            "Y",
+            "N"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "OPP_ENTRY",
+      "label_fr": "Entrée adverse",
+      "tier": 3,
+      "trigger": "their band moving into 0",
+      "questions": [
+        {
+          "id": "lane",
+          "label_fr": "Couloir",
+          "values": [
+            "L",
+            "HS_L",
+            "C",
+            "HS_R",
+            "R"
+          ]
+        },
+        {
+          "id": "method",
+          "label_fr": "Méthode",
+          "values": [
+            "PASS",
+            "CARRY",
+            "CROSS",
+            "SET_PIECE",
+            "LOOSE"
+          ]
+        }
+      ]
+    }
+  ],
+  "derived": {
+    "possession": "Maximal stretch of US state; US->DEAD->US is the same possession (DEAD time subtracted).",
+    "regain": "THEM->US switch with no DEAD in between.",
+    "loss": "US->THEM switch with no DEAD in between.",
+    "high_regain_bands": [
+      3,
+      4,
+      5
+    ],
+    "phases": [
+      {
+        "id": "SET_PIECE",
+        "rule": "within 20 s after a corner, free kick or penalty restart, or a throw-in in bands 4-5 (ours) / 0-1 (theirs)",
+        "window_s": 20
+      },
+      {
+        "id": "TRANSITION",
+        "rule": "within 10 s after an open-play regain",
+        "window_s": 10
+      },
+      {
+        "id": "BUILD_UP",
+        "rule": "rest of possession in bands 0-2 (3-5 for the opponent)"
+      },
+      {
+        "id": "SETTLED",
+        "rule": "rest of possession in bands 3-5 (0-2 for the opponent)"
+      }
+    ],
+    "red_zone_entry": "while US, band goes from <=3 to 4 or 5",
+    "box_entry": "while US, band becomes 5",
+    "attack_18_window_s": 15,
+    "chance": "a shot, or a flag answered CHANCE_NO_SHOT",
+    "attempts": {
+      "hs": {
+        "success": "ENTRY lane HS_L/HS_R",
+        "failure": "LOSS in bands 3-5 with intent_lane HS_L/HS_R"
+      },
+      "box": {
+        "success": "box entry",
+        "failure": "LOSS in band 4 with intent THROUGH, CROSS, DRIBBLE or PASS_INTO_HS"
+      },
+      "progression": {
+        "success": "red-zone entry",
+        "failure": "LOSS in band 3 with intent other than CLEARANCE_LONG"
+      }
+    },
+    "join_window_s": 5,
+    "counterpress_window_s": 5,
+    "closing_window_s": 3,
+    "resilience": {
+      "late_from_ms": 4500000,
+      "after_conceding_ms": 600000
+    }
+  },
+  "xg": {
+    "label_fr": "xG (table publique, grossière, non ajustée sur nous)",
+    "buckets": {
+      "loc": [
+        "SIX",
+        "CENTRAL_BOX",
+        "WIDE_BOX",
+        "CENTRAL_OUT",
+        "WIDE_OUT"
+      ],
+      "body": [
+        "FOOT",
+        "HEAD"
+      ],
+      "situation": [
+        "OPEN",
+        "FAST_BREAK",
+        "SET_PIECE"
+      ]
+    },
+    "body_map": {
+      "OTHER": "HEAD"
+    },
+    "penalty": 0.76,
+    "min_cell_shots": 200,
+    "source": "StatsBomb open data (men's competitions, non-penalty shots), built by tools/build_xg_table.py",
+    "provisional": true,
+    "table": {
+      "SIX": {
+        "FOOT": {
+          "OPEN": 0.35,
+          "FAST_BREAK": 0.4,
+          "SET_PIECE": 0.3
+        },
+        "HEAD": {
+          "OPEN": 0.2,
+          "FAST_BREAK": 0.2,
+          "SET_PIECE": 0.2
+        }
+      },
+      "CENTRAL_BOX": {
+        "FOOT": {
+          "OPEN": 0.12,
+          "FAST_BREAK": 0.16,
+          "SET_PIECE": 0.1
+        },
+        "HEAD": {
+          "OPEN": 0.07,
+          "FAST_BREAK": 0.07,
+          "SET_PIECE": 0.07
+        }
+      },
+      "WIDE_BOX": {
+        "FOOT": {
+          "OPEN": 0.05,
+          "FAST_BREAK": 0.06,
+          "SET_PIECE": 0.05
+        },
+        "HEAD": {
+          "OPEN": 0.03,
+          "FAST_BREAK": 0.03,
+          "SET_PIECE": 0.03
+        }
+      },
+      "CENTRAL_OUT": {
+        "FOOT": {
+          "OPEN": 0.04,
+          "FAST_BREAK": 0.04,
+          "SET_PIECE": 0.05
+        },
+        "HEAD": {
+          "OPEN": 0.01,
+          "FAST_BREAK": 0.01,
+          "SET_PIECE": 0.01
+        }
+      },
+      "WIDE_OUT": {
+        "FOOT": {
+          "OPEN": 0.02,
+          "FAST_BREAK": 0.02,
+          "SET_PIECE": 0.03
+        },
+        "HEAD": {
+          "OPEN": 0.01,
+          "FAST_BREAK": 0.01,
+          "SET_PIECE": 0.01
+        }
+      }
+    },
+    "missing_loc": "shot-weighted average of the band's cells; match labelled 'xG partly estimated'"
+  },
+  "xt": {
+    "label_fr": "progression dangereuse (xT, grille publique, grossière)",
+    "source": "Karun Singh expected-threat grid (2018), 12x8 xT_grid.json, coarsened by tools/build_xt_grid.py",
+    "min_gain": 0.01,
+    "provisional": true,
+    "grid": null,
+    "missing_lane": "band lane-average value"
+  },
+  "metrics": [
+    {
+      "id": "goals_for",
+      "group": "identite",
+      "label_fr": "Buts pour / contre",
+      "unit": "per match",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "count of SH:GOAL by team"
+    },
+    {
+      "id": "goals_against",
+      "group": "identite",
+      "label_fr": "Buts pour / contre",
+      "unit": "per match",
+      "min_n": "–",
+      "direction": "↓",
+      "label": "exact",
+      "formula": "count of SH:GOAL by team"
+    },
+    {
+      "id": "shots_for",
+      "group": "identite",
+      "label_fr": "Tirs pour / contre",
+      "unit": "per match",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "count of SH by team"
+    },
+    {
+      "id": "shots_against",
+      "group": "identite",
+      "label_fr": "Tirs pour / contre",
+      "unit": "per match",
+      "min_n": "–",
+      "direction": "↓",
+      "label": "exact",
+      "formula": "count of SH by team"
+    },
+    {
+      "id": "chances_for",
+      "group": "identite",
+      "label_fr": "Occasions",
+      "unit": "per match",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "exact + judged",
+      "formula": "shots + CHANCE_NO_SHOT"
+    },
+    {
+      "id": "chances_against",
+      "group": "identite",
+      "label_fr": "Occasions",
+      "unit": "per match",
+      "min_n": "–",
+      "direction": "↓",
+      "label": "exact + judged",
+      "formula": "shots + CHANCE_NO_SHOT"
+    },
+    {
+      "id": "chance_share",
+      "group": "identite",
+      "label_fr": "Part des occasions",
+      "unit": "%",
+      "min_n": "3 matches",
+      "direction": "↑",
+      "label": "trend",
+      "formula": "for / (for + against)"
+    },
+    {
+      "id": "xg_for",
+      "group": "identite",
+      "label_fr": "xG pour / contre / diff.",
+      "unit": "xG per match",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "published coarse",
+      "formula": "sum of table xG"
+    },
+    {
+      "id": "xg_against",
+      "group": "identite",
+      "label_fr": "xG pour / contre / diff.",
+      "unit": "xG per match",
+      "min_n": "–",
+      "direction": "↓",
+      "label": "published coarse",
+      "formula": "sum of table xG"
+    },
+    {
+      "id": "xgd",
+      "group": "identite",
+      "label_fr": "xG pour / contre / diff.",
+      "unit": "xG per match",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "published coarse",
+      "formula": "sum of table xG"
+    },
+    {
+      "id": "conversion",
+      "group": "identite",
+      "label_fr": "Réalisme",
+      "unit": "%",
+      "min_n": "30 shots",
+      "direction": "↑",
+      "label": "coarse",
+      "formula": "goals / shots, Wilson 90% interval"
+    },
+    {
+      "id": "xg_rate_<phase>",
+      "group": "phases",
+      "label_fr": "xG par phase",
+      "unit": "xG/10 min",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "published coarse",
+      "formula": "xG of shots in phase / phase minutes x 10"
+    },
+    {
+      "id": "transition_to_box",
+      "group": "phases",
+      "label_fr": "Transitions → surface en 10 s",
+      "unit": "%",
+      "min_n": "20 regains",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "regains followed by a box entry within 10 s / regains"
+    },
+    {
+      "id": "transition_speed",
+      "group": "phases",
+      "label_fr": "Vitesse de transition",
+      "unit": "s",
+      "min_n": "20",
+      "direction": "↓",
+      "label": "exact",
+      "formula": "median regain -> next shot or box entry (classic exclusions)"
+    },
+    {
+      "id": "buildup_progression",
+      "group": "phases",
+      "label_fr": "Construction → zone 4",
+      "unit": "%",
+      "min_n": "30",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "build-up possessions reaching band 4 / build-up possessions"
+    },
+    {
+      "id": "setpiece_shot_rate",
+      "group": "phases",
+      "label_fr": "CPA → tir en 20 s",
+      "unit": "%",
+      "min_n": "15",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "our set pieces followed by our shot within 20 s, no loss / our set pieces"
+    },
+    {
+      "id": "setpiece_xg",
+      "group": "phases",
+      "label_fr": "xG par CPA",
+      "unit": "xG",
+      "min_n": "15",
+      "direction": "↑",
+      "label": "published coarse",
+      "formula": "xG in SET_PIECE phase / our set pieces"
+    },
+    {
+      "id": "first_contact_won",
+      "group": "phases",
+      "label_fr": "Premier contact gagné",
+      "unit": "%",
+      "min_n": "15",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "first_contact US / (US + THEM)"
+    },
+    {
+      "id": "xt_gained",
+      "group": "xt",
+      "label_fr": "Progression dangereuse",
+      "unit": "xT/10 min",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "public grid, coarse",
+      "formula": "sum of gains / Poss x 10"
+    },
+    {
+      "id": "xt_by_phase",
+      "group": "xt",
+      "label_fr": "… par phase / par couloir",
+      "unit": "xT",
+      "min_n": "5 matches",
+      "direction": "–",
+      "label": "public grid, coarse",
+      "formula": "split of xt_gained"
+    },
+    {
+      "id": "xt_by_lane",
+      "group": "xt",
+      "label_fr": "… par phase / par couloir",
+      "unit": "xT",
+      "min_n": "5 matches",
+      "direction": "–",
+      "label": "public grid, coarse",
+      "formula": "split of xt_gained"
+    },
+    {
+      "id": "hs_entry_share",
+      "group": "couloir_interieur",
+      "label_fr": "Entrées par le couloir intérieur",
+      "unit": "%",
+      "min_n": "20 entries",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "ENTRY lane HS_* / ENTRY with known lane"
+    },
+    {
+      "id": "between_lines_rate",
+      "group": "couloir_interieur",
+      "label_fr": "Reçu entre les lignes",
+      "unit": "%",
+      "min_n": "20",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "between_lines YES / answered ENTRY"
+    },
+    {
+      "id": "hs_to_box",
+      "group": "couloir_interieur",
+      "label_fr": "Couloir intérieur → surface",
+      "unit": "%",
+      "min_n": "15",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "HS entries with outcome SHOT or BOX_ENTRY / HS entries"
+    },
+    {
+      "id": "hs_assist_share",
+      "group": "couloir_interieur",
+      "label_fr": "Tirs servis du couloir intérieur",
+      "unit": "%",
+      "min_n": "20 shots",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "shots with last_pass_lane HS_* / shots with known lane"
+    },
+    {
+      "id": "hs_attempt_success",
+      "group": "couloir_interieur",
+      "label_fr": "Réussite des tentatives intérieures",
+      "unit": "%",
+      "min_n": "20 attempts",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "attempts.hs success / (success + failure)"
+    },
+    {
+      "id": "xg_after_hs",
+      "group": "couloir_interieur",
+      "label_fr": "xG après entrée intérieure / autre",
+      "unit": "xG per entry",
+      "min_n": "15 each",
+      "direction": "↑",
+      "label": "published coarse",
+      "formula": "xG of our shots <= 15 s after the entry / entries of that kind"
+    },
+    {
+      "id": "xg_after_other",
+      "group": "couloir_interieur",
+      "label_fr": "xG après entrée intérieure / autre",
+      "unit": "xG per entry",
+      "min_n": "15 each",
+      "direction": "↑",
+      "label": "published coarse",
+      "formula": "xG of our shots <= 15 s after the entry / entries of that kind"
+    },
+    {
+      "id": "redzone_entries",
+      "group": "zone_rouge",
+      "label_fr": "Entrées zone rouge",
+      "unit": "/10 min",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "red-zone entries / Poss x 10"
+    },
+    {
+      "id": "box_entries",
+      "group": "zone_rouge",
+      "label_fr": "Entrées dans la surface",
+      "unit": "/10 min",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "box entries / Poss x 10"
+    },
+    {
+      "id": "red_to_box",
+      "group": "zone_rouge",
+      "label_fr": "Zone rouge → surface",
+      "unit": "%",
+      "min_n": "30",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "box entries / red-zone entries"
+    },
+    {
+      "id": "box_attack_eff",
+      "group": "zone_rouge",
+      "label_fr": "Attaque des 18 m",
+      "unit": "%",
+      "min_n": "20",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "box entries followed by a shot within 15 s / box entries"
+    },
+    {
+      "id": "box_attempt_success",
+      "group": "zone_rouge",
+      "label_fr": "Réussite des tentatives de surface",
+      "unit": "%",
+      "min_n": "20",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "attempts.box success / (success + failure)"
+    },
+    {
+      "id": "possessions_reaching_redzone",
+      "group": "zone_rouge",
+      "label_fr": "Possessions qui atteignent la zone rouge",
+      "unit": "%",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "our possessions with a red-zone entry / our possessions"
+    },
+    {
+      "id": "field_tilt_time",
+      "group": "zone_rouge",
+      "label_fr": "Territoire (temps)",
+      "unit": "%",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "US time in 4-5 / (US time in 4-5 + THEM time in 0-1)"
+    },
+    {
+      "id": "field_tilt_classic",
+      "group": "zone_rouge",
+      "label_fr": "Field tilt (classique)",
+      "unit": "%",
+      "min_n": "–",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "classic.py staff formula"
+    },
+    {
+      "id": "counterpress_5s",
+      "group": "intensite",
+      "label_fr": "Contre-pressing 5 s",
+      "unit": "%",
+      "min_n": "20 losses",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "losses in bands 3-5 regained in open play within 5 s / losses in bands 3-5"
+    },
+    {
+      "id": "high_regains",
+      "group": "intensite",
+      "label_fr": "Récupérations hautes",
+      "unit": "/10 min",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "high regains / OppPoss x 10"
+    },
+    {
+      "id": "opp_possession_length",
+      "group": "intensite",
+      "label_fr": "Durée des possessions adverses",
+      "unit": "s",
+      "min_n": "–",
+      "direction": "↓",
+      "label": "exact",
+      "formula": "mean THEM possession duration"
+    },
+    {
+      "id": "closing_3s_mean",
+      "group": "intensite",
+      "label_fr": "Joueurs qui ferment en 3 s",
+      "unit": "players / %",
+      "min_n": "20 cards",
+      "direction": "↑",
+      "label": "counted",
+      "formula": "mean closing_3s (3PLUS = 3); share >= 2"
+    },
+    {
+      "id": "closing_2plus_share",
+      "group": "intensite",
+      "label_fr": "Joueurs qui ferment en 3 s",
+      "unit": "players / %",
+      "min_n": "20 cards",
+      "direction": "↑",
+      "label": "counted",
+      "formula": "mean closing_3s (3PLUS = 3); share >= 2"
+    },
+    {
+      "id": "duel_win",
+      "group": "intensite",
+      "label_fr": "Duels 50/50 gagnés",
+      "unit": "%",
+      "min_n": "20 duels",
+      "direction": "↑",
+      "label": "judged",
+      "formula": "WON / (WON + LOST)"
+    },
+    {
+      "id": "resilience_late",
+      "group": "intensite",
+      "label_fr": "Fin de match",
+      "unit": "%",
+      "min_n": "5 matches",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "our shots / all shots after 75:00"
+    },
+    {
+      "id": "resilience_after_conceding",
+      "group": "intensite",
+      "label_fr": "Réaction après un but encaissé",
+      "unit": "%",
+      "min_n": "5 events",
+      "direction": "↑",
+      "label": "exact",
+      "formula": "our shots / all shots in the 10 min after we concede"
+    }
+  ],
+  "improvement": {
+    "window": 5,
+    "sd_factor": 0.5,
+    "min_beating": 3,
+    "consecutive": 2,
+    "min_matches": 5,
+    "statuses": [
+      "AMÉLIORÉ",
+      "STABLE",
+      "EN BAISSE",
+      "TROP TÔT"
+    ]
+  },
+  "reliability": {
+    "every_nth_match": 3,
+    "cards": 20,
+    "min_days_later": 7,
+    "agreement": 0.85,
+    "merges": {
+      "lane": "5 -> 3 (HS folded into its wide side)",
+      "between_lines": "dropped",
+      "phase_check": "TRANSITION vs not",
+      "closing_3s": "0-1 vs 2+",
+      "assist": "CROSS vs not",
+      "intent": "4 groups: inside, behind, wide, other"
+    },
+    "band_check": {
+      "cards": 20,
+      "exact": 0.85,
+      "within_one": 0.95
+    },
+    "possession_check": {
+      "samples": 2,
+      "minutes": 5,
+      "max_points": 5
+    }
+  },
+  "coverage": {
+    "normal": 0.8,
+    "partial": 0.5
+  },
+  "gates": {
+    "blocking": {
+      "G1": "schema valid, codebook version known, sha256 matches",
+      "G2": "goals from C presses = final score",
+      "G3": "Veo offsets for both halves and 3-moment check (blocks clip links only)",
+      "G4": "no negative durations, segments ordered",
+      "G5": "US+THEM+DEAD+UNKNOWN time = half length +/- 3 min"
+    },
+    "labelling": {
+      "Q1": "reliability below bar -> simplifié / indicatif",
+      "Q2": "coverage below 80% -> partiel"
+    }
+  },
+  "yoy": {
+    "mapping": {
+      "RECUP": "regain + band (BOX -> 0)",
+      "PERTE": "loss + band (BOX -> 5, check in re-tag)",
+      "TIR_C": "SH:ON",
+      "TIR_HC": "SH:OFF",
+      "BUT": "SH:GOAL",
+      "CORNER": "R:CORNER",
+      "COUP_FRANC": "R:FK",
+      "TOUCHE": "R:THROW",
+      "DEGAGEMENT": "R:GK",
+      "PENALTY": "R:PEN",
+      "couloir": "3 lanes: L = L+HS_L, C, R = HS_R+R",
+      "CARTON_JAUNE": "EXTRA:CARD",
+      "CARTON_ROUGE": "EXTRA:CARD"
+    },
+    "not_compared": [
+      "PASSE_PROF",
+      "CONDUITE",
+      "CENTRE",
+      "SWITCH",
+      "SEQUENCE"
+    ],
+    "retag_matches": 4,
+    "mapping_tolerance": 0.15
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-02",
+      "change": "First version; definitions confirmed by the analyst."
+    }
+  ],
+  "mirror_metrics": {
+    "suffix": "_against",
+    "applies_to": "phase metrics (§8.2) computed on opponent possessions",
+    "direction": "↓"
+  }
+}

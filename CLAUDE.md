@@ -4,6 +4,17 @@ Match analytics for the Laureats team, built from our own tagging (laureats
 tagger + Veo video). Tag a match → export JSON → possessions and metrics →
 API → dashboard / team website / LLM assistant.
 
+## v1 pipeline (in progress, branch `pipeline-v1`)
+
+The next version of the whole system is specified in `docs/pipeline/PIPELINE.md`
+(process, tools, weekly routine, build phases P0–P9) and
+`docs/pipeline/CODEBOOK.md` (every key, review question, definition and formula).
+`shared/codebook.v1.json` is the machine copy, loaded with `src/codebook.py`.
+`tests/test_codebook_v1.py` fails if the JSON and the markdown disagree, so a
+codebook change means editing both (and the changelog, CODEBOOK §12).
+v1 football constants come from the codebook, never hard-coded. The old v0 path
+(below) keeps working for existing exports.
+
 ## The rule that matters most
 
 **Football definitions belong to the user.** What counts as a possession, a
