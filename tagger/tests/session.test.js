@@ -70,3 +70,26 @@ test("presses per minute count match presses, not automatic ones", () => {
   const { ops } = play(actions);
   assert.equal(pressesPerMinute(ops, 300000, 300000), 6);
 });
+
+test("a click on the pitch records the absolute band, even with the flip on", () => {
+  const { live } = play([[2000, op("S", "US")], [3000, { type: "op", k: "Z", v: 1, absolute: true }, { flip: true }]]);
+  assert.equal(live.band, 1);
+});
+
+test("throw-ins and free kicks ask for the band of the restart", () => {
+  const a = play([[2000, op("S", "US")], [3000, op("S", "DEAD")], [4000, op("R", "THROW")]]);
+  assert.equal(a.live.needsRestartBand, true);
+  const b = play([[2000, op("S", "US")], [3000, op("S", "DEAD")], [4000, op("R", "FK")], [5000, op("Z", 3)]]);
+  assert.equal(b.live.needsRestartBand, false);
+  assert.equal(b.live.band, 3);
+  const c = play([[2000, op("S", "US")], [3000, op("S", "DEAD")], [4000, op("R", "CORNER")]]);
+  assert.equal(c.live.needsRestartBand, false);
+});
+
+test("taking a throw-in without its band is accepted but flagged", () => {
+  let ops = [{ seq: 1, t: 0, half: 1, k: "H", v: "START" }];
+  for (const [t, a] of [[2000, op("S", "US")], [3000, op("S", "DEAD")], [4000, op("R", "THROW")]]) ops = ops.concat(opsForAction(ops, a, ctx(t)).ops);
+  const r = opsForAction(ops, op("S", "THEM"), ctx(5000));
+  assert.equal(r.warning, "Zone de la reprise non indiquée");
+  assert.equal(r.ops.length, 1);
+});

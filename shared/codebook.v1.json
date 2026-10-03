@@ -214,7 +214,7 @@
         "key": "A",
         "code": "R:THROW",
         "label_fr": "Touche",
-        "definition": "Throw-in. Pressed while the ball is dead, as soon as the restart is known.",
+        "definition": "Throw-in. Pressed while the ball is dead, as soon as the restart is known; then press (or click) the band where it is taken.",
         "per_min": null
       },
       {
@@ -228,7 +228,7 @@
         "key": "D",
         "code": "R:FK",
         "label_fr": "Coup franc",
-        "definition": "Free kick.",
+        "definition": "Free kick (including offside: indirect free kick to the defending team). Then press (or click) the band where it is taken.",
         "per_min": null
       },
       {
@@ -1551,12 +1551,16 @@
     {
       "version": "1.0.0",
       "date": "2026-10-02",
-      "change": "First version; definitions confirmed by the analyst."
+      "change": "First version; definitions confirmed by the analyst. Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; zones clickable on a pitch view."
     }
   ],
   "mirror_metrics": {
     "suffix": "_against",
     "applies_to": "phase metrics (§8.2) computed on opponent possessions",
     "direction": "↓"
-  }
+  },
+  "restart_band_prompt": [
+    "THROW",
+    "FK"
+  ]
 }

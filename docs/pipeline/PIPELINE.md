@@ -179,7 +179,7 @@ The location is `FA_MATCH_DIR` (default `../laureats-tagger/matches/`). Old expo
 3. **Live**, top to bottom:
    - **Header:** score LAU – OPP, clock (big), MT1/MT2, state Running/Paused, buttons −1m −10s +10s +1m, the "Sauvegardé ✓ / ✗" badge, the Inverser toggle.
    - **State banner** (full width, the largest element): *Notre ballon* (gold #b8862e) / *Leur ballon* (blue #2a6aa8) / *Ballon mort* (grey). It also shows the pending restart.
-   - **Band strip** 0–5, with the current band highlighted (and `auto` shown in italics).
+   - **Pitch view** (horizontal, our goal on the left; mirrored when Inverser is on): the six bands drawn on a pitch, current band highlighted, **clickable**. After a throw-in or free-kick key it pulses and asks for the band of the restart.
    - **Last 8 presses** (French labels, time). A cancelled press is struck through.
    - **Load:** presses/min over the last 5 min and since kick-off. Amber above 12, red above 14.
    - **Heartbeat:** seconds since the last state or band press. It flashes after 90 s.
@@ -202,7 +202,7 @@ Keys are read by **physical position** (`event.code`), so the layout works on an
   - adds 1 to the scoring team's score;
   - inserts an automatic DEAD;
   - sets the pending restart to KICKOFF for the other team.
-- **Restart key:** only accepted while the state is DEAD (otherwise it shows a toast and is ignored). The next `Q`/`W` takes it and applies the automatic band.
+- **Restart key:** only accepted while the state is DEAD (otherwise it shows a toast and is ignored). Corner, goal kick, penalty and kick-off: the next `Q`/`W` takes it and applies the automatic band. Throw-in and free kick (offside included): the tagger asks for the band of the restart; taking it without a band shows a warning.
 - **Shot while DEAD** (direct free kick, penalty): it belongs to the team that last had the ball live.
 - **Undo:** adds `U` for the last match press that hasn't been cancelled. It can be repeated.
 - **Inverser:** from MT2, a band press `n` is stored as `5 − n`. The banner shows "Zones inversées".

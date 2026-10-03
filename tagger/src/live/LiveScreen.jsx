@@ -6,6 +6,7 @@ import { CB_VERSION, CODEBOOK } from "../core/codebook.js";
 import { buildBundle, bundleFileName } from "../core/bundle.js";
 import { download } from "../ui/util.js";
 import HelpOverlay from "./HelpOverlay.jsx";
+import Pitch from "./Pitch.jsx";
 
 const STATE_UI = {
   US: { label: "Notre ballon", cls: "bg-us text-paper" },
@@ -13,7 +14,6 @@ const STATE_UI = {
   DEAD: { label: "Ballon mort", cls: "bg-dead text-paper" },
 };
 const RESTART_FR = { KICKOFF: "Engagement", THROW: "Touche", CORNER: "Corner", FK: "Coup franc", GK: "Dégagement", PEN: "Penalty" };
-const BANDS = CODEBOOK.geometry.bands.map((b) => b.name_fr);
 const SNAPSHOT_MS = 5 * 60 * 1000;
 const LOAD = CODEBOOK.load;
 
@@ -106,7 +106,8 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
     const r = opsForAction(opsRef.current, action, { t, half: c.half, wall: new Date().toISOString(), flip: live.flip });
     if (r.error) { say(r.error, "warn"); return; }
     if (r.ops.length) commit(r.ops);
-    if (!c.running && action.type === "op") say("Chrono en pause (Espace pour lancer)", "warn");
+    if (r.warning) say(r.warning, "warn");
+    else if (!c.running && action.type === "op") say("Chrono en pause (Espace pour lancer)", "warn");
   }, [commit, exportNow, meta, match.reviewed, say]);
 
   const setFlip = (on) => { commit([sysOp("FLIP", on ? "ON" : "OFF", clockMs(clockRef.current, Date.now()), clockRef.current.half)]); setFlipPrompt(false); };
@@ -174,12 +175,10 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
         </span>
       </section>
 
-      <section className="mx-4 mt-3 grid grid-cols-6 gap-2">
-        {BANDS.map((name, i) => (
-          <div key={i} className={`rounded border px-2 py-3 text-center ${live.band === i ? "border-ink bg-ink text-paper" : "border-rule bg-paper text-ink-3"}`}>
-            <div className="text-2xl font-semibold">{i}</div><div className="text-xs">{name}</div>
-          </div>
-        ))}
+      <section className="mx-4 mt-3">
+        <Pitch band={live.band} flip={live.flip}
+          ask={live.needsRestartBand ? (live.pendingRestart === "THROW" ? "Zone de la touche ?" : "Zone du coup franc ?") : null}
+          onBand={(v) => handle({ type: "op", k: "Z", v, absolute: true })} />
       </section>
 
       <section className="mx-4 mt-4 grid flex-1 grid-cols-3 gap-4 pb-4">

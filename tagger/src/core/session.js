@@ -3,6 +3,7 @@
 import { CODEBOOK, CB_VERSION, MATCH_KINDS, opLabel } from "./codebook.js";
 
 const AUTO = CODEBOOK.auto_bands;
+const ASK_BAND = new Set(CODEBOOK.restart_band_prompt);
 const RETRACT_IGNORED = new Set(CODEBOOK.log.retraction_ignored_for);
 
 function retractedSet(ops) {
@@ -21,7 +22,7 @@ function retractedSet(ops) {
 export function deriveLive(ops) {
   const retracted = retractedSet(ops);
   const live = { state: null, lastLive: null, band: null, pendingRestart: null, score: { us: 0, them: 0 },
-                 lostOpen: false, flip: false, half: 1, lastPlayT: null, recent: [] };
+                 lostOpen: false, flip: false, half: 1, lastPlayT: null, needsRestartBand: false, recent: [] };
   for (const o of ops) {
     if (o.k === "SCORE") {
       const [team, d] = [o.v.startsWith("US") ? "us" : "them", o.v.endsWith("+1") ? 1 : -1];
@@ -40,12 +41,12 @@ export function deriveLive(ops) {
     switch (o.k) {
       case "S":
         live.state = o.v;
-        if (o.v !== "DEAD") { live.lastLive = o.v; live.pendingRestart = null; }
+        if (o.v !== "DEAD") { live.lastLive = o.v; live.pendingRestart = null; live.needsRestartBand = false; }
         live.lostOpen = false;
         live.lastPlayT = o.t;
         break;
-      case "Z": live.band = o.v; live.lastPlayT = o.t; break;
-      case "R": live.pendingRestart = o.v; break;
+      case "Z": live.band = o.v; live.lastPlayT = o.t; live.needsRestartBand = false; break;
+      case "R": live.pendingRestart = o.v; live.needsRestartBand = ASK_BAND.has(o.v); break;
       case "LOST": live.lostOpen = !live.lostOpen; break;
       case "SH":
         if (o.v === "GOAL") {
@@ -77,13 +78,15 @@ export function opsForAction(ops, action, { t, half, wall, flip }) {
 
   const { k, v } = action;
   if (k === "R" && live.state !== "DEAD") return { error: "Reprise seulement quand le ballon est mort (E)" };
-  if (k === "Z") return { ops: [mk("Z", flip ? 5 - v : v)] };
+  // Keyboard bands follow the flip; a click on the pitch is already absolute.
+  if (k === "Z") return { ops: [mk("Z", flip && !action.absolute ? 5 - v : v)] };
   if (k === "S") {
     const s = mk("S", v);
     const out = [s];
     const auto = AUTO[live.pendingRestart];
     if (live.state === "DEAD" && v !== "DEAD" && auto) out.push(mk("Z", auto[v], { auto: true, src: s.seq }));
-    return { ops: out };
+    const warning = live.needsRestartBand && v !== "DEAD" ? "Zone de la reprise non indiquée" : undefined;
+    return { ops: out, warning };
   }
   if (k === "SH" && v === "GOAL") {
     const g = mk("SH", "GOAL");

@@ -94,9 +94,9 @@ Target load: **9–10 presses/min, cap 12**. A 15-minute block above 14/min is m
 | `W` | `S:THEM` | Leur ballon | The opponent gains control. Same anchor. | 1.8 |
 | `E` | `S:DEAD` | Ballon mort | Ball out of play, or the whistle. | 1.0 |
 | `0`–`5` | `Z:n` | Zone 0–5 | Band of the ball (§1.1). Press it **with every change of possession** and **every time the ball is controlled in a new band** (in both directions). Not while the ball is in flight. | 3.5 |
-| `A` | `R:THROW` | Touche | Throw-in. Pressed while the ball is dead, as soon as the restart is known. | |
+| `A` | `R:THROW` | Touche | Throw-in. Pressed while the ball is dead, as soon as the restart is known; **then press (or click) the band where it is taken**. | |
 | `S` | `R:CORNER` | Corner | | |
-| `D` | `R:FK` | Coup franc | | |
+| `D` | `R:FK` | Coup franc | Free kick, **including offside** (indirect free kick to the defending team at the spot of the offence). Then press (or click) the band where it is taken. | |
 | `F` | `R:GK` | Dégagement (6 m) | Goal kick | 1.0 total |
 | `Shift+D` | `R:PEN` | Penalty | | |
 | `Z` | `SH:OFF` | Tir non cadré / contré | Shot that misses or is blocked. It belongs to the team with the ball. | |
@@ -106,6 +106,10 @@ Target load: **9–10 presses/min, cap 12**. A 15-minute block above 14/min is m
 | `T` | `LOST` | J'ai perdu le fil | Opens an **untrusted window** (pressed again, or the next `Q`/`W`/`E`, closes it). The engine leaves that window out until the gap card resolves it. | <0.1 |
 
 **Restart team** = the team of the next `Q` / `W` press.
+
+**Band of the restart.** For throw-ins and free kicks, the tagger asks for the band right after the restart key (« Zone de la touche ? » / « Zone du coup franc ? », the pitch view pulses). Press the digit or click the band. Taking the restart without it is accepted but flagged. Corners, goal kicks, penalties and kick-offs use the automatic bands below.
+
+**Clicking the pitch.** Every band can also be set by clicking it on the pitch view. A click is always the real (absolute) band: with Inverser on, the drawing is mirrored so you click what you see.
 
 **Automatic bands** (save presses; written as `auto: true`):
 
@@ -479,4 +483,4 @@ A blocked report still lets the clip list be sent (once G3 passes).
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0.0 | 2026-10-02 | Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
+| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view. Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
