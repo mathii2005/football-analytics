@@ -93,3 +93,56 @@ test("taking a throw-in without its band is accepted but flagged", () => {
   assert.equal(r.warning, "Zone de la reprise non indiquée");
   assert.equal(r.ops.length, 1);
 });
+
+// ---- editable log (append-only: an edit = retraction + corrected line) ----
+import { editOps } from "../src/core/session.js";
+const seqOf = (ops, k, v) => ops.find((o) => o.k === k && o.v === v && !o.auto).seq;
+const apply = (ops, extra) => ops.concat(extra);
+
+test("editing a value retracts the original and adds a corrected line", () => {
+  const { ops } = play([[2000, op("S", "US")], [5000, op("S", "THEM")]]);
+  const r = editOps(ops, seqOf(ops, "S", "THEM"), { v: "DEAD" }, "w");
+  const next = apply(ops, r.ops);
+  assert.equal(r.ops[0].k, "U");
+  assert.equal(r.ops[1].edit_of, seqOf(ops, "S", "THEM"));
+  assert.equal(deriveLive(next).state, "DEAD");
+  assert.ok(deriveLive(next).recent.some((x) => x.edited));
+});
+
+test("editing the time re-orders the log by match time", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 3)], [4000, op("Z", 4)]]);
+  const next = apply(ops, editOps(ops, seqOf(ops, "Z", 3), { t: 6000 }, "w").ops);
+  assert.equal(deriveLive(next).band, 3);
+  assert.deepEqual(deriveLive(next).recent.filter((x) => !x.retracted).map((x) => x.t).slice(0, 2), [6000, 4000]);
+});
+
+test("changing the team taking a corner recomputes its automatic band", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("S", "DEAD")], [4000, op("R", "CORNER")], [5000, op("S", "US")]]);
+  const corner = ops.filter((o) => o.k === "S" && o.v === "US" && !o.auto).at(-1).seq;
+  const next = apply(ops, editOps(ops, corner, { v: "THEM" }, "w").ops);
+  assert.equal(deriveLive(next).band, 1);
+});
+
+test("deleting a goal removes the score and its automatic restart; restoring brings it back", () => {
+  const { ops } = play([[2000, op("S", "US")], [9000, op("SH", "GOAL")]]);
+  const goal = seqOf(ops, "SH", "GOAL");
+  const deleted = apply(ops, editOps(ops, goal, { delete: true }, "w").ops);
+  assert.deepEqual(deriveLive(deleted).score, { us: 0, them: 0 });
+  assert.equal(deriveLive(deleted).state, "US");
+  const restored = apply(deleted, editOps(deleted, goal, { restore: true }, "w").ops);
+  assert.deepEqual(deriveLive(restored).score, { us: 1, them: 0 });
+  assert.equal(deriveLive(restored).state, "DEAD");
+});
+
+test("changing a goal into a shot on target removes the goal consequences", () => {
+  const { ops } = play([[2000, op("S", "US")], [9000, op("SH", "GOAL")]]);
+  const next = apply(ops, editOps(ops, seqOf(ops, "SH", "GOAL"), { v: "ON" }, "w").ops);
+  assert.deepEqual(deriveLive(next).score, { us: 0, them: 0 });
+  assert.equal(deriveLive(next).state, "US");
+});
+
+test("an edit can't move a line out of its half", () => {
+  const { ops } = play([[2000, op("S", "US")]]);
+  const r = editOps(ops, seqOf(ops, "S", "US"), { t: -5000 }, "w");
+  assert.equal(r.error, "Temps hors de la mi-temps");
+});

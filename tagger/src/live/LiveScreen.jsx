@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { keyToAction } from "../core/keymap.js";
 import { clockMs, startClock, pauseClock, nudgeClock, halfTime, fmtClock } from "../core/clock.js";
-import { deriveLive, opsForAction, pressesPerMinute } from "../core/session.js";
+import { deriveLive, opsForAction, editOps, pressesPerMinute } from "../core/session.js";
 import { CB_VERSION, CODEBOOK } from "../core/codebook.js";
 import { buildBundle, bundleFileName } from "../core/bundle.js";
 import { download } from "../ui/util.js";
 import HelpOverlay from "./HelpOverlay.jsx";
 import Pitch from "./Pitch.jsx";
+import Journal from "./Journal.jsx";
 
 const STATE_UI = {
   US: { label: "Notre ballon", cls: "bg-us text-paper" },
@@ -110,6 +111,12 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
     else if (!c.running && action.type === "op") say("Chrono en pause (Espace pour lancer)", "warn");
   }, [commit, exportNow, meta, match.reviewed, say]);
 
+  const editLine = (seq, change) => {
+    const r = editOps(opsRef.current, seq, change, new Date().toISOString());
+    if (r.error) { say(r.error, "warn"); return r; }
+    if (r.ops.length) { commit(r.ops); say(change.delete ? "Supprimé" : change.restore ? "Restauré" : "Modifié", "ok"); }
+    return r;
+  };
   const setFlip = (on) => { commit([sysOp("FLIP", on ? "ON" : "OFF", clockMs(clockRef.current, Date.now()), clockRef.current.half)]); setFlipPrompt(false); };
   const endMatch = () => {
     const c = clockRef.current, nowMs = Date.now();
@@ -144,7 +151,7 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
   const loadCls = (v) => (v > LOAD.block_alarm_per_min ? "text-warn" : v > LOAD.cap_per_min ? "text-us-deep" : "text-ink");
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col" onClickCapture={(e) => { if (e.target.closest("button")) setTimeout(() => document.activeElement?.blur?.(), 0); }}>
       <header className="flex flex-wrap items-center gap-4 border-b border-rule bg-paper px-4 py-2">
         <div className="text-sm text-ink-3">{meta.opponent || "—"} · {meta.date}</div>
         <div className="text-2xl font-semibold tabular-nums">LAU {live.score.us} – {live.score.them} OPP</div>
@@ -182,16 +189,8 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
       </section>
 
       <section className="mx-4 mt-4 grid flex-1 grid-cols-3 gap-4 pb-4">
-        <div className="col-span-2 rounded border border-rule bg-paper p-3">
-          <div className="label">Dernières entrées</div>
-          <ul className="mt-2 space-y-1 text-sm">
-            {live.recent.map((r) => (
-              <li key={r.seq} className={`flex justify-between ${r.retracted ? "text-ink-3 line-through" : ""}`}>
-                <span>{r.label}</span><span className="tabular-nums text-ink-3">{fmtClock(r.t)}</span>
-              </li>
-            ))}
-            {!live.recent.length && <li className="text-ink-3">Espace pour lancer le chrono, puis Q / W / E. <kbd>?</kbd> pour l'aide.</li>}
-          </ul>
+        <div className="col-span-2 flex min-h-0 flex-col">
+          <Journal entries={live.recent} onEdit={editLine} />
         </div>
         <div className="space-y-3">
           <div className="rounded border border-rule bg-paper p-3">

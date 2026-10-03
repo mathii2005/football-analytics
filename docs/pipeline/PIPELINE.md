@@ -180,7 +180,7 @@ The location is `FA_MATCH_DIR` (default `../laureats-tagger/matches/`). Old expo
    - **Header:** score LAU – OPP, clock (big), MT1/MT2, state Running/Paused, buttons −1m −10s +10s +1m, the "Sauvegardé ✓ / ✗" badge, the Inverser toggle.
    - **State banner** (full width, the largest element): *Notre ballon* (gold #b8862e) / *Leur ballon* (blue #2a6aa8) / *Ballon mort* (grey). It also shows the pending restart.
    - **Pitch view** (horizontal, our goal on the left; mirrored when Inverser is on): the six bands drawn on a pitch, current band highlighted, **clickable**. After a throw-in or free-kick key it pulses and asks for the band of the restart.
-   - **Last 8 presses** (French labels, time). A cancelled press is struck through.
+   - **Journal**: every press, newest (by match time) first, scrollable. Cancelled lines are struck through, corrected ones marked « modifié ». Clicking a line opens an editor: change the value (state, band, restart, shot), change the time (±1 s / ±5 s or mm:ss), Supprimer, or Restaurer. Edits are appended to the log, never written over it (CODEBOOK §4).
    - **Load:** presses/min over the last 5 min and since kick-off. Amber above 12, red above 14.
    - **Heartbeat:** seconds since the last state or band press. It flashes after 90 s.
    - **"Fil perdu" indicator** while a `LOST` window is open.

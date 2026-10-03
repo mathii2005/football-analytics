@@ -452,7 +452,9 @@
       "v",
       "auto",
       "wall",
-      "cb"
+      "cb",
+      "src",
+      "edit_of"
     ],
     "kinds": [
       "S",
@@ -477,7 +479,8 @@
       "resolve retractions",
       "apply patches",
       "sort by (half, t, seq)"
-    ]
+    ],
+    "edit": "retraction of the original + corrected copy with edit_of, children recomputed; delete = retraction; restore = copy with edit_of; never leaves its half"
   },
   "review": {
     "file": "reviewed.jsonl",
@@ -1551,7 +1554,7 @@
     {
       "version": "1.0.0",
       "date": "2026-10-02",
-      "change": "First version; definitions confirmed by the analyst. Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; zones clickable on a pitch view."
+      "change": "First version; definitions confirmed by the analyst. Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; zones clickable on a pitch view; editable journal."
     }
   ],
   "mirror_metrics": {

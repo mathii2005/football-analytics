@@ -174,8 +174,12 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 | `auto` | `true` when the tagger produced it (automatic band) |
 | `wall` | Wall-clock time (for audits) |
 | `cb` | Codebook version |
+| `src` | (automatic lines only) the press that produced it |
+| `edit_of` | (edited lines only) the `seq` of the line it corrects |
 
 - **Retraction:** `{"k": "U", "v": 57}` cancels press 57. A `U` targeting an `H`, `U` or `CLOCK` press is ignored.
+- **Automatic children:** a line produced by the tagger (automatic band, the dead ball and kick-off after a goal) carries `src` = the press that caused it. Retracting the press retracts its children.
+- **Edit (from the journal):** a retraction of the original line, followed by a corrected copy carrying `edit_of` = the original `seq`, at the corrected time. Its automatic children are recomputed from the state just before that time. Deleting is a retraction alone; restoring a deleted line appends a copy with `edit_of`. An edit can't leave its half.
 - **Patch (correction from the review):** `{"k": "PATCH", "v": {"replace": [a, b], "half": 1, "ops": [...]}}`. Between live times `a` and `b`, the listed ops replace the match ops of that half (`S`, `Z`, `R`, `SH`). The original presses stay in the file.
 - **Ordering for the engine:**
   1. Resolve retractions.
@@ -483,4 +487,4 @@ A blocked report still lets the clip list be sent (once G3 passes).
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view. Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
+| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`). Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
