@@ -291,7 +291,11 @@ The original press stays in the log. The patch is also used to measure the typic
 
 ### 5.7 GAP cards
 
-A GAP card shows the window's pass-1 presses. The analyst re-enters the states and bands with the live keys while watching the clip; the times are entered as Veo times and converted. **Valider** writes a `PATCH`.
+A GAP card shows its window. The analyst adds the states (our ball / their ball / dead) and bands seen on the video at their Veo time; **Valider le remplissage** retracts the `LOST` press and appends those lines (`gap_fill: true`), **Laisser inconnu** keeps the window untrusted. Nothing is overwritten.
+
+### 5.8 Where it lives
+
+`tagger/src/core/cards.js` (card generation, same counts as the engine's labels; pinned on the Ahuntsic fixture), `core/review.js` (answers, coverage), `core/video.js` (Veo links, 5 s lead, and the reverse for « déplacer le moment »), `review/ReviewScreen.jsx` (the screen). Opened from the launch screen (« Revue ») or the live screen (« Revue (passe 2) »). The engine joins answers by original press (`src/v1/answers.py`).
 
 ---
 

@@ -18,7 +18,7 @@ const RESTART_FR = { KICKOFF: "Engagement", THROW: "Touche", CORNER: "Corner", F
 const SNAPSHOT_MS = 5 * 60 * 1000;
 const LOAD = CODEBOOK.load;
 
-export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
+export default function LiveScreen({ store, match, onEditMeta, onReview, onQuit }) {
   const [ops, setOps] = useState(match.ops);
   const [clock, setClock] = useState(match.clock);
   const [now, setNow] = useState(Date.now());
@@ -173,6 +173,7 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
         <div className="ml-auto flex gap-2">
           <button className={`btn ${live.flip ? "btn-primary" : ""}`} onClick={() => setFlip(!live.flip)}>Inverser · {live.flip ? "ON" : "OFF"}</button>
           <button className="btn" onClick={restart}>Recommencer</button>
+          <button className="btn" onClick={onReview}>Revue (passe 2)</button>
           <button className="btn" onClick={onEditMeta}>Feuille de match</button>
           <button className="btn" onClick={exportNow}>Exporter</button>
           <button className="btn" onClick={() => setHelp(true)}>?</button>

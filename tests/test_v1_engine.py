@@ -270,3 +270,17 @@ def test_ahuntsic_gates_and_engine(ahuntsic):
     assert sum(p.end_type == "opp_goal" for p in ps) == 2
     report = classic_report(match, ps)
     assert report["headline"]["shots"] == 4
+
+
+# ---------- answers (stage 5) ----------
+
+def test_answers_join_by_original_press_latest_wins():
+    from src.v1.answers import latest_answers, root_seq, answer_for
+    L = kickoff_then(Log())
+    L.S(1000, "US", auto_band=2)
+    z = L.add(3000, "Z", 4)
+    L.add(5000, "U", z)
+    z2 = L.add(3500, "Z", 4, edit_of=z)
+    reviewed = [{"card": f"ENTRY:{z}", "q": {"lane": "C"}}, {"card": f"ENTRY:{z}", "q": {"lane": "HS_R", "method": "PASS"}}]
+    a = answer_for(latest_answers(reviewed), root_seq(L.ops), "ENTRY", z2)
+    assert a == {"lane": "HS_R", "method": "PASS"}

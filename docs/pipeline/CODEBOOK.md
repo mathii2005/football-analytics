@@ -242,6 +242,14 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 
 Re-answering a card appends a new line; the latest line wins.
 
+**Card id** = `<KIND>:<seq>` where `seq` is the **original** press: an edited line keeps its card and its answers (`edit_of` is followed back). Low-fidelity blocks: `GAP:block:<half>:<i>`. Set-piece cards key on the restart key's press.
+
+**GAP answers.** `{"result": "FILLED"}` when the analyst re-entered the window: the `LOST` press is retracted and the states and bands seen on the video are appended as ordinary lines marked `gap_fill: true` (entered in Veo time, converted with the half's offset). `{"result": "UNKNOWN"}` leaves the window untrusted.
+
+**Entry sampling.** Estimated at 20 s per card: if tiers 1 + 2 would take more than 50 min, every entry into band 5 is kept and entries 3→4 are sampled at 50 % (deterministic, seeded by the match id).
+
+**Pre-filled answers.** LOSS `regain_5s` from the log; GOAL `phase_check` = the phase computed with §6.3 at the moment of the goal. The analyst confirms or changes them.
+
 ---
 
 ## 6. Derived definitions (computed by the engine, never tagged)

@@ -3,16 +3,18 @@ import { parseImport, buildBundle, bundleFileName } from "../core/bundle.js";
 import { newClock } from "../core/clock.js";
 import { download } from "../ui/util.js";
 
-export default function LaunchScreen({ store, onNew, onOpen }) {
+export default function LaunchScreen({ store, onNew, onOpen, onReview }) {
   const [matches, setMatches] = useState([]);
   const [msg, setMsg] = useState(null);
   const fileRef = useRef(null);
   useEffect(() => { store.listMatches().then(setMatches); }, [store]);
 
-  const resume = async (id) => {
+  const load = async (id) => {
     const m = await store.loadMatch(id);
-    if (m) onOpen({ meta: m.meta, ops: m.ops, reviewed: m.reviewed || [], clock: m.clock || newClock() });
+    return m && { meta: m.meta, ops: m.ops, reviewed: m.reviewed || [], clock: m.clock || newClock() };
   };
+  const resume = async (id) => { const m = await load(id); if (m) onOpen(m); };
+  const review = async (id) => { const m = await load(id); if (m) onReview(m); };
   const exportOne = async (id) => {
     const m = await store.loadMatch(id);
     if (m) download(bundleFileName(m.meta), buildBundle(m.meta, m.ops, m.reviewed || []));
@@ -40,7 +42,10 @@ export default function LaunchScreen({ store, onNew, onOpen }) {
           <div className="label">Dernière session</div>
           <div className="mt-1 text-lg font-medium">{last.opponent || "—"} · {last.date || "—"}</div>
           <div className="text-sm text-ink-3">{last.n} entrées · sauvegardé {new Date(last.savedAt).toLocaleString("fr-CA")}</div>
-          <button className="btn btn-primary mt-3" onClick={() => resume(last.id)}>Reprendre</button>
+          <div className="mt-3 flex gap-2">
+            <button className="btn btn-primary" onClick={() => resume(last.id)}>Reprendre</button>
+            <button className="btn" onClick={() => review(last.id)}>Revue (passe 2)</button>
+          </div>
         </section>
       )}
       <div className="mt-6 flex flex-wrap gap-2">
@@ -58,6 +63,7 @@ export default function LaunchScreen({ store, onNew, onOpen }) {
                 <span>{m.date} · {m.opponent} <span className="text-ink-3">({m.n})</span></span>
                 <span className="flex gap-2">
                   <button className="btn" onClick={() => resume(m.id)}>Reprendre</button>
+                  <button className="btn" onClick={() => review(m.id)}>Revue</button>
                   <button className="btn" onClick={() => exportOne(m.id)}>Exporter</button>
                 </span>
               </li>

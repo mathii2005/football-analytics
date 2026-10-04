@@ -10,6 +10,7 @@ normalize - the single entry point from a match file to the engine.
 
 from src.analytics.possessions import possessions_from_match
 from src.v1.adapter import legacy_events, attach_events
+from src.v1.answers import latest_answers, root_seq
 from src.v1.gates import integrity_gates
 from src.v1.labels import label_match
 from src.v1.log import effective_ops
@@ -40,6 +41,7 @@ def normalize_match(raw: dict, match_id: str):
         "final_score": {"us": tl.score["US"], "them": tl.score["THEM"]},
         "events": events,
         "v1": {"timeline": tl, "labels": lab, "gates": integrity_gates(raw, tl),
-               "meta": meta, "reviewed": raw.get("reviewed", [])},
+               "meta": meta, "reviewed": raw.get("reviewed", []),
+               "answers": latest_answers(raw.get("reviewed", [])), "roots": root_seq(raw["events"])},
     }
     return match, possessions
