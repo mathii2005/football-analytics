@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { keyToAction } from "../core/keymap.js";
-import { clockMs, startClock, pauseClock, nudgeClock, halfTime, fmtClock } from "../core/clock.js";
-import { deriveLive, opsForAction, editOps, pressesPerMinute } from "../core/session.js";
+import { newClock, clockMs, startClock, pauseClock, nudgeClock, halfTime, fmtClock } from "../core/clock.js";
+import { deriveLive, opsForAction, editOps, resetOps, pressesPerMinute } from "../core/session.js";
 import { CB_VERSION, CODEBOOK } from "../core/codebook.js";
 import { buildBundle, bundleFileName } from "../core/bundle.js";
 import { download } from "../ui/util.js";
@@ -117,6 +117,11 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
     if (r.ops.length) { commit(r.ops); say(change.delete ? "Supprimé" : change.restore ? "Restauré" : "Modifié", "ok"); }
     return r;
   };
+  const restart = () => {
+    if (!window.confirm("Recommencer ? Toutes les entrées seront annulées et le chrono remis à 0 (rien n'est effacé du journal).")) return;
+    commit(resetOps(opsRef.current, new Date().toISOString()), newClock());
+    say("Match recommencé : Espace pour lancer", "ok");
+  };
   const setFlip = (on) => { commit([sysOp("FLIP", on ? "ON" : "OFF", clockMs(clockRef.current, Date.now()), clockRef.current.half)]); setFlipPrompt(false); };
   const endMatch = () => {
     const c = clockRef.current, nowMs = Date.now();
@@ -167,6 +172,7 @@ export default function LiveScreen({ store, match, onEditMeta, onQuit }) {
         <span className={`text-xs ${saved ? "text-ink-3" : "font-semibold text-warn"}`}>{saved ? "Sauvegardé ✓" : "Non sauvegardé ✗"}</span>
         <div className="ml-auto flex gap-2">
           <button className={`btn ${live.flip ? "btn-primary" : ""}`} onClick={() => setFlip(!live.flip)}>Inverser · {live.flip ? "ON" : "OFF"}</button>
+          <button className="btn" onClick={restart}>Recommencer</button>
           <button className="btn" onClick={onEditMeta}>Feuille de match</button>
           <button className="btn" onClick={exportNow}>Exporter</button>
           <button className="btn" onClick={() => setHelp(true)}>?</button>

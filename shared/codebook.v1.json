@@ -249,7 +249,7 @@
         "key": "Z",
         "code": "SH:OFF",
         "label_fr": "Tir non cadré / contré",
-        "definition": "Shot that misses or is blocked. It belongs to the team with the ball.",
+        "definition": "Shot that misses or is blocked. Its team comes from the zone (shot_team_rule).",
         "per_min": null
       },
       {
@@ -403,7 +403,7 @@
         "keys": [
           "Inverser"
         ],
-        "action": "Button: flip bands from MT2 (stored band = 5 - pressed band)",
+        "action": "Button: we attack right-to-left on screen (either half): stored band = 5 - pressed band; offered again at half time",
         "log": [
           "FLIP:ON",
           "FLIP:OFF"
@@ -417,12 +417,22 @@
         "log": [
           "H:END"
         ]
+      },
+      {
+        "keys": [
+          "Recommencer"
+        ],
+        "action": "Button: cancel every press and score correction, reset the clock to 0 (appended to the log)",
+        "log": [
+          "U",
+          "CLOCK:RESET"
+        ]
       }
     ],
     "read_by": "event.code (physical key position)"
   },
   "restart_team_rule": "The team of the next Q/W press takes the restart.",
-  "shot_while_dead_rule": "A shot pressed while DEAD belongs to the team that last had the ball live.",
+  "shot_while_dead_rule": "A penalty pressed while DEAD belongs to the team that last had the ball live; other shots follow shot_team_rule.",
   "auto_bands": {
     "KICKOFF": {
       "US": 2,
@@ -454,7 +464,8 @@
       "wall",
       "cb",
       "src",
-      "edit_of"
+      "edit_of",
+      "team"
     ],
     "kinds": [
       "S",
@@ -1554,7 +1565,7 @@
     {
       "version": "1.0.0",
       "date": "2026-10-02",
-      "change": "First version; definitions confirmed by the analyst. Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; zones clickable on a pitch view; editable journal."
+      "change": "First version; definitions confirmed by the analyst. Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; zones clickable on a pitch view; editable journal. Shot team decided by the zone; Recommencer button; Inverser usable in either half."
     }
   ],
   "mirror_metrics": {
@@ -1565,5 +1576,18 @@
   "restart_band_prompt": [
     "THROW",
     "FK"
-  ]
+  ],
+  "shot_team_rule": {
+    "rule": "Decided by the zone: band 3-5 -> US, band 0-2 -> THEM, whatever was pressed first. A penalty pressed while dead -> the team that had the ball; no band yet -> the team with the ball. Stored on the shot (team), recomputed when the shot is moved.",
+    "us_bands": [
+      3,
+      4,
+      5
+    ],
+    "them_bands": [
+      0,
+      1,
+      2
+    ]
+  }
 }

@@ -62,7 +62,7 @@ export default function Journal({ entries, onEdit }) {
           <li key={e.seq} className={`cursor-pointer rounded px-1 py-0.5 hover:bg-paper-2 ${open === e.seq ? "bg-paper-2" : ""}`}
               onClick={() => setOpen(open === e.seq ? null : e.seq)}>
             <div className={`flex justify-between ${e.retracted ? "text-ink-3 line-through" : ""}`}>
-              <span>{e.label}{e.edited && <span className="ml-2 text-xs text-us-deep no-underline">modifié</span>}</span>
+              <span>{e.label}{e.k === "SH" && e.team && <span className="text-ink-3"> · {e.team === "US" ? "Lauréats" : "Adversaire"}</span>}{e.edited && <span className="ml-2 text-xs text-us-deep no-underline">modifié</span>}</span>
               <span className="tabular-nums text-ink-3">MT{e.half} · {fmtClock(e.t)}</span>
             </div>
             {open === e.seq && (

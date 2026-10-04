@@ -29,7 +29,7 @@ test("restart keys only while the ball is dead", () => {
 });
 
 test("a goal scores for the team in possession and restarts with the other team's kick-off", () => {
-  const { live } = play([[2000, op("S", "US")], [9000, op("SH", "GOAL")]]);
+  const { live } = play([[2000, op("S", "US")], [5000, op("Z", 5)], [9000, op("SH", "GOAL")]]);
   assert.deepEqual(live.score, { us: 1, them: 0 });
   assert.equal(live.state, "DEAD");
   assert.equal(live.pendingRestart, "KICKOFF");
@@ -124,7 +124,7 @@ test("changing the team taking a corner recomputes its automatic band", () => {
 });
 
 test("deleting a goal removes the score and its automatic restart; restoring brings it back", () => {
-  const { ops } = play([[2000, op("S", "US")], [9000, op("SH", "GOAL")]]);
+  const { ops } = play([[2000, op("S", "US")], [5000, op("Z", 4)], [9000, op("SH", "GOAL")]]);
   const goal = seqOf(ops, "SH", "GOAL");
   const deleted = apply(ops, editOps(ops, goal, { delete: true }, "w").ops);
   assert.deepEqual(deriveLive(deleted).score, { us: 0, them: 0 });
@@ -145,4 +145,45 @@ test("an edit can't move a line out of its half", () => {
   const { ops } = play([[2000, op("S", "US")]]);
   const r = editOps(ops, seqOf(ops, "S", "US"), { t: -5000 }, "w");
   assert.equal(r.error, "Temps hors de la mi-temps");
+});
+
+// ---- shot team (explicit, late-press rule, editable) and restart-the-match ----
+import { resetOps, shotTeam } from "../src/core/session.js";
+const shot = (ops) => ops.filter((o) => o.k === "SH" && !o.auto).at(-1);
+
+test("every shot stores its team explicitly", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 4)], [5000, op("SH", "ON")]]);
+  assert.equal(shot(ops).team, "US");
+});
+
+test("the band decides the shot's team, whatever was pressed first", () => {
+  let ops = [{ seq: 1, t: 0, half: 1, k: "H", v: "START" }];
+  for (const [t, a] of [[2000, op("S", "US")], [3000, op("Z", 4)], [10000, op("S", "THEM")]]) ops = ops.concat(opsForAction(ops, a, ctx(t)).ops);
+  const r = opsForAction(ops, op("SH", "GOAL"), ctx(10900));     // keeper pressed before the shot
+  assert.equal(r.ops[0].team, "US");
+  assert.match(r.warning, /Lauréats/);
+  assert.deepEqual(deriveLive(ops.concat(r.ops)).score, { us: 1, them: 0 });
+  const theirs = play([[2000, op("S", "THEM")], [3000, op("Z", 1)], [4000, op("SH", "ON")]]);
+  assert.equal(shot(theirs.ops).team, "THEM");
+});
+
+test("without a band yet, the shot goes to the team with the ball", () => {
+  assert.equal(shotTeam({ state: "THEM", lastLive: "THEM", band: null }).team, "THEM");
+  assert.equal(shotTeam({ state: "DEAD", lastLive: "US", band: null }).team, "US");
+});
+
+test("moving a shot in time recomputes its team from the band at the new time", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 4)], [6000, op("SH", "ON")], [8000, op("S", "THEM")], [9000, op("Z", 1)]]);
+  const next = ops.concat(editOps(ops, shot(ops).seq, { t: 9500 }, "w").ops);
+  assert.equal(shot(next).team, "THEM");
+});
+
+test("restarting the match cancels every press, score corrections included, and resets the clock", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 3)], [4000, { type: "score", v: "THEM+1" }], [5000, op("SH", "GOAL")]]);
+  const next = ops.concat(resetOps(ops, "w"));
+  const live = deriveLive(next);
+  assert.deepEqual(live.score, { us: 0, them: 0 });
+  assert.equal(live.band, null);
+  assert.equal(live.state, "DEAD");
+  assert.ok(next.some((o) => o.k === "CLOCK" && o.v === "RESET"));
 });

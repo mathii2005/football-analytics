@@ -40,7 +40,7 @@ export default function SetupScreen({ meta, onSave, onCancel }) {
         <label className="col-span-2"><span className="label">Lien Veo</span><input className="field" value={f.veoUrl} onChange={set("veoUrl")} placeholder="https://app.veo.co/matches/…" /></label>
         <label><span className="label">Coup d'envoi MT1 dans Veo (mm:ss)</span><input className="field" value={f.off1} onChange={set("off1")} placeholder="12:59" /></label>
         <label><span className="label">Coup d'envoi MT2 dans Veo (mm:ss)</span><input className="field" value={f.off2} onChange={set("off2")} placeholder="70:13" /></label>
-        <label className="col-span-2 flex items-center gap-2 text-sm"><input type="checkbox" checked={f.flip} onChange={set("flip")} /> Inverser les zones en MT2 (je tague les zones telles que je les vois)</label>
+        <label className="col-span-2 flex items-center gap-2 text-sm"><input type="checkbox" checked={f.flip} onChange={set("flip")} /> Proposer d'inverser les zones à la mi-temps (le bouton Inverser marche dans les deux mi-temps : à activer quand on attaque de droite à gauche à l'écran)</label>
         {err && <p className="col-span-2 text-sm text-warn">{err}</p>}
         <div className="col-span-2 flex gap-2">
           <button type="submit" className="btn btn-primary">{meta ? "Enregistrer" : "Commencer"}</button>

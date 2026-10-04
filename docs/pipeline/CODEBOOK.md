@@ -99,13 +99,15 @@ Target load: **9–10 presses/min, cap 12**. A 15-minute block above 14/min is m
 | `D` | `R:FK` | Coup franc | Free kick, **including offside** (indirect free kick to the defending team at the spot of the offence). Then press (or click) the band where it is taken. | |
 | `F` | `R:GK` | Dégagement (6 m) | Goal kick | 1.0 total |
 | `Shift+D` | `R:PEN` | Penalty | | |
-| `Z` | `SH:OFF` | Tir non cadré / contré | Shot that misses or is blocked. It belongs to the team with the ball. | |
+| `Z` | `SH:OFF` | Tir non cadré / contré | Shot that misses or is blocked. Its team comes from the zone (see below). | |
 | `X` | `SH:ON` | Tir cadré | On target and not a goal (saved, or hits the woodwork and is saved). | |
 | `C` | `SH:GOAL` | But | Goal. Updates the score automatically. | 0.3 total |
 | `R` | `F` | À revoir | "Look at this on video": a chance without a shot, a key duel, an error, a set-piece routine, or a doubt. | 0.3 |
 | `T` | `LOST` | J'ai perdu le fil | Opens an **untrusted window** (pressed again, or the next `Q`/`W`/`E`, closes it). The engine leaves that window out until the gap card resolves it. | <0.1 |
 
 **Restart team** = the team of the next `Q` / `W` press.
+
+**Shot team = decided by the zone.** Nobody shoots from their own half, so a shot while the ball is in bands 3–5 is ours and in bands 0–2 theirs, whatever was pressed first (e.g. the keeper's `W` before the `X`). Exceptions: a penalty pressed while the ball is dead goes to the team that had the ball; with no band yet, the team with the ball. The team is written on the shot (`team`) and recomputed if the shot is moved in the journal.
 
 **Band of the restart.** For throw-ins and free kicks, the tagger asks for the band right after the restart key (« Zone de la touche ? » / « Zone du coup franc ? », the pitch view pulses). Press the digit or click the band. Taking the restart without it is accepted but flagged. Corners, goal kicks, penalties and kick-offs use the automatic bands below.
 
@@ -136,7 +138,8 @@ Target load: **9–10 presses/min, cap 12**. A 15-minute block above 14/min is m
 | `Ctrl/Cmd+S` | Export the match file now | — |
 | `?` | Help overlay listing all keys and definitions | — |
 | `Esc` | Close the overlay | — |
-| Button **Inverser** | Flip: from MT2, the analyst presses bands as seen on screen and the tagger stores the **absolute** band (`n → 5 − n`). The tagger offers it automatically at `M`. | `FLIP:ON/OFF` |
+| Button **Inverser** | Flip, **in either half**: when we attack right-to-left on the Veo footage, the analyst presses bands as seen on screen and the tagger stores the **absolute** band (`n → 5 − n`). The tagger offers to switch it at `M`. | `FLIP:ON/OFF` |
+| Button **Recommencer** | Cancel every press and score correction and reset the clock to 0 (for a false start). Appended to the log like everything else; the orientation is kept | `U` for each press, then `CLOCK:RESET` |
 | Button **Fin du match** | End of match + forced export | `H:END` (h2) |
 
 Score keys only correct the displayed score. Goals for the engine come from `C` presses and are checked against the corrected score (integrity gate G2).
@@ -176,6 +179,7 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 | `cb` | Codebook version |
 | `src` | (automatic lines only) the press that produced it |
 | `edit_of` | (edited lines only) the `seq` of the line it corrects |
+| `team` | (shots only) `US` / `THEM`, from the zone rule (§3.1) |
 
 - **Retraction:** `{"k": "U", "v": 57}` cancels press 57. A `U` targeting an `H`, `U` or `CLOCK` press is ignored.
 - **Automatic children:** a line produced by the tagger (automatic band, the dead ball and kick-off after a goal) carries `src` = the press that caused it. Retracting the press retracts its children.
@@ -487,4 +491,4 @@ A blocked report still lets the clip list be sent (once G3 passes).
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`). Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
+| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`); shot team decided by the zone; Recommencer button; Inverser usable in either half. Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |

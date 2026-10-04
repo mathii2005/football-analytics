@@ -203,9 +203,10 @@ Keys are read by **physical position** (`event.code`), so the layout works on an
   - inserts an automatic DEAD;
   - sets the pending restart to KICKOFF for the other team.
 - **Restart key:** only accepted while the state is DEAD (otherwise it shows a toast and is ignored). Corner, goal kick, penalty and kick-off: the next `Q`/`W` takes it and applies the automatic band. Throw-in and free kick (offside included): the tagger asks for the band of the restart; taking it without a band shows a warning.
-- **Shot while DEAD** (direct free kick, penalty): it belongs to the team that last had the ball live.
+- **Shot team:** decided by the zone: bands 3–5 → us, bands 0–2 → them, whatever was pressed first. A penalty pressed while the ball is dead goes to the team that had the ball. A message appears when the zone overrides the possession.
 - **Undo:** adds `U` for the last match press that hasn't been cancelled. It can be repeated.
-- **Inverser:** from MT2, a band press `n` is stored as `5 − n`. The banner shows "Zones inversées".
+- **Inverser:** usable in either half, whenever we attack right-to-left on the footage: a band press `n` is stored as `5 − n` (a click on the pitch is already absolute). Offered at `M`. The banner shows "Zones inversées".
+- **Recommencer:** for a false start. Cancels every press and score correction and resets the clock to 0, written to the log.
 
 ### 4.4 Saving
 

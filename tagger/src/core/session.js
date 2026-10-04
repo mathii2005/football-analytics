@@ -7,6 +7,7 @@ const AUTO = CODEBOOK.auto_bands;
 const ASK_BAND = new Set(CODEBOOK.restart_band_prompt);
 const RETRACT_IGNORED = new Set(CODEBOOK.log.retraction_ignored_for);
 const HALF_START = { 1: 0, 2: CODEBOOK.clock.half2_start_ms };
+const TEAM_FR = { US: "Lauréats", THEM: "l'adversaire" };
 
 const byTime = (a, b) => a.half - b.half || a.t - b.t || a.seq - b.seq;
 const nextSeq = (ops) => ops.reduce((m, o) => Math.max(m, o.seq), 0) + 1;
@@ -29,6 +30,7 @@ export function deriveLive(ops) {
   const live = { state: null, lastLive: null, band: null, pendingRestart: null, score: { us: 0, them: 0 },
                  lostOpen: false, flip: false, half: 1, lastPlayT: null, needsRestartBand: false, recent: [] };
   for (const o of [...ops].sort(byTime)) {
+    if ((o.k === "SCORE" || o.k === "FLIP") && retracted.has(o.seq)) continue;
     if (o.k === "SCORE") {
       const [team, d] = [o.v.startsWith("US") ? "us" : "them", o.v.endsWith("+1") ? 1 : -1];
       live.score[team] = Math.max(0, live.score[team] + d);
@@ -41,7 +43,7 @@ export function deriveLive(ops) {
       continue;
     }
     if (!MATCH_KINDS.has(o.k)) continue;
-    if (!o.auto) live.recent.push({ seq: o.seq, t: o.t, half: o.half, k: o.k, v: o.v, label: opLabel(o),
+    if (!o.auto) live.recent.push({ seq: o.seq, t: o.t, half: o.half, k: o.k, v: o.v, team: o.team, label: opLabel(o),
                                     retracted: retracted.has(o.seq), edited: o.edit_of !== undefined });
     if (retracted.has(o.seq)) continue;
     switch (o.k) {
@@ -56,7 +58,7 @@ export function deriveLive(ops) {
       case "LOST": live.lostOpen = !live.lostOpen; break;
       case "SH":
         if (o.v === "GOAL") {
-          const team = live.state === "US" || live.state === "THEM" ? live.state : live.lastLive;
+          const team = o.team ?? (live.state === "US" || live.state === "THEM" ? live.state : live.lastLive);
           if (team === "US") live.score.us += 1; else if (team === "THEM") live.score.them += 1;
         }
         break;
@@ -67,8 +69,20 @@ export function deriveLive(ops) {
   return live;
 }
 
+// Team of a shot: decided by the band (CODEBOOK shot_team_rule). Nobody shoots
+// from their own half, so a shot in bands 3-5 is ours and in bands 0-2 theirs,
+// whatever was pressed first. Without a band yet: the team with the ball.
+export function shotTeam(before) {
+  const byBall = before.state === "US" || before.state === "THEM" ? before.state : before.lastLive;
+  // a penalty pressed before the restart: the team that had the ball (fouled in the box)
+  if (before.state === "DEAD" && before.pendingRestart === "PEN") return { team: byBall ?? null };
+  if (before.band === null || before.band === undefined) return { team: byBall ?? null };
+  const team = before.band >= 3 ? "US" : "THEM";
+  return team === byBall ? { team } : { team, warning: `Tir attribué à ${TEAM_FR[team]} (zone ${before.band})` };
+}
+
 // The new line(s) a match press produces, given the state just before it.
-function linesFor(before, k, v, mk) {
+function linesFor(before, k, v, mk, team) {
   if (k === "S") {
     const s = mk("S", v);
     const out = [s];
@@ -77,9 +91,10 @@ function linesFor(before, k, v, mk) {
     return out;
   }
   if (k === "SH" && v === "GOAL") {
-    const g = mk("SH", "GOAL");
+    const g = mk("SH", "GOAL", { team });
     return [g, mk("S", "DEAD", { auto: true, src: g.seq }), mk("R", "KICKOFF", { auto: true, src: g.seq })];
   }
+  if (k === "SH") return [mk("SH", v, { team })];
   return [mk(k, v)];
 }
 
@@ -100,6 +115,10 @@ export function opsForAction(ops, action, { t, half, wall, flip }) {
   if (k === "R" && live.state !== "DEAD") return { error: "Reprise seulement quand le ballon est mort (E)" };
   // Keyboard bands follow the flip; a click on the pitch is already absolute.
   if (k === "Z") return { ops: [mk("Z", flip && !action.absolute ? 5 - v : v)] };
+  if (k === "SH") {
+    const st = shotTeam(live);
+    return { ops: linesFor(live, k, v, mk, st.team), warning: st.warning };
+  }
   const warning = k === "S" && live.needsRestartBand && v !== "DEAD" ? "Zone de la reprise non indiquée" : undefined;
   return { ops: linesFor(live, k, v, mk), warning };
 }
@@ -129,9 +148,20 @@ export function editOps(ops, targetSeq, change, wall) {
   const withoutTarget = ops.concat(out);
   const before = deriveLive(withoutTarget.filter((o) => byTime(o, { half, t, seq: Infinity }) < 0 || o.k === "U"));
   const mk = (k, val, extra = {}) => ({ seq: seq++, t, half, k, v: val, ...base, ...extra });
-  const lines = linesFor(before, target.k, v, mk);
+  const team = target.k === "SH" ? shotTeam(before).team : undefined;   // recomputed from the band at the new time
+  const lines = linesFor(before, target.k, v, mk, team);
   lines[0].edit_of = targetSeq;
   return { ops: out.concat(lines) };
+}
+
+// "Recommencer": cancel every press (score corrections included) and reset
+// the clock. Appended like everything else; the orientation (FLIP) is kept.
+export function resetOps(ops, wall) {
+  const retracted = retractedSet(ops);
+  let seq = nextSeq(ops);
+  const out = ops.filter((o) => (MATCH_KINDS.has(o.k) || o.k === "SCORE") && !o.auto && !retracted.has(o.seq))
+    .map((o) => ({ seq: seq++, t: 0, half: 1, k: "U", v: o.seq, wall, cb: CB_VERSION }));
+  return out.concat({ seq: seq++, t: 0, half: 1, k: "CLOCK", v: "RESET", wall, cb: CB_VERSION });
 }
 
 // Match presses (not automatic, not clock/score) per minute over the window.
