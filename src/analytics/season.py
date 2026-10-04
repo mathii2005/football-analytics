@@ -24,7 +24,8 @@ import json
 from src.analytics.classic import classic_report
 from src.analytics.metrics import match_metrics, share
 from src.analytics.phases import counter_press, finishing
-from src.analytics.possessions import US, possessions_from_match
+from src.analytics.possessions import US
+from src.ingestion.normalize import normalize_match
 
 METRICS = ("possession", "field_tilt", "high_recup_share", "regain_10s", "shots_per_possession",
            "box_entries_per_possession", "verticality", "not_cheap_loss", "shots", "losses_opp_half_share")
@@ -85,7 +86,8 @@ def season_profile(paths) -> dict:
             match = json.loads(path.read_text())
         except (json.JSONDecodeError, UnicodeDecodeError):
             continue
-        if not isinstance(match, dict) or not isinstance(match.get("events"), list) or not isinstance(match.get("match"), dict):
+        if not isinstance(match, dict) or not isinstance(match.get("events"), list) or \
+                not (isinstance(match.get("match"), dict) or isinstance(match.get("meta"), dict)):
             continue
-        items.append((path.stem, match, possessions_from_match(match, path.stem)))
+        items.append((path.stem, *normalize_match(match, path.stem)))
     return season_from(items)

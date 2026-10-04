@@ -19,7 +19,8 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Query
 
 from src.analytics.metrics import match_metrics, possession_row, outcome, time_to_shot_ms
-from src.analytics.possessions import possessions_from_match, format_ms, US, THEM
+from src.analytics.possessions import format_ms, US, THEM
+from src.ingestion.normalize import normalize_match
 from src.analytics.quality import quality_report
 from src.analytics.report import match_report
 from src.analytics.phases import phases_report
@@ -49,9 +50,7 @@ def match_path(match_id: str) -> Path:
 
 @lru_cache(maxsize=64)
 def _analyse(path: str, mtime: float):
-    match = json.loads(Path(path).read_text())
-    possessions = possessions_from_match(match, Path(path).stem)
-    return match, possessions
+    return normalize_match(json.loads(Path(path).read_text()), Path(path).stem)
 
 
 def analyse(match_id: str):

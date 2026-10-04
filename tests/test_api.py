@@ -98,3 +98,32 @@ def test_season_and_timeline_endpoints(client):
     assert "possession" in s["summary"]
     t = client.get("/matches/champlain_15min/timeline").json()
     assert t["minutes"] and "events" in t
+
+
+# ---- v1 matches (two-pass tagger) go through every endpoint ----
+
+@pytest.fixture
+def v1_client(tmp_path, monkeypatch):
+    shutil.copy(FIXTURES / "ahuntsic_2026-10-02_h1_v1.json", tmp_path / "ahuntsic_h1.json")
+    shutil.copy(FIXTURES / "champlain_15min.json", tmp_path / "champlain_15min.json")
+    monkeypatch.setenv("FA_MATCH_DIR", str(tmp_path))
+    return TestClient(app)
+
+
+def test_v1_match_is_listed_and_summarised(v1_client):
+    listed = {m["id"]: m for m in v1_client.get("/matches").json()}
+    assert listed["ahuntsic_h1"]["opponent"] == "Ahuntsic"
+    assert listed["ahuntsic_h1"]["final_score"] == {"us": 0, "them": 2}
+    s = v1_client.get("/matches/ahuntsic_h1/summary").json()
+    assert round(s["metrics"]["possession_pct"]["strict"] * 100) == 58
+
+
+@pytest.mark.parametrize("endpoint", ["report", "phases", "timeline", "clips", "possessions", "transitions", "losses", "quality"])
+def test_v1_match_serves_every_endpoint(v1_client, endpoint):
+    r = v1_client.get(f"/matches/ahuntsic_h1/{endpoint}")
+    assert r.status_code == 200, r.text[:300]
+
+
+def test_v1_match_in_season(v1_client):
+    ids = [m["id"] for m in v1_client.get("/season").json()["matches"]]
+    assert "ahuntsic_h1" in ids
