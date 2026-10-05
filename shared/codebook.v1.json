@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "date": "2026-10-02",
+  "version": "1.1.0",
+  "date": "2026-10-05",
   "source": "docs/pipeline/CODEBOOK.md",
   "status": "Definitions confirmed by the analyst on behalf of the staff on 2026-10-02.",
   "geometry": {
@@ -607,7 +607,8 @@
             "HS_PASS",
             "SET_PIECE_DELIVERY",
             "REBOUND",
-            "SOLO"
+            "SOLO",
+            "REGAIN_DIRECT"
           ]
         },
         {
@@ -973,79 +974,187 @@
     },
     "penalty": 0.76,
     "min_cell_shots": 200,
-    "source": "StatsBomb open data (men's competitions, non-penalty shots), built by tools/build_xg_table.py",
-    "provisional": true,
+    "source": "StatsBomb open data, 244 matches (FIFA World Cup 2018, FIFA World Cup 2022, UEFA Euro 2020, UEFA Euro 2024, Copa America 2024, African Cup of Nations 2023), 5942 non-penalty shots; tools/build_xg_table.py",
+    "provisional": false,
     "table": {
       "SIX": {
         "FOOT": {
-          "OPEN": 0.35,
-          "FAST_BREAK": 0.4,
-          "SET_PIECE": 0.3
+          "OPEN": 0.2571,
+          "FAST_BREAK": 0.2571,
+          "SET_PIECE": 0.2885
         },
         "HEAD": {
-          "OPEN": 0.2,
-          "FAST_BREAK": 0.2,
-          "SET_PIECE": 0.2
+          "OPEN": 0.2571,
+          "FAST_BREAK": 0.2571,
+          "SET_PIECE": 0.2159
         }
       },
       "CENTRAL_BOX": {
         "FOOT": {
-          "OPEN": 0.12,
-          "FAST_BREAK": 0.16,
-          "SET_PIECE": 0.1
+          "OPEN": 0.1896,
+          "FAST_BREAK": 0.1955,
+          "SET_PIECE": 0.1173
         },
         "HEAD": {
-          "OPEN": 0.07,
-          "FAST_BREAK": 0.07,
-          "SET_PIECE": 0.07
+          "OPEN": 0.0842,
+          "FAST_BREAK": 0.0951,
+          "SET_PIECE": 0.0583
         }
       },
       "WIDE_BOX": {
         "FOOT": {
-          "OPEN": 0.05,
-          "FAST_BREAK": 0.06,
-          "SET_PIECE": 0.05
+          "OPEN": 0.0534,
+          "FAST_BREAK": 0.0563,
+          "SET_PIECE": 0.0708
         },
         "HEAD": {
-          "OPEN": 0.03,
-          "FAST_BREAK": 0.03,
-          "SET_PIECE": 0.03
+          "OPEN": 0.0576,
+          "FAST_BREAK": 0.0576,
+          "SET_PIECE": 0.0576
         }
       },
       "CENTRAL_OUT": {
         "FOOT": {
-          "OPEN": 0.04,
-          "FAST_BREAK": 0.04,
-          "SET_PIECE": 0.05
+          "OPEN": 0.034,
+          "FAST_BREAK": 0.0333,
+          "SET_PIECE": 0.0244
         },
         "HEAD": {
-          "OPEN": 0.01,
-          "FAST_BREAK": 0.01,
-          "SET_PIECE": 0.01
+          "OPEN": 0.0308,
+          "FAST_BREAK": 0.0308,
+          "SET_PIECE": 0.0308
         }
       },
       "WIDE_OUT": {
         "FOOT": {
-          "OPEN": 0.02,
-          "FAST_BREAK": 0.02,
-          "SET_PIECE": 0.03
+          "OPEN": 0.0167,
+          "FAST_BREAK": 0.0167,
+          "SET_PIECE": 0.0167
         },
         "HEAD": {
-          "OPEN": 0.01,
-          "FAST_BREAK": 0.01,
-          "SET_PIECE": 0.01
+          "OPEN": 0.0167,
+          "FAST_BREAK": 0.0167,
+          "SET_PIECE": 0.0167
         }
       }
     },
-    "missing_loc": "shot-weighted average of the band's cells; match labelled 'xG partly estimated'"
+    "missing_loc": "shot-weighted average of the band's cells; match labelled 'xG partly estimated'",
+    "counts": {
+      "SIX": {
+        "FOOT": {
+          "OPEN": 120,
+          "FAST_BREAK": 19,
+          "SET_PIECE": 88
+        },
+        "HEAD": {
+          "OPEN": 74,
+          "FAST_BREAK": 3,
+          "SET_PIECE": 190
+        }
+      },
+      "CENTRAL_BOX": {
+        "FOOT": {
+          "OPEN": 712,
+          "FAST_BREAK": 183,
+          "SET_PIECE": 324
+        },
+        "HEAD": {
+          "OPEN": 285,
+          "FAST_BREAK": 20,
+          "SET_PIECE": 480
+        }
+      },
+      "WIDE_BOX": {
+        "FOOT": {
+          "OPEN": 674,
+          "FAST_BREAK": 143,
+          "SET_PIECE": 240
+        },
+        "HEAD": {
+          "OPEN": 16,
+          "FAST_BREAK": 1,
+          "SET_PIECE": 37
+        }
+      },
+      "CENTRAL_OUT": {
+        "FOOT": {
+          "OPEN": 1293,
+          "FAST_BREAK": 240,
+          "SET_PIECE": 738
+        },
+        "HEAD": {
+          "OPEN": 2,
+          "FAST_BREAK": 0,
+          "SET_PIECE": 0
+        }
+      },
+      "WIDE_OUT": {
+        "FOOT": {
+          "OPEN": 18,
+          "FAST_BREAK": 1,
+          "SET_PIECE": 41
+        },
+        "HEAD": {
+          "OPEN": 0,
+          "FAST_BREAK": 0,
+          "SET_PIECE": 0
+        }
+      }
+    },
+    "built": "2026-10-05"
   },
   "xt": {
     "label_fr": "progression dangereuse (xT, grille publique, grossière)",
     "source": "Karun Singh expected-threat grid (2018), 12x8 xT_grid.json, coarsened by tools/build_xt_grid.py",
     "min_gain": 0.01,
-    "provisional": true,
-    "grid": null,
-    "missing_lane": "band lane-average value"
+    "provisional": false,
+    "grid": {
+      "0": {
+        "L": 0.00933,
+        "HS_L": 0.00933,
+        "C": 0.01012,
+        "HS_R": 0.00933,
+        "R": 0.00933
+      },
+      "1": {
+        "L": 0.00806,
+        "HS_L": 0.01001,
+        "C": 0.01017,
+        "HS_R": 0.01001,
+        "R": 0.00806
+      },
+      "2": {
+        "L": 0.01169,
+        "HS_L": 0.0127,
+        "C": 0.01293,
+        "HS_R": 0.0127,
+        "R": 0.01169
+      },
+      "3": {
+        "L": 0.01871,
+        "HS_L": 0.02011,
+        "C": 0.02024,
+        "HS_R": 0.02011,
+        "R": 0.01871
+      },
+      "4": {
+        "L": 0.03617,
+        "HS_L": 0.02855,
+        "C": 0.03511,
+        "HS_R": 0.02855,
+        "R": 0.03617
+      },
+      "5": {
+        "L": 0.05967,
+        "HS_L": 0.05967,
+        "C": 0.18275,
+        "HS_R": 0.05967,
+        "R": 0.05967
+      }
+    },
+    "missing_lane": "band lane-average value",
+    "built": "2026-10-05",
+    "source_url": "https://karun.in/blog/data/open_xt_12x8_v1.json"
   },
   "metrics": [
     {
@@ -1571,6 +1680,11 @@
   },
   "changelog": [
     {
+      "version": "1.1.0",
+      "date": "2026-10-05",
+      "change": "Shot assist REGAIN_DIRECT; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data."
+    },
+    {
       "version": "1.0.0",
       "date": "2026-10-02",
       "change": "First version; definitions confirmed by the analyst. Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; zones clickable on a pitch view; editable journal. Shot team decided by the zone; Recommencer button; Inverser usable in either half."
@@ -1666,7 +1780,8 @@
     "NONE": "Personne",
     "WON": "Gagné",
     "NEUTRAL": "Neutre",
-    "CANT_SEE": "Je ne vois pas"
+    "CANT_SEE": "Je ne vois pas",
+    "REGAIN_DIRECT": "Récupération directe"
   },
   "card_labels_fr": {
     "SHOT": "Tir",

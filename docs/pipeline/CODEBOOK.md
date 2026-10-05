@@ -1,10 +1,10 @@
-# Lauréats codebook — v1.0.0
+# Lauréats codebook — v1.1.0
 
 > The single source of truth for **what is tagged, how it is defined, and how every number is computed**.
 > The machine-readable copy is `shared/codebook.v1.json`. It must say exactly what this file says, and a test checks that the two agree.
 > Companion document: [`PIPELINE.md`](PIPELINE.md) (the whole process, from match day to the dashboard).
 >
-> Status: v1.0.0. All definitions confirmed by the analyst on behalf of the staff on 2026-10-02. Any change goes through the versioning rules in §0.
+> Status: v1.1.0. All definitions confirmed by the analyst on behalf of the staff on 2026-10-02. Any change goes through the versioning rules in §0.
 
 ---
 
@@ -207,7 +207,7 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 
 | Card | Trigger | Questions → values |
 |---|---|---|
-| **SHOT** (Tir) | every `SH` press, both teams | **loc**: `SIX` (6-yard box) / `CENTRAL_BOX` (in the box, lanes HS_L–C–HS_R, outside the 6-yard box) / `WIDE_BOX` (in the box, outside the 18-yard box's inner lanes) / `CENTRAL_OUT` (outside the box, lanes HS_L–C–HS_R) / `WIDE_OUT` · **body**: `FOOT` / `HEAD` / `OTHER` · **situation**: `OPEN` / `FAST_BREAK` (≤ 10 s after a regain) / `SET_PIECE` / `PENALTY` · **assist**: `THROUGH` / `CUTBACK` / `CROSS` / `HS_PASS` / `SET_PIECE_DELIVERY` / `REBOUND` / `SOLO` · **last_pass_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
+| **SHOT** (Tir) | every `SH` press, both teams | **loc**: `SIX` (6-yard box) / `CENTRAL_BOX` (in the box, in the centre lane: the width of the 6-yard box, outside the 6-yard box) / `WIDE_BOX` (in the box, in a half-space: between the 6-yard and 18-yard box lines) / `CENTRAL_OUT` (outside the box, within the width of the box) / `WIDE_OUT` (outside the box, in a wide lane) · **body**: `FOOT` / `HEAD` / `OTHER` · **situation**: `OPEN` / `FAST_BREAK` (≤ 10 s after a regain) / `SET_PIECE` / `PENALTY` · **assist**: `THROUGH` / `CUTBACK` / `CROSS` / `HS_PASS` / `SET_PIECE_DELIVERY` / `REBOUND` / `SOLO` / `REGAIN_DIRECT` (the shot comes straight from a ball we won: interception or press, then shot) · **last_pass_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
 | **GOAL** (But) | every `SH:GOAL` press, both teams | Every SHOT question, plus **phase_check**: `TRANSITION` / `BUILD_UP` / `SETTLED` / `SET_PIECE` / `PENALTY` (a check against the computed phase) · **box_lane** (lane where the ball entered the box): `L` / `HS_L` / `C` / `HS_R` / `R` |
 | **GAP** (Trou) | every `LOST` window, every low-fidelity block | Re-enter the possession states and bands from the clip, as a patch (§4) |
 | **FLAG** (À revoir) | every `F` press | **type**: `CHANCE_NO_SHOT` / `KEY_DUEL` / `ERROR` / `SET_PIECE_ROUTINE` / `OTHER` · **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
@@ -318,17 +318,18 @@ Success rate = successes ÷ (successes + failures). Only cards that were answere
      - **situation**: StatsBomb play pattern "From Counter", or a shot ≤ 10 s after a possession change → FAST_BREAK. Set-piece play patterns → SET_PIECE. Otherwise OPEN.
   3. Cell value = goals ÷ shots in that cell. A cell with fewer than 200 shots is merged with its `situation = OPEN` neighbour.
   4. Store the values, the shot count per cell, the source and the build date. The SHA-256 of the table goes into the codebook JSON.
-- **Provisional values until the script has run** (order of magnitude only, flagged `xg_table: provisional` in every output):
+- **Built table** (StatsBomb open data, 244 matches (FIFA World Cup 2018, FIFA World Cup 2022, UEFA Euro 2020, UEFA Euro 2024, Copa America 2024, African Cup of Nations 2023), 5942 non-penalty shots; tools/build_xg_table.py; built 2026-10-05; cell counts in the JSON):
 
-| loc | FOOT · OPEN | FOOT · FAST_BREAK | FOOT · SET_PIECE | HEAD (all) |
-|---|---|---|---|---|
-| SIX | 0.35 | 0.40 | 0.30 | 0.20 |
-| CENTRAL_BOX | 0.12 | 0.16 | 0.10 | 0.07 |
-| WIDE_BOX | 0.05 | 0.06 | 0.05 | 0.03 |
-| CENTRAL_OUT | 0.04 | 0.04 | 0.05 (direct FK) | 0.01 |
-| WIDE_OUT | 0.02 | 0.02 | 0.03 | 0.01 |
+| loc | FOOT · OPEN | FOOT · FAST_BREAK | FOOT · SET_PIECE | HEAD · OPEN | HEAD · SET_PIECE |
+|---|---|---|---|---|---|
+| SIX | 0.257 | 0.257 | 0.288 | 0.257 | 0.216 |
+| CENTRAL_BOX | 0.190 | 0.196 | 0.117 | 0.084 | 0.058 |
+| WIDE_BOX | 0.053 | 0.056 | 0.071 | 0.058 | 0.058 |
+| CENTRAL_OUT | 0.034 | 0.033 | 0.024 | 0.031 | 0.031 |
+| WIDE_OUT | 0.017 | 0.017 | 0.017 | 0.017 | 0.017 |
 
-- **Missing answers:** a shot with `loc` unknown takes the shot-weighted average of its band's cells (band 5 → the box cells, band 4 / 3 → the outside cells). The match is then labelled "xG partly estimated".
+  The full table (FAST_BREAK headers included) is in `shared/codebook.v1.json` (`xg.table`, `xg.counts`). Re-run `tools/build_xg_table.py` (add `--cached` to use only what is downloaded) to rebuild it.
+- **Missing answers:** body unknown → FOOT, situation unknown → OPEN (both mark the shot estimated); a shot with `loc` unknown takes the shot-weighted average of its band's cells (band 5 → the box cells, band 4 / 3 → the outside cells). The match is then labelled "xG partly estimated".
 - **Label everywhere:** "xG (table publique, grossière, non ajustée sur nous)".
 
 ### 7.2 xT (public grid, coarsened)
@@ -340,6 +341,18 @@ Success rate = successes ÷ (successes + failures). Only cards that were answere
   - The lane of a cell comes from the joined ENTRY card. Without a lane, the band's lane-average value is used.
   - **Gain** = `max(0, xT[B] − xT[A])`, and it counts only if ≥ 0.01, so sideways or backward moves earn 0.
   - **xT gained** = the sum of gains. It is split by phase (§6.3) and by lane.
+- **Built grid** (`tools/build_xt_grid.py`, source https://karun.in/blog/data/open_xt_12x8_v1.json):
+
+| Band | L | HS_L | C | HS_R | R |
+|---|---|---|---|---|---|
+| 0 | 0.0093 | 0.0093 | 0.0101 | 0.0093 | 0.0093 |
+| 1 | 0.0081 | 0.0100 | 0.0102 | 0.0100 | 0.0081 |
+| 2 | 0.0117 | 0.0127 | 0.0129 | 0.0127 | 0.0117 |
+| 3 | 0.0187 | 0.0201 | 0.0202 | 0.0201 | 0.0187 |
+| 4 | 0.0362 | 0.0285 | 0.0351 | 0.0285 | 0.0362 |
+| 5 | 0.0597 | 0.0597 | 0.1827 | 0.0597 | 0.0597 |
+
+  With the minimum gain of 0.01, a move from band 2 to band 3 earns nothing: only moves into band 4 and into the box count.
 - **Label:** "progression dangereuse (xT, grille publique, grossière)".
 
 ---
@@ -461,6 +474,7 @@ Possession timeline, possession-flow Sankey, possession durations, regain curve,
 - **EN BAISSE (worse):** the mirror.
 - **STABLE (flat):** otherwise.
 - **TROP TÔT (too early):** fewer than 5 matches.
+- With the in-season baseline the first 5 matches are the reference and two consecutive evaluations are needed, so the first AMÉLIORÉ / EN BAISSE can only appear from the 11th v1 match.
 - Each status is also shown split by opponent tier and home/away.
 
 ---
@@ -499,4 +513,5 @@ A blocked report still lets the clip list be sent (once G3 passes).
 
 | Version | Date | Change |
 |---|---|---|
+| 1.1.0 | 2026-10-05 | MINOR: shot assist value `REGAIN_DIRECT` (shot straight from a regain). Clarification of shot locations (centre lane vs half-space inside the box). xG table built from StatsBomb open data and xT grid built from Karun Singh's grid (§7), provisional values removed. |
 | 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`); shot team decided by the zone; Recommencer button; Inverser usable in either half. Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |

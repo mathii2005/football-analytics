@@ -23,3 +23,6 @@ dashboard/dist/
 .impeccable/review/
 .impeccable/questions/
 .superpowers/
+
+# public data downloaded by tools/ (xG table, xT grid)
+data/statsbomb/

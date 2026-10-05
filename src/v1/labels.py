@@ -46,6 +46,7 @@ class Moment:
     team: str              # team that gains (regain) / loses (loss) / enters (entry)
     band: int | None
     kind: str = ""
+    seq: int | None = None # the press it comes from (review cards key on it)
 
 
 @dataclass
@@ -71,11 +72,11 @@ def _legacy(band):
 
 
 def _switches(tl):
-    """Direct live -> live changes of team: (half, t, from, to)."""
+    """Direct live -> live changes of team: (half, t, from, to, seq)."""
     out = []
     for a, b in zip(tl.states, tl.states[1:]):
         if a.half == b.half and a.end == b.start and a.state in LIVE and b.state in LIVE and a.state != b.state:
-            out.append((a.half, b.start, a.state, b.state))
+            out.append((a.half, b.start, a.state, b.state, b.seq))
     return out
 
 
@@ -155,14 +156,14 @@ def _entries(tl):
         p, n = b.prev, b.band
         if b.state == "US":
             if p <= 3 and n >= 4:
-                out.append(Moment(b.half, b.start, "US", n, "redzone"))
+                out.append(Moment(b.half, b.start, "US", n, "redzone", b.seq))
             if n == 5 and p <= 4:
-                out.append(Moment(b.half, b.start, "US", n, "box"))
+                out.append(Moment(b.half, b.start, "US", n, "box", b.seq))
         else:
             if p >= 2 and n <= 1:
-                out.append(Moment(b.half, b.start, "THEM", n, "redzone"))
+                out.append(Moment(b.half, b.start, "THEM", n, "redzone", b.seq))
             if n == 0 and p >= 1:
-                out.append(Moment(b.half, b.start, "THEM", n, "box"))
+                out.append(Moment(b.half, b.start, "THEM", n, "box", b.seq))
     return out
 
 
@@ -201,13 +202,13 @@ def _phases(tl, regains):
 def label_match(tl, match_id: str) -> Labels:
     lab = Labels()
     switches = _switches(tl)
-    for half, t, frm, to in switches:          # ours only: regain = them -> us, loss = us -> them
+    for half, t, frm, to, seq in switches:     # ours only: regain = them -> us, loss = us -> them
         band = tl.band_at(half, t)
         if to == "US":
-            lab.regains.append(Moment(half, t, "US", band, "regain"))
+            lab.regains.append(Moment(half, t, "US", band, "regain", seq))
         else:
-            lab.losses.append(Moment(half, t, "US", band, "loss"))
+            lab.losses.append(Moment(half, t, "US", band, "loss", seq))
     lab.possessions = _possessions(tl, match_id)
     lab.entries = _entries(tl)
-    lab.phases = _phases(tl, [Moment(h, t, to, None) for h, t, f, to in switches])   # both teams' regains
+    lab.phases = _phases(tl, [Moment(h, t, to, None) for h, t, f, to, _ in switches])   # both teams' regains
     return lab

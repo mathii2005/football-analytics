@@ -61,7 +61,7 @@ def ticks(cell: str) -> list[str]:
 def test_json_loads_and_versions_match():
     cb = load_codebook()
     title_version = re.search(r"^# .*— v(\d+\.\d+\.\d+)", MD, re.M).group(1)
-    assert cb["version"] == title_version == "1.0.0"
+    assert cb["version"] == title_version == "1.1.0"
     assert re.fullmatch(r"[0-9a-f]{64}", codebook_sha256())
     assert CODEBOOK_PATH.name == "codebook.v1.json"
 

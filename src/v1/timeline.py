@@ -38,6 +38,7 @@ class Segment:
     state: str                       # US | THEM | DEAD | UNKNOWN
     restart: str | None = None       # DEAD only
     taken_by: str | None = None      # DEAD only
+    seq: int | None = None           # the S line that opened it
 
 
 @dataclass
@@ -49,6 +50,7 @@ class BandSeg:
     auto: bool
     prev: int | None                 # band before this one (None at the first)
     state: str | None                # state when the band was entered
+    seq: int | None = None           # the Z line
 
 
 @dataclass
@@ -59,6 +61,8 @@ class Restart:
     team: str
     band: int | None
     dead_start: float
+    rseq: int | None = None          # the restart key's line
+    seq: int | None = None           # the S line that took it
 
 
 @dataclass
@@ -119,14 +123,14 @@ def build_timeline(ops: list[dict]) -> Timeline:
         h_end = next((o["t"] for o in hops if o["k"] == "H" and o["v"] == "END"), max(o["t"] for o in hops))
         tl.halves[half] = (h_start, h_end)
 
-        cur = {"state": "DEAD", "start": h_start, "restart": "KICKOFF"}
-        last_live, band, band_start, band_auto, band_prev, band_state = None, None, None, False, None, None
+        cur = {"state": "DEAD", "start": h_start, "restart": "KICKOFF", "seq": None, "rseq": None}
+        last_live, band, band_start, band_auto, band_prev, band_state, band_seq = None, None, None, False, None, None, None
         lost_open, before_lost = None, None
         segs, bsegs = [], []
 
         def close(t, taken_by=None):
             segs.append(Segment(half, cur["start"], t, cur["state"],
-                                cur.get("restart") if cur["state"] == "DEAD" else None, taken_by))
+                                cur.get("restart") if cur["state"] == "DEAD" else None, taken_by, cur.get("seq")))
 
         for o in hops:
             if o["t"] > h_end:
@@ -140,23 +144,23 @@ def build_timeline(ops: list[dict]) -> Timeline:
                     continue
                 taken_by = v if cur["state"] == "DEAD" and v in LIVE else None
                 if taken_by:
-                    tl.restarts.append(Restart(half, t, cur.get("restart"), v, None, cur["start"]))
+                    tl.restarts.append(Restart(half, t, cur.get("restart"), v, None, cur["start"], cur.get("rseq"), o["seq"]))
                 close(t, taken_by)
-                cur = {"state": v, "start": t, "restart": None}
+                cur = {"state": v, "start": t, "restart": None, "seq": o["seq"], "rseq": None}
                 if v in LIVE:
                     last_live = v
             elif k == "R" and cur["state"] == "DEAD":
-                cur["restart"] = v
+                cur["restart"], cur["rseq"] = v, o["seq"]
             elif k == "Z":
                 if v != band:
                     if band is not None:
-                        bsegs.append(BandSeg(half, band_start, t, band, band_auto, band_prev, band_state))
-                    band_prev, band, band_start, band_auto, band_state = band, v, t, bool(o.get("auto")), cur["state"]
+                        bsegs.append(BandSeg(half, band_start, t, band, band_auto, band_prev, band_state, band_seq))
+                    band_prev, band, band_start, band_auto, band_state, band_seq = band, v, t, bool(o.get("auto")), cur["state"], o["seq"]
             elif k == "LOST":
                 if lost_open is None:
                     lost_open, before_lost = t, dict(cur)
                     close(t)
-                    cur = {"state": "UNKNOWN", "start": t, "restart": None}
+                    cur = {"state": "UNKNOWN", "start": t, "restart": None, "seq": o["seq"]}
                 else:
                     tl.lost.append((half, lost_open, t))
                     lost_open = None
@@ -176,7 +180,7 @@ def build_timeline(ops: list[dict]) -> Timeline:
             tl.lost.append((half, lost_open, h_end))
         close(h_end)
         if band is not None:
-            bsegs.append(BandSeg(half, band_start, h_end, band, band_auto, band_prev, band_state))
+            bsegs.append(BandSeg(half, band_start, h_end, band, band_auto, band_prev, band_state, band_seq))
         tl.states += [s for s in segs if s.end > s.start]
         tl.bands += [b for b in bsegs if b.end > b.start or b.end == h_end]
 

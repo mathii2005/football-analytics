@@ -326,6 +326,8 @@ A GAP card shows its window. The analyst adds the states (our ball / their ball 
   - one **golden match** (a real re-tagged match) whose full output is snapshotted;
   - the existing suite stays green.
 
+**Where it lives (built in P2–P4):** `src/v1/log.py` (stage 2), `timeline.py` (3), `labels.py` (4), `answers.py` (5), `models.py` (6: xG per shot, xT gains), `metrics.py` (7: the catalogue, clips 3 typical + 3 extreme, min n, coverage), `quality.py` (8: calibration, reliability agreement and coarsening), `gates.py` (9), `season.py` + `improvement.py` (10), `adapter.py` + `src/ingestion/normalize.py` (presentation to the existing engine). Tables are built by `tools/build_xg_table.py` and `tools/build_xt_grid.py`.
+
 **API additions:**
 
 | Endpoint | Returns |

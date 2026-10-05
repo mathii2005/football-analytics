@@ -14,7 +14,13 @@ from src.v1.answers import latest_answers, root_seq
 from src.v1.gates import integrity_gates
 from src.v1.labels import label_match
 from src.v1.log import effective_ops
+from src.v1.metrics import compute_metrics
+from src.analytics.classic import classic_report
 from src.v1.timeline import build_timeline
+
+
+def _round(x):
+    return None if x is None else round(x, 4)
 
 
 def is_v1(raw: dict) -> bool:
@@ -44,4 +50,7 @@ def normalize_match(raw: dict, match_id: str):
                "meta": meta, "reviewed": raw.get("reviewed", []),
                "answers": latest_answers(raw.get("reviewed", [])), "roots": root_seq(raw["events"])},
     }
+    v1 = match["v1"]
+    v1["metrics"] = compute_metrics(tl, lab, v1["answers"], v1["roots"], meta,
+                                    classic_tilt=_round(classic_report(match, possessions)["headline"]["field_tilt"]))
     return match, possessions
