@@ -141,3 +141,11 @@ def test_season_v1_endpoint(v1_client):
     d = v1_client.get("/season/v1").json()
     assert [m["id"] for m in d["matches"]] == ["ahuntsic_h1"]
     assert d["metrics"]["box_entries"]["status"] == "TROP TÔT"
+
+
+def test_recap_endpoint_first_match_vs_opponent(v1_client):
+    r = v1_client.get("/matches/ahuntsic_h1/recap").json()
+    assert r["available"] and r["mode"] == "vs_opponent" and r["n_other_matches"] == 0
+    assert r["brief"]["goals_against"]["value"] == 2
+    assert all(x["score"] > 0 for x in r["best"]) and all(x["score"] < 0 for x in r["worst"])
+    assert v1_client.get("/matches/champlain_15min/recap").json() == {"available": False}

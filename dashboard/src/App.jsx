@@ -10,6 +10,7 @@ import Possession from "./tabs/Possession.jsx";
 import Attaque from "./tabs/Attaque.jsx";
 import Terrain from "./tabs/Terrain.jsx";
 import ClipDrawer from "./v1ui/ClipDrawer.jsx";
+import Presentation from "./v1ui/Presentation.jsx";
 import { fmtValue } from "./v1ui/format.js";
 import * as V1 from "./v1ui/pages/Pages.jsx";
 
@@ -137,6 +138,7 @@ export default function App() {
   };
   const [loading, setLoading] = useState(false);
   const [drawer, setDrawer] = useState(null);     // v1 metric whose clips are open
+  const [presenting, setPresenting] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -245,7 +247,8 @@ export default function App() {
         {data && !isV1 && current === "attaque" && <Attaque d={data} openClips={openClips} />}
         {data && !isV1 && current === "terrain" && <Terrain d={data} openClips={openClips} />}
         {data && current === "clips" && <ClipsView clips={data.clips} quality={data.quality} preset={clipPreset} />}
-        {data && isV1 && (() => { const T = V1_TABS.find((t) => t.id === current); return T?.Page ? <T.Page d={data} v1={data.v1} openClips={setDrawer} /> : null; })()}
+        {data && isV1 && (() => { const T = V1_TABS.find((t) => t.id === current); return T?.Page ? <T.Page d={data} v1={data.v1} openClips={setDrawer} present={() => setPresenting(true)} /> : null; })()}
+        {presenting && data?.recap?.available && <Presentation recap={data.recap} info={data.report.match} matchId={selected} onClose={() => setPresenting(false)} />}
         <ClipDrawer metric={drawer} onClose={() => setDrawer(null)} />
       </main>
     </div>

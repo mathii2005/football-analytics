@@ -23,11 +23,19 @@ const PRIORITIES = [["identite", "Identité", "chance_share"], ["phases", "Phase
   ["couloir", "Couloir intérieur", "hs_entry_share"], ["zone", "Zone rouge", "box_entries"],
   ["intensite", "Intensité", "counterpress_5s"], ["defense", "Défense", "xg_against"]];
 
-export function Recap({ d, v1, openClips }) {
+export function Recap({ d, v1, openClips, present }) {
   const M = v1.metrics, S = d.seasonV1?.metrics || {};
   const key = ["goals_for", "xg_for", "box_entries", "counterpress_5s", "shots_against"].filter((k) => M[k]?.clips?.all?.length);
   return (
     <div className="grid gap-3 lg:grid-cols-12">
+      {d.recap?.available && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-rule bg-paper px-4 py-3 lg:col-span-12">
+          <p className="text-[13px] text-ink-2"><span className="font-semibold text-ink">Récap du lundi</span> · 5 diapos, ~10 min ·{" "}
+            {d.recap.mode === "vs_season" ? `comparé à nos ${d.recap.n_other_matches} autres matchs` : "premier match : comparé à l'adversaire"}
+            {" "}· meilleurs : {d.recap.best.map((x) => x.label_fr).join(", ") || "–"} · à travailler : {d.recap.worst.map((x) => x.label_fr).join(", ") || "–"}</p>
+          <button type="button" onClick={present} className="rounded bg-ink px-3 py-1.5 text-sm font-semibold text-paper hover:bg-ink-2">Mode présentation</button>
+        </div>
+      )}
       <Tile className="lg:col-span-8" title="Quand étions-nous dangereux, et avions-nous le ballon ?" note="Menace (lissée) et part de possession sur 5 min glissantes, buts et mi-temps.">
         <MatchStory timeline={d.timeline} />
       </Tile>

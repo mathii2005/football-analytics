@@ -29,6 +29,7 @@ from src.analytics.season import season_from
 from src.analytics.clips import review_clips
 from src.analytics.video import veo_info, video_url
 from src.v1.season import season_v1
+from src.v1.recap import build_recap
 from src.v1.quality import calibration
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -237,9 +238,8 @@ def metrics(match_id: str):
     return _v1_payload(match) if "v1" in match else {"available": False}
 
 
-@app.get("/season/v1")
-def season_v1_endpoint():
-    """Per-metric series over the v1 matches with the improvement status (CODEBOOK §9.4)."""
+def _v1_matches():
+    """Every v1 match of the folder, one entry per match id (latest file)."""
     items = []
     for path in sorted(match_dir().glob("*.json")):
         try:
@@ -254,5 +254,25 @@ def season_v1_endpoint():
     for m in sorted(items, key=lambda x: x["date"] or "", reverse=True):     # one entry per match id (latest file)
         if m["match_id"] not in seen:
             seen.add(m["match_id"]); uniq.append(m)
+    return uniq
+
+
+@app.get("/season/v1")
+def season_v1_endpoint():
+    """Per-metric series over the v1 matches with the improvement status (CODEBOOK §9.4)."""
+    uniq = _v1_matches()
     return {"matches": [{k: m[k] for k in ("id", "date", "opponent", "final_score")} for m in sorted(uniq, key=lambda x: x["date"] or "")],
             "metrics": season_v1(uniq)}
+
+
+@app.get("/matches/{match_id}/recap")
+def recap(match_id: str):
+    """The Monday breakdown (PIPELINE §9): best / worst stats vs the opponent, then vs the season."""
+    match, _ = analyse(match_id)
+    if "v1" not in match:
+        return {"available": False}
+    me = match["match"].get("id")
+    all_v1 = _v1_matches()
+    others = [m["metrics"] for m in all_v1 if m["match_id"] != me]
+    status = season_v1(all_v1) if len(all_v1) > 1 else None
+    return {"available": True, **build_recap(match["v1"]["metrics"], others, status)}

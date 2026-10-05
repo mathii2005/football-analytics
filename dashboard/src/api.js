@@ -25,6 +25,8 @@ export async function fetchMatch(id) {
   ]);
   // v1 matches (two-pass tagger): the metric catalogue and the v1 season
   const v1 = await get(`/matches/${m}/metrics`).catch(() => ({ available: false }));
-  const seasonV1 = v1.available ? await get("/season/v1").catch(() => null) : null;
-  return { report, possessions, losses, quality, clips, phases, timeline, season, v1, seasonV1 };
+  const [seasonV1, recap] = v1.available
+    ? await Promise.all([get("/season/v1").catch(() => null), get(`/matches/${m}/recap`).catch(() => null)])
+    : [null, null];
+  return { report, possessions, losses, quality, clips, phases, timeline, season, v1, seasonV1, recap };
 }

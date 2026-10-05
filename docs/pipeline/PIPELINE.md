@@ -446,6 +446,14 @@ Example with a Saturday match; shift the days for other match days. Each step li
 
 **Caps: at most 3 numbers and 4 clips.** Anything else stays in the dashboard for anyone who wants to dig.
 
+### 9.1b How "best" and "worst" are chosen (built in P7: `src/v1/recap.py`, `GET /matches/{id}/recap`)
+
+- **First matches (fewer than 3 other v1 matches): compared with the opponent.** Each pair ours / theirs (shots, xG, chances, transition → box, build-up → zone 4, set piece → shot, first contact) is scored by the relative gap (us − them) / max(us, them). Best = the 2 largest positive gaps, worst = the 2 largest negative ones.
+- **From the 4th v1 match: compared with our season.** Each metric (status ok or partiel) is scored by z = (value − mean of the other matches) / their standard deviation, in its good direction. Best = the 2 highest z (≥ 0.5), worst = the 2 lowest (≤ −0.5). Outcomes (goals) are not levers and are left out.
+- **The trend slide** shows a metric whose improvement status is AMÉLIORÉ or EN BAISSE (with last season once the baseline exists); until then it says the trend is not available yet.
+- Each item carries up to 3 clips; the « À surveiller » sentence is typed on the last slide (kept in the browser).
+- Presentation mode: button on Récap, 5 slides, ← → to move, Esc to leave, 10-minute countdown in the corner.
+
 ### 9.2 Delivery rules
 
 - **Clip first, number second:** the number explains what the staff just saw.

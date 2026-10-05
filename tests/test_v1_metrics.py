@@ -206,3 +206,34 @@ def test_an_entry_marked_as_a_tag_error_is_left_out():
     assert m["redzone_entries"]["n"] == 1
     assert m["hs_entry_share"]["detail"]["entries"] == 1 and m["hs_entry_share"]["coverage"] == 1.0
     assert all(c["t"] != 3000 for c in m["xt_gained"]["clips"]["all"])
+
+
+# ---------- recap (P7) ----------
+
+def _m(mid, value, direction="↑", status="ok", n=10):
+    return {"id": mid, "label_fr": mid, "unit": "%", "value": value, "n": n, "status": status, "direction": direction,
+            "clips": {"typical": [{"half": 1, "t": 1000, "url": "u"}], "extreme": [], "all": [{"half": 1, "t": 1000, "url": "u"}]}}
+
+
+def test_first_match_compares_with_the_opponent():
+    from src.v1.recap import build_recap
+    M = {k: _m(k, v) for k, v in {"shots_for": 11, "shots_against": 15, "xg_for": 1.0, "xg_against": 1.1,
+                                  "transition_to_box": 0.03, "transition_to_box_against": 0.01,
+                                  "setpiece_shot_rate": 0.19, "setpiece_shot_rate_against": 0.40}.items()}
+    r = build_recap(M, [])
+    assert r["mode"] == "vs_opponent"
+    assert [x["id"] for x in r["best"]] == ["transition_to_box"]
+    assert [x["id"] for x in r["worst"]] == ["setpiece_shot_rate", "shots_for"]
+    assert r["worst"][0]["compare"] == {"label": "adversaire", "value": 0.40} and r["worst"][0]["clips"]
+
+
+def test_later_matches_compare_with_the_season():
+    from src.v1.recap import build_recap
+    others = [{"box_entries": _m("box_entries", v), "counterpress_5s": _m("counterpress_5s", c),
+               "opp_possession_length": _m("opp_possession_length", p, "↓")} for v, c, p in [(3, 0.2, 12), (4, 0.25, 11), (3.5, 0.22, 12.5)]]
+    M = {"box_entries": _m("box_entries", 6), "counterpress_5s": _m("counterpress_5s", 0.1),
+         "opp_possession_length": _m("opp_possession_length", 9, "↓")}
+    r = build_recap(M, others)
+    assert r["mode"] == "vs_season" and r["n_other_matches"] == 3
+    assert {x["id"] for x in r["best"]} == {"box_entries", "opp_possession_length"}
+    assert [x["id"] for x in r["worst"]] == ["counterpress_5s"]
