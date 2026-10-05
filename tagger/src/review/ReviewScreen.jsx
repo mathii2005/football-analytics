@@ -111,6 +111,16 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
     else if (isAnswered(card, q)) go(idx + 1);
   };
 
+  // « pas une entrée »: the band press was a tag error (ENTRY / OPP_ENTRY only)
+  const invalidOpt = card ? CODEBOOK.cards.find((c) => c.id === card.kind)?.invalid_option : null;
+  const markInvalid = (undo = false) => {
+    if (!card || !invalidOpt) return;
+    const line = answerLine(card, undo ? {} : { invalid: invalidOpt.value }, new Date().toISOString());
+    const next = [...ref.current.reviewed, line];
+    setReviewed(next); persist({ reviewed: next });
+    if (!undo) go(idx + 1);
+  };
+
   const moveMoment = () => {
     if (!card?.opSeq) return;
     const s = window.prompt("Temps Veo du bon moment (mm:ss)");
@@ -156,7 +166,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
         e.preventDefault(); return;
       }
       const map = { Enter: () => go(idx + 1), ArrowRight: () => go(idx + 1), ArrowLeft: () => go(idx - 1),
-                    KeyK: () => go(idx + 1, false), KeyO: () => openVeo(), KeyV: () => moveMoment(),
+                    KeyK: () => go(idx + 1, false), KeyO: () => openVeo(), KeyV: () => moveMoment(), KeyN: () => markInvalid(),
                     ArrowDown: () => setQi((i) => Math.min(questions.length - 1, i + 1)), ArrowUp: () => setQi((i) => Math.max(0, i - 1)) };
       if (map[e.code]) { e.preventDefault(); map[e.code](); }
     };
@@ -223,7 +233,14 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
               <div className="mt-3 flex flex-wrap gap-2">
                 <button className="btn btn-primary" onClick={() => openVeo()}>▶ Ouvrir dans Veo (O)</button>
                 {card.opSeq && <button className="btn" onClick={moveMoment}>Déplacer le moment (V)</button>}
+                {invalidOpt && <button className="btn" onClick={() => markInvalid()}>{invalidOpt.label_fr} ({invalidOpt.key})</button>}
               </div>
+              {invalidOpt && draft.invalid && (
+                <div className="mt-3 flex items-center justify-between rounded border border-warn/40 bg-warn/10 px-3 py-2 text-sm">
+                  <span>Marquée « pas une entrée » : exclue des statistiques. Corrige la zone dans le journal si besoin.</span>
+                  <button className="btn" onClick={() => markInvalid(true)}>Annuler</button>
+                </div>
+              )}
 
               {card.kind === "GAP" ? (
                 <div className="mt-5"><GapForm card={card} veo={meta.veo} onFill={fillGap} onUnknown={gapUnknown} disabled={locked} /></div>
@@ -248,7 +265,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
                   ))}
                 </div>
               )}
-              <p className="mt-5 text-xs text-ink-3">Chiffres = répondre · 0 = je ne vois pas · ↑↓ = question · Entrée / → = carte suivante · ← = précédente · K = passer · O = Veo · V = déplacer le moment</p>
+              <p className="mt-5 text-xs text-ink-3">Chiffres = répondre · 0 = je ne vois pas · ↑↓ = question · Entrée / → = carte suivante · ← = précédente · K = passer · O = Veo · V = déplacer le moment{invalidOpt ? " · N = pas une entrée" : ""}</p>
             </>
           )}
         </main>

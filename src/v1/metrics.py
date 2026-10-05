@@ -133,8 +133,20 @@ def _team_of_flag(ctx, half, t):
     return ctx.tl.state_at(half, t)
 
 
+def _invalid_entries(ctx, lab):
+    """Band presses whose ENTRY / OPP_ENTRY card says « pas une entrée » (tag error)."""
+    return {e.seq for e in lab.entries
+            if (ctx.ans("ENTRY" if e.team == "US" else "OPP_ENTRY", e.seq) or {}).get("invalid")}
+
+
 def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
     ctx = Ctx(tl, lab, answers, roots, meta)
+    invalid = _invalid_entries(ctx, lab)
+    if invalid:                         # left out of every entry metric and of xT
+        from copy import copy
+        lab = copy(lab)
+        lab.entries = [e for e in lab.entries if e.seq not in invalid]
+        ctx.lab = lab
     out = {}
     put = lambda m: out.__setitem__(m["id"], m)   # noqa: E731
 
@@ -236,7 +248,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
     def entry_lane(seq):
         a = ctx.ans("ENTRY", seq)
         return a.get("lane") if a else None
-    gains = xt_gains(tl, entry_lane)
+    gains = [g for g in xt_gains(tl, entry_lane) if g.seq not in invalid]
     total = sum(g.gain for g in gains)
     put(_metric(ctx, "xt_gained", _per10(total, ctx.poss["US"]), len(gains), [ctx.clip(g.half, g.t, g.gain, f"+{g.gain:.3f}") for g in gains],
                 detail={"total": round(total, 4)}))
@@ -308,7 +320,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
     put(_metric(ctx, "box_attempt_success", _ratio(nb, nb + len(box_fail)), nb + len(box_fail),
                 [ctx.clip(l.half, l.t, 0, "Tentative de surface perdue") for l in box_fail], coverage=cov_l))
     ours = [p for p in lab.possessions if p.team == "us"]
-    reached = [p for p in ours if any(b.band >= 4 and not b.auto for b in tl.bands if b.half == p.half and p.start_ms <= b.start < p.end_ms)]
+    reached = [p for p in ours if any(b.band >= 4 and not b.auto and b.seq not in invalid for b in tl.bands if b.half == p.half and p.start_ms <= b.start < p.end_ms)]
     put(_metric(ctx, "possessions_reaching_redzone", _ratio(len(reached), len(ours)), len(ours)))
     t45 = sum(min(s.end, b.end) - max(s.start, b.start) for s in tl.states if s.state == "US"
               for b in tl.bands if b.half == s.half and b.band >= 4 and min(s.end, b.end) > max(s.start, b.start))

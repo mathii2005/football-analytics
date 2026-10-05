@@ -2,6 +2,9 @@
 // of a card wins. CANT_SEE is an answer; a missing question is not.
 import { CB_VERSION } from "./codebook.js";
 import { cardQuestions } from "./cards.js";
+import { CODEBOOK as CB } from "./codebook.js";
+
+const CARD_INVALID = new Set(CB.cards.filter((c) => c.invalid_option).map((c) => c.id));
 
 export function latestAnswers(reviewed) {
   const m = new Map();
@@ -13,6 +16,7 @@ export const answerLine = (card, q, wall) => ({ card: card.id, seq: card.seq ?? 
 
 export function isAnswered(card, q) {
   if (!q) return false;
+  if (q.invalid && CARD_INVALID.has(card.kind)) return true;     // « pas une entrée »
   const qs = cardQuestions(card.kind);
   if (!qs.length) return q.result !== undefined;          // GAP
   return qs.every((x) => q[x.id] !== undefined && q[x.id] !== null);

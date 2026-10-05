@@ -744,7 +744,12 @@
             "RECYCLED"
           ]
         }
-      ]
+      ],
+      "invalid_option": {
+        "key": "N",
+        "value": "NOT_AN_ENTRY",
+        "label_fr": "Pas une entrée (erreur de tag)"
+      }
     },
     {
       "id": "LOSS",
@@ -892,7 +897,12 @@
             "LOOSE"
           ]
         }
-      ]
+      ],
+      "invalid_option": {
+        "key": "N",
+        "value": "NOT_AN_ENTRY",
+        "label_fr": "Pas une entrée (erreur de tag)"
+      }
     }
   ],
   "derived": {
@@ -1683,7 +1693,7 @@
     {
       "version": "1.1.0",
       "date": "2026-10-05",
-      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data."
+      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data. ENTRY / OPP_ENTRY cards: « Pas une entrée » (key N) excludes a tag error."
     },
     {
       "version": "1.0.0",

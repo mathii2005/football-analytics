@@ -79,3 +79,9 @@ test("answers: latest wins, coverage per kind, CANT_SEE counts as answered", () 
   assert.equal(isAnswered(card, { intent: "CANT_SEE", intent_lane: "CANT_SEE", cause: "CANT_SEE", closing_3s: "CANT_SEE", regain_5s: "CANT_SEE" }), true);
   assert.deepEqual(coverage([card, { id: "LOSS:9", seq: 9, kind: "LOSS" }], answers).LOSS, { answered: 1, total: 2 });
 });
+
+test("an entry marked « pas une entrée » counts as answered", () => {
+  const card = { id: "ENTRY:5", seq: 5, kind: "ENTRY" };
+  assert.equal(isAnswered(card, { invalid: "NOT_AN_ENTRY" }), true);
+  assert.equal(isAnswered({ id: "SHOT:5", seq: 5, kind: "SHOT" }, { invalid: "NOT_AN_ENTRY" }), false);
+});

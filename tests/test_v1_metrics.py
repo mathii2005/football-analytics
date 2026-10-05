@@ -192,3 +192,17 @@ def test_mirror_metrics_borrow_their_definition():
     assert m["first_contact_won_against"]["label_fr"] == "Premier contact gagné (adversaire)"
     assert m["first_contact_won_against"]["direction"] == "↓"
     assert m["xg_rate_TRANSITION"]["label_fr"] == "xG par 10 min · transition"
+
+
+def test_an_entry_marked_as_a_tag_error_is_left_out():
+    L = kickoff_then(Log())
+    L.S(1000, "US", auto_band=2)
+    L.add(2000, "Z", 3)
+    bad = L.add(3000, "Z", 4)
+    L.add(4000, "Z", 3)
+    good = L.add(5000, "Z", 4)
+    m = run(L, [{"card": f"ENTRY:{bad}", "q": {"invalid": "NOT_AN_ENTRY"}},
+                {"card": f"ENTRY:{good}", "q": {"lane": "HS_L", "method": "PASS", "between_lines": "YES", "outcome_15s": "LOST"}}], end=60000)
+    assert m["redzone_entries"]["n"] == 1
+    assert m["hs_entry_share"]["detail"]["entries"] == 1 and m["hs_entry_share"]["coverage"] == 1.0
+    assert all(c["t"] != 3000 for c in m["xt_gained"]["clips"]["all"])
