@@ -608,7 +608,8 @@
             "SET_PIECE_DELIVERY",
             "REBOUND",
             "SOLO",
-            "REGAIN_DIRECT"
+            "REGAIN_DIRECT",
+            "NONE"
           ]
         },
         {
@@ -1682,7 +1683,7 @@
     {
       "version": "1.1.0",
       "date": "2026-10-05",
-      "change": "Shot assist REGAIN_DIRECT; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data."
+      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data."
     },
     {
       "version": "1.0.0",
@@ -1777,7 +1778,7 @@
     "EDGE": "Entrée de surface",
     "US": "Nous",
     "THEM": "Eux",
-    "NONE": "Personne",
+    "NONE": "Aucune",
     "WON": "Gagné",
     "NEUTRAL": "Neutre",
     "CANT_SEE": "Je ne vois pas",
