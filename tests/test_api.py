@@ -127,3 +127,17 @@ def test_v1_match_serves_every_endpoint(v1_client, endpoint):
 def test_v1_match_in_season(v1_client):
     ids = [m["id"] for m in v1_client.get("/season").json()["matches"]]
     assert "ahuntsic_h1" in ids
+
+
+def test_v1_metrics_endpoint(v1_client):
+    d = v1_client.get("/matches/ahuntsic_h1/metrics").json()
+    assert d["available"] and d["metrics"]["shots_for"]["value"] == 4
+    assert {g["id"] for g in d["gates"]} == {"G1", "G2", "G3", "G4", "G5"}
+    assert d["metrics"]["box_entries"]["clips"]["all"][0]["url"].startswith("https://app.veo.co/")
+    assert v1_client.get("/matches/champlain_15min/metrics").json() == {"available": False}
+
+
+def test_season_v1_endpoint(v1_client):
+    d = v1_client.get("/season/v1").json()
+    assert [m["id"] for m in d["matches"]] == ["ahuntsic_h1"]
+    assert d["metrics"]["box_entries"]["status"] == "TROP TÔT"

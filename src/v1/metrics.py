@@ -14,8 +14,9 @@ Shared rules
     coverage            for judged metrics: answered / eligible cards.
                         >= 80 % normal, 50-80 % "partiel", < 50 % value hidden.
     clips               every moment behind the number (Veo, 5 s lead);
-                        "typical" = the 3 closest to the median weight,
-                        "extreme" = the 3 heaviest (xG, xT gain, else time order).
+                        weighted moments (xG, xT gain): "typical" = the 3 closest
+                        to the median, "extreme" = the 3 heaviest; unweighted
+                        moments: a sample of 3 spread over the match ("spread").
 """
 
 import re
@@ -68,30 +69,48 @@ class Ctx:
 
 def _clips(moments):
     if not moments:
-        return {"typical": [], "extreme": [], "all": []}
+        return {"typical": [], "extreme": [], "all": [], "mode": "spread"}
     ordered = sorted(moments, key=lambda m: (m["half"], m["t"]))
     weights = [m["weight"] for m in moments]
-    if len(set(weights)) == 1:
+    if len(set(weights)) == 1:          # no weight: a sample spread over the match, no "extremes"
         step = max(1, len(ordered) // 3)
-        typical = ordered[::step][:3]
-        extreme = ordered[-3:]
+        return {"typical": ordered[::step][:3], "extreme": [], "all": ordered, "mode": "spread"}
     else:
         med = median(weights)
         typical = sorted(moments, key=lambda m: abs(m["weight"] - med))[:3]
         extreme = sorted(moments, key=lambda m: -m["weight"])[:3]
-    return {"typical": typical, "extreme": extreme, "all": ordered}
+    return {"typical": typical, "extreme": extreme, "all": ordered, "mode": "weighted"}
 
 
-def _metric(ctx, mid, value, n, moments=(), coverage=None, detail=None):
-    d = ctx.defs.get(mid) or ctx.defs.get(re.sub(r"_(TRANSITION|BUILD_UP|SETTLED|SET_PIECE)$", "_<phase>", mid)) or {}
+PHASE_FR = {"TRANSITION": "transition", "BUILD_UP": "construction", "SETTLED": "attaque placée", "SET_PIECE": "CPA"}
+
+
+def _definition(ctx, mid):
+    """Catalogue row of a metric. Mirror metrics (…_against, CODEBOOK §8.2) share
+    their base metric's definition, labelled « (adversaire) », direction reversed;
+    xg_rate_<phase> takes the phase name."""
+    against = mid.endswith("_against") and mid not in ctx.defs
+    base = mid[: -len("_against")] if against else mid
+    phase = re.search(r"_(TRANSITION|BUILD_UP|SETTLED|SET_PIECE)$", base)
+    d = dict(ctx.defs.get(base) or ctx.defs.get(re.sub(r"_(TRANSITION|BUILD_UP|SETTLED|SET_PIECE)$", "_<phase>", base)) or {})
+    if phase:
+        d["label_fr"] = f"xG par 10 min · {PHASE_FR[phase.group(1)]}"
+    if against:
+        d["label_fr"] = f'{d.get("label_fr", base)} (adversaire)'
+        d["direction"] = {"↑": "↓", "↓": "↑"}.get(d.get("direction"), d.get("direction"))
+    return d
+
+
+def _metric(ctx, mid, value, n, moments=(), coverage=None, detail=None, hide_below=True):
+    d = _definition(ctx, mid)
     status, label = "ok", d.get("label", "")
     need = _min_n(d.get("min_n"))
     if value is not None and need is not None and n < need:
         status = "trop tôt"
     if coverage is not None:
-        if coverage < 0.5:
+        if coverage < 0.5 and hide_below:
             value, status = None, "couverture insuffisante"
-        elif coverage < 0.8:
+        elif coverage < 0.8 or (coverage < 0.5 and not hide_below):
             status = "partiel" if status == "ok" else status
     return {"id": mid, "label_fr": d.get("label_fr", mid), "group": d.get("group"), "unit": d.get("unit"),
             "direction": d.get("direction"), "min_n": d.get("min_n"), "value": value, "n": n,
@@ -149,7 +168,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
     flag_cov = _ratio(flags_answered, len(tl.flags)) if tl.flags else None
     for t, sfx in (("US", "for"), ("THEM", "against")):
         moments = [ctx.clip(s.half, s.t, xg, "Tir") for s, xg, _ in by_team[t]] + chance_flags[t]
-        put(_metric(ctx, f"chances_{sfx}", len(moments), len(moments), moments, coverage=flag_cov))
+        put(_metric(ctx, f"chances_{sfx}", len(moments), len(moments), moments, coverage=flag_cov, hide_below=False))
     cf, ca = out["chances_for"]["value"], out["chances_against"]["value"]
     put(_metric(ctx, "chance_share", _ratio(cf or 0, (cf or 0) + (ca or 0)), (cf or 0) + (ca or 0)))
     g, n = out["goals_for"]["value"], out["shots_for"]["value"]
@@ -239,8 +258,13 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
     cov_e = _ratio(len(answered), len(ent)) if ent else None
     lane_known = [(e, a) for e, a in answered if a.get("lane") in LANES]
     hs = [(e, a) for e, a in lane_known if a["lane"] in HS]
+    count = lambda xs: {k: xs.count(k) for k in dict.fromkeys(xs)}   # noqa: E731
     put(_metric(ctx, "hs_entry_share", _ratio(len(hs), len(lane_known)), len(lane_known),
-                [ctx.clip(e.half, e.t, 1, "Entrée intérieure") for e, _ in hs], coverage=cov_e))
+                [ctx.clip(e.half, e.t, 1, "Entrée intérieure") for e, _ in hs], coverage=cov_e,
+                detail={"lanes": count([a["lane"] for _, a in lane_known]),
+                        "methods": count([a["method"] for _, a in answered if a.get("method") not in (None, "CANT_SEE")]),
+                        "grid": count([f'{a["lane"]}:{e.band}' for e, a in lane_known]),
+                        "entries": len(ent), "answered": len(answered)}))
     bl = [(e, a) for e, a in answered if a.get("between_lines") in ("YES", "NO")]
     put(_metric(ctx, "between_lines_rate", _ratio(sum(a["between_lines"] == "YES" for _, a in bl), len(bl)), len(bl),
                 [ctx.clip(e.half, e.t, 1, "Entre les lignes") for e, a in bl if a["between_lines"] == "YES"], coverage=cov_e))
@@ -296,7 +320,11 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
     # ---- intensity
     l35 = [l for l in lab.losses if l.band is not None and l.band >= 3]
     won = [l for l in l35 if any(h == l.half and l.t < g <= l.t + 5000 for h, g, _ in regains["US"])]
-    put(_metric(ctx, "counterpress_5s", _ratio(len(won), len(l35)), len(l35), [ctx.clip(l.half, l.t, 1, "Contre-pressing réussi") for l in won]))
+    lc = [a for _, a in loss_answered]
+    put(_metric(ctx, "counterpress_5s", _ratio(len(won), len(l35)), len(l35), [ctx.clip(l.half, l.t, 1, "Contre-pressing réussi") for l in won],
+                detail={"causes": count([a["cause"] for a in lc if a.get("cause") not in (None, "CANT_SEE")]),
+                        "intents": count([a["intent"] for a in lc if a.get("intent") not in (None, "CANT_SEE")]),
+                        "losses_by_band": count([l.band for l in l35]), "answered": len(lc)}))
     high = [r for r in lab.regains if r.band is not None and r.band >= 3]
     put(_metric(ctx, "high_regains", _per10(len(high), ctx.poss["THEM"]), len(high), [ctx.clip(r.half, r.t, 1, "Récupération haute") for r in high]))
     theirs = [p for p in lab.possessions if p.team == "them" and p.duration_ms is not None]

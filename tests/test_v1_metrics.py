@@ -183,3 +183,12 @@ def test_season_v1_uses_the_baseline_file_or_the_first_five_matches():
     assert s["box_entries"]["baseline_source"] == "baseline intra-saison" and s["box_entries"]["status"] == "AMÉLIORÉ"
     s2 = season_v1(matches[:4], baseline={"box_entries": {"mean": 3, "sd": 1, "source": "2025 re-tag"}})
     assert s2["box_entries"]["status"] == "TROP TÔT" and s2["box_entries"]["baseline_source"] == "2025 re-tag"
+
+
+def test_mirror_metrics_borrow_their_definition():
+    L = kickoff_then(Log())
+    L.S(1000, "US", auto_band=2)
+    m = run(L, end=60000)
+    assert m["first_contact_won_against"]["label_fr"] == "Premier contact gagné (adversaire)"
+    assert m["first_contact_won_against"]["direction"] == "↓"
+    assert m["xg_rate_TRANSITION"]["label_fr"] == "xG par 10 min · transition"

@@ -28,6 +28,8 @@ from src.analytics.timeline import match_timeline
 from src.analytics.season import season_from
 from src.analytics.clips import review_clips
 from src.analytics.video import veo_info, video_url
+from src.v1.season import season_v1
+from src.v1.quality import calibration
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -68,6 +70,7 @@ def match_info(match_id: str, match: dict) -> dict:
         "final_score": match.get("final_score"),
         "schema_version": meta.get("schemaVersion") or match.get("schema_version"),
         "veo_url": meta.get("veoUrl") or None,
+        "v1": "v1" in match,
         "events": len(match.get("events", [])),
     }
 
@@ -208,3 +211,48 @@ def quality(match_id: str):
     for g in q["long_gaps"]:
         g["video_url"] = video_url(veo, g["half"], g["from_ms"])
     return q
+
+
+# ── v1 (two-pass tagger) ───────────────────────────────────────────
+
+def _v1_payload(match):
+    v1 = match["v1"]
+    tl = v1["timeline"]
+    return {
+        "available": True,
+        "codebook_version": v1["meta"].get("codebook_version"),
+        "metrics": v1["metrics"],
+        "gates": v1["gates"],
+        "calibration": calibration(v1.get("ops", [])),
+        "minutes": {s: round(sum(x.end - x.start for x in tl.states if x.state == s) / 60000, 2)
+                    for s in ("US", "THEM", "DEAD", "UNKNOWN")},
+        "halves": {h: [a, b] for h, (a, b) in tl.halves.items()},
+    }
+
+
+@app.get("/matches/{match_id}/metrics")
+def metrics(match_id: str):
+    """The v1 metric catalogue (CODEBOOK §8) with clips, gates and quality; {available: false} for old exports."""
+    match, _ = analyse(match_id)
+    return _v1_payload(match) if "v1" in match else {"available": False}
+
+
+@app.get("/season/v1")
+def season_v1_endpoint():
+    """Per-metric series over the v1 matches with the improvement status (CODEBOOK §9.4)."""
+    items = []
+    for path in sorted(match_dir().glob("*.json")):
+        try:
+            match, _ = analyse(path.stem)
+        except (ValueError, KeyError, TypeError, AttributeError, HTTPException):
+            continue
+        if "v1" in match:
+            meta = match["match"]
+            items.append({"id": path.stem, "match_id": meta.get("id"), "date": meta.get("date"), "opponent": meta.get("opponent"),
+                          "final_score": match.get("final_score"), "metrics": match["v1"]["metrics"]})
+    seen, uniq = set(), []
+    for m in sorted(items, key=lambda x: x["date"] or "", reverse=True):     # one entry per match id (latest file)
+        if m["match_id"] not in seen:
+            seen.add(m["match_id"]); uniq.append(m)
+    return {"matches": [{k: m[k] for k in ("id", "date", "opponent", "final_score")} for m in sorted(uniq, key=lambda x: x["date"] or "")],
+            "metrics": season_v1(uniq)}

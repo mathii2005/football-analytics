@@ -386,6 +386,10 @@ The API contains no football logic.
 - Its charts are kept and placed on these pages: match story → Récap; radar → Saison; bullets → KPI cards; band and lane pitch maps → Couloirs; Sankey, timeline and durations → Possession; regain curve → Intensité; butterfly → Coups de pied arrêtés; funnel and beeswarm → Attaque.
 - The old tabs (Aperçu / Possession / Attaque / Terrain / Clips) disappear as tabs, but none of their content is lost.
 
+### 7.2b State of the build (P6, first pass)
+
+Built: the v1 pages above (Récap, Saison, Attaque, Couloirs & zone rouge, Possession & construction, Intensité, CPA, Défense, Clips, Données) for matches tagged with the v1 tagger, fed by `GET /matches/{id}/metrics` and `GET /season/v1`; KPI row per page from catalogue metrics; tiles titled with their question, n / coverage / status as the note, `⋯` menu (clips, definition, CSV); clip drawer (typical + extreme when moments carry a weight, a spread sample otherwise). Old-tagger matches keep the previous tabs. Still to build: the filter bar's half / phase / opponent filters and cross-filtering, the presentation mode (P7), the phone layout check.
+
 ### 7.3 Presentation mode (from Récap)
 
 - **16:9 full screen**, text 24 px or larger, arrow keys to move, a discreet 15-min timer, `Esc` to leave.

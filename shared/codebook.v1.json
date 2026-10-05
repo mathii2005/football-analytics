@@ -1161,7 +1161,7 @@
     {
       "id": "goals_for",
       "group": "identite",
-      "label_fr": "Buts pour / contre",
+      "label_fr": "Buts pour",
       "unit": "per match",
       "min_n": "–",
       "direction": "↑",
@@ -1171,7 +1171,7 @@
     {
       "id": "goals_against",
       "group": "identite",
-      "label_fr": "Buts pour / contre",
+      "label_fr": "Buts contre",
       "unit": "per match",
       "min_n": "–",
       "direction": "↓",
@@ -1181,7 +1181,7 @@
     {
       "id": "shots_for",
       "group": "identite",
-      "label_fr": "Tirs pour / contre",
+      "label_fr": "Tirs pour",
       "unit": "per match",
       "min_n": "–",
       "direction": "↑",
@@ -1191,7 +1191,7 @@
     {
       "id": "shots_against",
       "group": "identite",
-      "label_fr": "Tirs pour / contre",
+      "label_fr": "Tirs contre",
       "unit": "per match",
       "min_n": "–",
       "direction": "↓",
@@ -1201,7 +1201,7 @@
     {
       "id": "chances_for",
       "group": "identite",
-      "label_fr": "Occasions",
+      "label_fr": "Occasions pour",
       "unit": "per match",
       "min_n": "–",
       "direction": "↑",
@@ -1211,7 +1211,7 @@
     {
       "id": "chances_against",
       "group": "identite",
-      "label_fr": "Occasions",
+      "label_fr": "Occasions contre",
       "unit": "per match",
       "min_n": "–",
       "direction": "↓",
@@ -1231,7 +1231,7 @@
     {
       "id": "xg_for",
       "group": "identite",
-      "label_fr": "xG pour / contre / diff.",
+      "label_fr": "xG pour",
       "unit": "xG per match",
       "min_n": "–",
       "direction": "↑",
@@ -1241,7 +1241,7 @@
     {
       "id": "xg_against",
       "group": "identite",
-      "label_fr": "xG pour / contre / diff.",
+      "label_fr": "xG contre",
       "unit": "xG per match",
       "min_n": "–",
       "direction": "↓",
@@ -1251,7 +1251,7 @@
     {
       "id": "xgd",
       "group": "identite",
-      "label_fr": "xG pour / contre / diff.",
+      "label_fr": "Différence de xG",
       "unit": "xG per match",
       "min_n": "–",
       "direction": "↑",
@@ -1351,7 +1351,7 @@
     {
       "id": "xt_by_phase",
       "group": "xt",
-      "label_fr": "… par phase / par couloir",
+      "label_fr": "Progression dangereuse par phase",
       "unit": "xT",
       "min_n": "5 matches",
       "direction": "–",
@@ -1361,7 +1361,7 @@
     {
       "id": "xt_by_lane",
       "group": "xt",
-      "label_fr": "… par phase / par couloir",
+      "label_fr": "Progression dangereuse par couloir",
       "unit": "xT",
       "min_n": "5 matches",
       "direction": "–",
@@ -1421,7 +1421,7 @@
     {
       "id": "xg_after_hs",
       "group": "couloir_interieur",
-      "label_fr": "xG après entrée intérieure / autre",
+      "label_fr": "xG après une entrée intérieure",
       "unit": "xG per entry",
       "min_n": "15 each",
       "direction": "↑",
@@ -1431,7 +1431,7 @@
     {
       "id": "xg_after_other",
       "group": "couloir_interieur",
-      "label_fr": "xG après entrée intérieure / autre",
+      "label_fr": "xG après une autre entrée",
       "unit": "xG per entry",
       "min_n": "15 each",
       "direction": "↑",
@@ -1561,7 +1561,7 @@
     {
       "id": "closing_2plus_share",
       "group": "intensite",
-      "label_fr": "Joueurs qui ferment en 3 s",
+      "label_fr": "Pertes fermées à 2 et +",
       "unit": "players / %",
       "min_n": "20 cards",
       "direction": "↑",

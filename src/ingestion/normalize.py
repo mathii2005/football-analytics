@@ -48,7 +48,7 @@ def normalize_match(raw: dict, match_id: str):
         "events": events,
         "v1": {"timeline": tl, "labels": lab, "gates": integrity_gates(raw, tl),
                "meta": meta, "reviewed": raw.get("reviewed", []),
-               "answers": latest_answers(raw.get("reviewed", [])), "roots": root_seq(raw["events"])},
+               "answers": latest_answers(raw.get("reviewed", [])), "roots": root_seq(raw["events"]), "ops": raw["events"]},
     }
     v1 = match["v1"]
     v1["metrics"] = compute_metrics(tl, lab, v1["answers"], v1["roots"], meta,
