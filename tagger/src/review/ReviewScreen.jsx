@@ -68,7 +68,8 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
   const answers = useMemo(() => latestAnswers(reviewed), [reviewed]);
   const cov = useMemo(() => coverage(cards, answers), [cards, answers]);
   const card = cards[Math.min(idx, cards.length - 1)];
-  const locked = elapsed >= BUDGET_MS;
+  const over = elapsed >= BUDGET_MS;     // the 60 min is a guide: past it, the timer turns red and answering goes on
+  const locked = false;
   const questions = card ? cardQuestions(card.kind) : [];
   const draft = card ? { ...card.prefill, ...(answers.get(card.id) || {}) } : {};
 
@@ -82,10 +83,10 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
 
   // timer: runs while the screen is open, not paused, under the budget
   useEffect(() => {
-    if (paused || locked) return;
+    if (paused) return;
     const id = setInterval(() => setElapsed((e) => e + 1000), 1000);
     return () => clearInterval(id);
-  }, [paused, locked]);
+  }, [paused]);
   useEffect(() => { if (elapsed % 10000 === 0) persist(); }, [elapsed, persist]);
 
   const openVeo = (c = card) => {
@@ -182,15 +183,14 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
       <header className="flex flex-wrap items-center gap-3 border-b border-rule bg-paper px-4 py-2">
         <button className="btn" onClick={() => { persist(); onBack(); }}>← Retour</button>
         <div className="font-semibold">Revue · {meta.opponent} · {meta.date}</div>
-        <div className={`text-2xl font-semibold tabular-nums ${locked ? "text-warn" : ""}`}>{fmtClock(elapsed)} <span className="text-sm text-ink-3">/ {fmtClock(BUDGET_MS)}</span></div>
-        <button className="btn" onClick={() => setPaused((p) => !p)} disabled={locked}>{paused ? "Reprendre" : "Pause"}</button>
+        <div className={`text-2xl font-semibold tabular-nums ${over ? "text-warn" : ""}`}>{fmtClock(elapsed)} <span className="text-sm text-ink-3">/ {fmtClock(BUDGET_MS)}{over ? " · temps dépassé" : ""}</span></div>
+        <button className="btn" onClick={() => setPaused((p) => !p)}>{paused ? "Reprendre" : "Pause"}</button>
         <span className="rounded bg-paper-2 px-2 py-0.5 text-sm">Palier {tierNow}</span>
         <label className="text-sm">Thème <select className="field mt-0 ml-1 inline-block w-36" value={theme} onChange={(e) => setTheme(e.target.value)}>{THEMES.map((t) => <option key={t} value={t}>{CL[t]}</option>)}</select></label>
         <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={autoVeo} onChange={(e) => setAutoVeo(e.target.checked)} /> Ouvrir Veo à chaque carte</label>
         <div className="ml-auto flex gap-2 text-sm text-ink-3">{totalAnswered}/{cards.length} cartes <button className="btn" onClick={exportNow}>Exporter</button></div>
       </header>
       {conflict && <div className="flex items-center justify-between bg-warn px-4 py-1 text-sm font-semibold text-paper">Ce match a été modifié ailleurs (autre onglet ou import) : cet écran n'enregistre plus. <button className="btn" onClick={onReload}>Recharger</button></div>}
-      {locked && <div className="bg-warn px-4 py-1 text-sm font-semibold text-paper">Temps écoulé : les cartes restantes restent « non revues ». Exporte le match.</div>}
       {!meta.veo?.url || meta.veo?.offset_h1_ms == null ? <div className="bg-us/15 px-4 py-1 text-sm text-us-deep">Sans lien Veo ni coup d'envoi MT1 dans la feuille de match, les cartes ne peuvent pas ouvrir la vidéo.</div> : null}
 
       <div className="grid min-h-0 flex-1 grid-cols-[18rem_1fr] gap-4 p-4">

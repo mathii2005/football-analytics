@@ -201,7 +201,7 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
   - `Enter` = next card; `←` = previous card; `K` = skip.
   - `V` = "move this moment" (a correction, see PIPELINE §4.6).
 - **Defaults:** every question has `CANT_SEE`. An unanswered card stays `UNREVIEWED`, which is different from `CANT_SEE`.
-- **Time budget:** 60 min hard stop, in three tiers.
+- **Time budget:** 60 min target, in three tiers. It is a guide, not a stop: past 60 min the timer turns red and answering continues; the time spent is recorded (`meta.review.elapsed_ms`). Cards never answered stay `UNREVIEWED`.
 
 ### 5.1 Tier 1 — mandatory (first 30 min)
 
@@ -514,4 +514,4 @@ A blocked report still lets the clip list be sent (once G3 passes).
 | Version | Date | Change |
 |---|---|---|
 | 1.1.0 | 2026-10-05 | MINOR: shot assist values `REGAIN_DIRECT` (shot straight from a regain) and `NONE` (no pass leads to the shot). Clarification of shot locations (centre lane vs half-space inside the box). xG table built from StatsBomb open data and xT grid built from Karun Singh's grid (§7), provisional values removed. |
-| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`); shot team decided by the zone; Recommencer button; Inverser usable in either half. Definitions confirmed by the analyst. First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |
+| 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`); shot team decided by the zone; Recommencer button; Inverser usable in either half. Definitions confirmed by the analyst. Review budget softened to a 60 min target (no hard stop). First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |

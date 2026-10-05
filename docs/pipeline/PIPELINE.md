@@ -268,7 +268,7 @@ After the match, the quiz screen (inside the same HTML file) reads the live log 
 | 3 — rotating theme | last 10 min | SET_PIECE → DUEL → OPP_ENTRY (one theme per week, in rotation) |
 
 - Within a tier, cards are in chronological order.
-- **At 60:00 the quiz stops.** Remaining cards stay `UNREVIEWED` and are counted in the coverage.
+- **60:00 is a target, not a stop.** Past it the timer turns red (« temps dépassé ») and answering continues; cards never answered stay `UNREVIEWED` and count in the coverage. The time spent is kept for the time log (W7).
 - **If Tier 1 isn't finished at 30 min,** it continues, and Tiers 2–3 shrink.
 
 ### 5.4 Pre-filled answers
@@ -416,7 +416,7 @@ Example with a Saturday match; shift the days for other match days. Each step li
 | W3 | Match, 90+ min | **Live tagging** (§4). Half time: the automatic export plus a USB copy, and confirm "Exporté". **Check:** banner visible; the score from `C` presses = the scoreboard. **Fail:** `T` (lost thread) and resume at the next dead ball. Laptop dies: paper sheet (§11) |
 | W4 | Final whistle +10 min | **Export + backup** (`tools/backup.py`). **Check:** checksums match; number of presses plausible (≈ 500–1 000). **Fail:** restore the half-time export; mark the second half "partiel" for the GAP cards |
 | W5 | Once Veo has uploaded, 5 min | **Veo offsets + check.** Enter the MT1 and MT2 offsets, then open 3 random moments per half. **Check:** each one lands within 5 s (gate G3). **Fail:** re-sync from a goal or the half-time whistle; Veo late → W6–W9 move one day |
-| W6 | Sunday, 60 min max | **Review quiz** (§5). **Check:** 100 % of Tier 1 done. **Fail:** at 60 min, stop; the rest stays `UNREVIEWED` |
+| W6 | Sunday, ~60 min | **Review quiz** (§5). **Check:** 100 % of Tier 1 done. Past 60 min the timer turns red; carry on or stop, the rest stays `UNREVIEWED` |
 | W7 | Sunday, 2 min | **Engine** (automatic). **Check:** no blocking gate. **Fail:** fix with a patch and re-run; if still blocked on Monday morning, the recap is clips only |
 | W8 | Sunday, 10 min | **Quality.** Données page: coverage, load. Every 3rd match: blind re-check of 20 cards (CODEBOOK §10, about 10 min, done ≥ 7 days later, so on the following Sunday). **Fail:** labels apply automatically |
 | W9 | Sunday or Monday morning, 30 min | **Prepare the recap:** pin 3 numbers and 3–4 clips, write the « À surveiller » sentence, run through presentation mode once |
