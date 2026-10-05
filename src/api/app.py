@@ -30,6 +30,7 @@ from src.analytics.clips import review_clips
 from src.analytics.video import veo_info, video_url
 from src.v1.season import season_v1
 from src.v1.recap import build_recap
+from src.v1.metrics import compute_metrics
 from src.v1.quality import calibration
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -232,10 +233,18 @@ def _v1_payload(match):
 
 
 @app.get("/matches/{match_id}/metrics")
-def metrics(match_id: str):
-    """The v1 metric catalogue (CODEBOOK §8) with clips, gates and quality; {available: false} for old exports."""
+def metrics(match_id: str, half: int | None = Query(None, ge=1, le=2)):
+    """The v1 metric catalogue (CODEBOOK §8) with clips, gates and quality; {available: false} for old exports.
+    ?half=1|2 recomputes every metric on that half only."""
     match, _ = analyse(match_id)
-    return _v1_payload(match) if "v1" in match else {"available": False}
+    if "v1" not in match:
+        return {"available": False}
+    out = _v1_payload(match)
+    if half is not None:
+        v1 = match["v1"]
+        out["metrics"] = compute_metrics(v1["timeline"], v1["labels"], v1["answers"], v1["roots"], v1["meta"], half=half)
+        out["half"] = half
+    return out
 
 
 def _v1_matches():
@@ -248,7 +257,9 @@ def _v1_matches():
             continue
         if "v1" in match:
             meta = match["match"]
+            v1meta = match["v1"]["meta"]
             items.append({"id": path.stem, "match_id": meta.get("id"), "date": meta.get("date"), "opponent": meta.get("opponent"),
+                          "venue": v1meta.get("venue"), "tier": v1meta.get("opponent_tier"),
                           "final_score": match.get("final_score"), "metrics": match["v1"]["metrics"]})
     seen, uniq = set(), []
     for m in sorted(items, key=lambda x: x["date"] or "", reverse=True):     # one entry per match id (latest file)
@@ -258,10 +269,13 @@ def _v1_matches():
 
 
 @app.get("/season/v1")
-def season_v1_endpoint():
-    """Per-metric series over the v1 matches with the improvement status (CODEBOOK §9.4)."""
-    uniq = _v1_matches()
-    return {"matches": [{k: m[k] for k in ("id", "date", "opponent", "final_score")} for m in sorted(uniq, key=lambda x: x["date"] or "")],
+def season_v1_endpoint(tier: str | None = Query(None, pattern="^(top|mid|bottom)$"),
+                       venue: str | None = Query(None, pattern="^(home|away)$")):
+    """Per-metric series over the v1 matches with the improvement status (CODEBOOK §9.4),
+    optionally only against one opponent tier and/or at home / away."""
+    uniq = [m for m in _v1_matches() if (tier is None or m["tier"] == tier) and (venue is None or m["venue"] == venue)]
+    return {"filters": {"tier": tier, "venue": venue},
+            "matches": [{k: m[k] for k in ("id", "date", "opponent", "final_score", "tier", "venue")} for m in sorted(uniq, key=lambda x: x["date"] or "")],
             "metrics": season_v1(uniq)}
 
 

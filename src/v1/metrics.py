@@ -62,8 +62,8 @@ class Ctx:
                 return p.phase
         return None
 
-    def clip(self, half, t, weight=1.0, what=""):
-        return {"half": half, "t": t, "weight": weight, "what": what,
+    def clip(self, half, t, weight=1.0, what="", team="US", lane=None):
+        return {"half": half, "t": t, "weight": weight, "what": what, "phase": self.phase_at(team, half, t), "lane": lane,
                 "url": video_url(self.veo, half, t, lead_ms=self.lead) if self.veo["url"] else None}
 
 
@@ -139,7 +139,23 @@ def _invalid_entries(ctx, lab):
             if (ctx.ans("ENTRY" if e.team == "US" else "OPP_ENTRY", e.seq) or {}).get("invalid")}
 
 
-def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
+def only_half(tl, lab, half):
+    """Copies of the timeline and labels restricted to one half (the half filter)."""
+    from copy import copy
+    t2, l2 = copy(tl), copy(lab)
+    t2.halves = {h: v for h, v in tl.halves.items() if h == half}
+    for name in ("states", "bands", "restarts", "shots", "lost"):
+        setattr(t2, name, [x for x in getattr(tl, name) if (x[0] if isinstance(x, tuple) else x.half) == half])
+    t2.flags = [f for f in tl.flags if f[0] == half]
+    for name in ("possessions", "regains", "losses", "entries", "phases"):
+        setattr(l2, name, [x for x in getattr(lab, name) if x.half == half])
+    return t2, l2
+
+
+def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None, half=None) -> dict:
+    if half is not None:
+        tl, lab = only_half(tl, lab, half)
+        classic_tilt = None             # the classic formula is a whole-match number
     ctx = Ctx(tl, lab, answers, roots, meta)
     invalid = _invalid_entries(ctx, lab)
     if invalid:                         # left out of every entry metric and of xT
@@ -162,7 +178,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
         put(_metric(ctx, f"shots_{sfx}", len(by_team[t]), len(by_team[t]), [ctx.clip(s.half, s.t, xg, "Tir") for s, xg, _ in by_team[t]]))
         xg_sum = round(sum(x[1] for x in by_team[t]), 3)
         est = sum(x[2] for x in by_team[t])
-        put(_metric(ctx, f"xg_{sfx}", xg_sum, len(by_team[t]), [ctx.clip(s.half, s.t, xg, f"xG {xg:.2f}") for s, xg, _ in by_team[t]],
+        put(_metric(ctx, f"xg_{sfx}", xg_sum, len(by_team[t]), [ctx.clip(s.half, s.t, xg, f"xG {xg:.2f}", team=t) for s, xg, _ in by_team[t]],
                     detail={"estimated_shots": est}))
     put(_metric(ctx, "xgd", round(out["xg_for"]["value"] - out["xg_against"]["value"], 3), len(shots)))
 
@@ -250,7 +266,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None) -> dict:
         return a.get("lane") if a else None
     gains = [g for g in xt_gains(tl, entry_lane) if g.seq not in invalid]
     total = sum(g.gain for g in gains)
-    put(_metric(ctx, "xt_gained", _per10(total, ctx.poss["US"]), len(gains), [ctx.clip(g.half, g.t, g.gain, f"+{g.gain:.3f}") for g in gains],
+    put(_metric(ctx, "xt_gained", _per10(total, ctx.poss["US"]), len(gains), [ctx.clip(g.half, g.t, g.gain, f"+{g.gain:.3f}", lane=g.lane or "?") for g in gains],
                 detail={"total": round(total, 4)}))
     by_phase, by_lane = {}, {}
     for g in gains:

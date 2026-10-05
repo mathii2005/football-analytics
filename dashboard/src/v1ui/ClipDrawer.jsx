@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { X, Play } from "lucide-react";
 import { clock } from "../format.js";
 
@@ -14,6 +15,12 @@ function Row({ c }) {
 }
 
 export default function ClipDrawer({ metric, onClose }) {
+  useEffect(() => {
+    if (!metric) return undefined;
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [metric, onClose]);
   if (!metric) return null;
   const c = metric.clips || { typical: [], extreme: [], all: [] };
   return (

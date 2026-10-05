@@ -30,3 +30,10 @@ export async function fetchMatch(id) {
     : [null, null];
   return { report, possessions, losses, quality, clips, phases, timeline, season, v1, seasonV1, recap };
 }
+
+// v1 filters: one half of a match, or the season against one tier / at one venue
+export const fetchMetrics = (id, half) => get(`/matches/${encodeURIComponent(id)}/metrics${half ? `?half=${half}` : ""}`);
+export const fetchSeasonV1 = ({ tier, venue } = {}) => {
+  const q = new URLSearchParams(Object.entries({ tier, venue }).filter(([, v]) => v));
+  return get(`/season/v1${q.toString() ? `?${q}` : ""}`);
+};

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AlertTriangle, ExternalLink, Loader2, Play } from "lucide-react";
-import { fetchMatch, fetchMatches } from "./api.js";
+import { fetchMatch, fetchMatches, fetchMetrics, fetchSeasonV1 } from "./api.js";
+import FilterBar from "./v1ui/FilterBar.jsx";
 import { pct, dec, secs, signed, plural, mmss, matchDate, VENUE, ZONE_LABELS, COULOIR_LABELS } from "./format.js";
 import Scoreboard from "./components/Scoreboard.jsx";
 import { nextPreset } from "./links.js";
@@ -139,6 +140,9 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [drawer, setDrawer] = useState(null);     // v1 metric whose clips are open
   const [presenting, setPresenting] = useState(false);
+  const [half, setHalf] = useState(null);            // v1 filters
+  const [tier, setTier] = useState(null);
+  const [venue, setVenue] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -147,8 +151,20 @@ export default function App() {
       .catch((e) => setError(e.message));
   }, []);
 
+  // half filter: every metric recomputed on that half
+  useEffect(() => {
+    if (!data?.v1?.available) return;
+    fetchMetrics(selected, half).then((v1) => setData((d) => (d ? { ...d, v1 } : d))).catch((e) => setError(e.message));
+  }, [half]);   // eslint-disable-line react-hooks/exhaustive-deps
+  // opponent tier / venue: the season view and the reference statuses
+  useEffect(() => {
+    if (!data?.v1?.available) return;
+    fetchSeasonV1({ tier, venue }).then((s) => setData((d) => (d ? { ...d, seasonV1: s } : d))).catch(() => {});
+  }, [tier, venue]);   // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (!selected) return;
+    setHalf(null); setTier(null); setVenue(null);
     setLoading(true);
     fetchMatch(selected)
       .then((d) => { setData(d); setError(null); })
@@ -230,6 +246,7 @@ export default function App() {
           </div>
         )}
       </header>
+      {isV1 && <FilterBar half={half} setHalf={setHalf} tier={tier} setTier={setTier} venue={venue} setVenue={setVenue} nSeason={data.seasonV1?.matches?.length} />}
 
       <main id="tabpanel" role="tabpanel" aria-labelledby={`tab-${current}`}
         className={`mx-auto max-w-7xl px-3 py-4 transition-opacity sm:px-5 ${loading ? "opacity-50" : ""}`}>

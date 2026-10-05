@@ -149,3 +149,17 @@ def test_recap_endpoint_first_match_vs_opponent(v1_client):
     assert r["brief"]["goals_against"]["value"] == 2
     assert all(x["score"] > 0 for x in r["best"]) and all(x["score"] < 0 for x in r["worst"])
     assert v1_client.get("/matches/champlain_15min/recap").json() == {"available": False}
+
+
+def test_half_filter_recomputes_the_metrics(tmp_path, monkeypatch):
+    shutil.copy(FIXTURES / "ahuntsic_2026-10-02_full_v1.json", tmp_path / "ahuntsic.json")
+    monkeypatch.setenv("FA_MATCH_DIR", str(tmp_path))
+    c = TestClient(app)
+    full = c.get("/matches/ahuntsic/metrics").json()["metrics"]
+    h1 = c.get("/matches/ahuntsic/metrics?half=1").json()["metrics"]
+    h2 = c.get("/matches/ahuntsic/metrics?half=2").json()["metrics"]
+    assert h1["shots_for"]["value"] + h2["shots_for"]["value"] == full["shots_for"]["value"]
+    assert h1["goals_against"]["value"] == 2 and h1["field_tilt_classic"]["value"] is None
+    assert c.get("/matches/ahuntsic/metrics?half=3").status_code == 422
+    assert c.get("/season/v1?tier=top").json()["matches"] == []
+    assert len(c.get("/season/v1?tier=mid&venue=home").json()["matches"]) == 1

@@ -388,7 +388,9 @@ The API contains no football logic.
 
 ### 7.2b State of the build (P6, first pass)
 
-Built: the v1 pages above (Récap, Saison, Attaque, Couloirs & zone rouge, Possession & construction, Intensité, CPA, Défense, Clips, Données) for matches tagged with the v1 tagger, fed by `GET /matches/{id}/metrics` and `GET /season/v1`; KPI row per page from catalogue metrics; tiles titled with their question, n / coverage / status as the note, `⋯` menu (clips, definition, CSV); clip drawer (typical + extreme when moments carry a weight, a spread sample otherwise). Old-tagger matches keep the previous tabs. Still to build: the filter bar's half / phase / opponent filters and cross-filtering, the presentation mode (P7), the phone layout check.
+Built: the v1 pages above (Récap, Saison, Attaque, Couloirs & zone rouge, Possession & construction, Intensité, CPA, Défense, Clips, Données) for matches tagged with the v1 tagger, fed by `GET /matches/{id}/metrics` and `GET /season/v1`; KPI row per page from catalogue metrics; tiles titled with their question, n / coverage / status as the note, `⋯` menu (clips, definition, CSV); clip drawer (typical + extreme when moments carry a weight, a spread sample otherwise). Old-tagger matches keep the previous tabs.
+
+Filters (P6, done): **Mi-temps** (Tout / MT1 / MT2) recomputes every metric on that half (`GET /matches/{id}/metrics?half=`; the classic field tilt, a whole-match formula, is not shown per half); **Adversaire** (haut / milieu / bas) and **Lieu** (domicile / extérieur) filter the season view and the reference statuses (`GET /season/v1?tier=&venue=`). **Click a bar → its clips**: xG by phase (ours and theirs), xT by lane and by phase open the drawer on the moments of that bar. **Phase is a breakdown, not a global filter**: filtering every metric by phase would mix definitions (possession minutes, entries, losses) — the phase splits live in the tiles that need them. Phone (390 px): tabs scroll, KPIs two per row, tiles in one column, the drawer full width; the filter bar is sticky only from tablet width up. Esc closes the drawer.
 
 ### 7.3 Presentation mode (from Récap)
 

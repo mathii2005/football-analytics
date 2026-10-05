@@ -16,6 +16,12 @@ import { pct } from "../../format.js";
 // The v1 pages (PIPELINE §7.2). Every tile is bound to catalogue metrics from
 // /matches/{id}/metrics; clicks open the clips behind the number.
 const PHASES = ["TRANSITION", "BUILD_UP", "SETTLED", "SET_PIECE"];
+
+// "click a bar -> its clips": the metric's moments filtered on one field
+function only(metric, field, value, label) {
+  const all = (metric?.clips?.all || []).filter((c) => (c[field] ?? "?") === value);
+  return { ...metric, label_fr: `${metric.label_fr} · ${label}`, clips: { typical: all.slice(0, 3), extreme: [], all, mode: "spread" } };
+}
 const xg2 = (v) => v.toFixed(2);
 
 // ---------- Récap ----------
@@ -116,18 +122,18 @@ export function Attaque({ d, v1, openClips }) {
     <div className="grid gap-3 lg:grid-cols-12">
       <MetricTile className="lg:col-span-6" title="Quelle phase crée le danger ?" metric={M.xg_for} openClips={openClips}
         note="xG par 10 min passées dans chaque phase (table publique StatsBomb, grossière).">
-        <Bars data={byPhase} order={PHASES} labels={PHASE_FR} format={xg2} />
+        <Bars data={byPhase} order={PHASES} labels={PHASE_FR} format={xg2} onSelect={(k) => openClips(only(M.xg_for, "phase", k, PHASE_FR[k]))} />
       </MetricTile>
       <MetricTile className="lg:col-span-6" title="Où nos attaques s'arrêtent-elles ?" metric={M.box_entries} openClips={openClips}
         note="Entrées en zone rouge → dans la surface → tirs → buts (nombres).">
         <Bars data={funnel} order={["red", "box", "shot", "goal"]} labels={{ red: "Zone rouge", box: "Surface", shot: "Tirs", goal: "Buts" }} />
       </MetricTile>
       <MetricTile className="lg:col-span-6" title="Par où progresse-t-on dangereusement ?" metric={M.xt_gained} openClips={openClips}>
-        <Bars data={M.xt_by_lane?.value} order={["L", "HS_L", "C", "HS_R", "R", "?"]} labels={LANE_FR} format={(v) => v.toFixed(3)} />
+        <Bars data={M.xt_by_lane?.value} order={["L", "HS_L", "C", "HS_R", "R", "?"]} labels={LANE_FR} format={(v) => v.toFixed(3)} onSelect={(k) => openClips(only(M.xt_gained, "lane", k, LANE_FR[k]))} />
         <p className="mt-2 text-[11px] text-ink-3">Gains xT (grille publique, grossière) ; « couloir inconnu » tant que les entrées ne sont pas revues.</p>
       </MetricTile>
       <MetricTile className="lg:col-span-6" title="… et dans quelle phase ?" metric={M.xt_by_phase} openClips={openClips}>
-        <Bars data={M.xt_by_phase?.value} order={[...PHASES, "?"]} labels={PHASE_FR} format={(v) => v.toFixed(3)} />
+        <Bars data={M.xt_by_phase?.value} order={[...PHASES, "?"]} labels={PHASE_FR} format={(v) => v.toFixed(3)} onSelect={(k) => openClips(only(M.xt_gained, "phase", k === "?" ? null : k, PHASE_FR[k]))} />
       </MetricTile>
       <Tile className="lg:col-span-12" title="Les chiffres de l'attaque" note="Cliquer un libellé pour ses clips.">
         <MetricRows ids={["goals_for", "shots_for", "chances_for", "xg_for", "conversion", "transition_to_box", "transition_speed", "buildup_progression", "xt_gained"]}
@@ -224,7 +230,7 @@ export function Defense({ d, v1, openClips }) {
   return (
     <div className="grid gap-3 lg:grid-cols-12">
       <MetricTile className="lg:col-span-6" title="D'où vient le danger adverse ?" metric={M.xg_against} openClips={openClips} note="xG adverse par 10 min de chaque phase de leur possession.">
-        <Bars data={byPhase} order={PHASES} labels={PHASE_FR} format={xg2} color="var(--them)" />
+        <Bars data={byPhase} order={PHASES} labels={PHASE_FR} format={xg2} color="var(--them)" onSelect={(k) => openClips(only(M.xg_against, "phase", k, PHASE_FR[k]))} />
       </MetricTile>
       <Tile className="lg:col-span-6" title="Ce qu'on concède">
         <MetricRows ids={["goals_against", "shots_against", "chances_against", "xg_against", "transition_to_box_against", "buildup_progression_against"]} metrics={M} season={d.seasonV1?.metrics} openClips={openClips} />
