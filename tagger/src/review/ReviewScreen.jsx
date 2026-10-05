@@ -7,6 +7,7 @@ import { editOps, retractedSet } from "../core/session.js";
 import { fmtClock } from "../core/clock.js";
 import { buildBundle, bundleFileName } from "../core/bundle.js";
 import { download, parseMmSs } from "../ui/util.js";
+import { useSaver } from "../store/useSaver.js";
 
 // Pass 2: the quiz (PIPELINE §5). One card per moment the live log selected,
 // answered with number keys while Veo plays in a reused window.
@@ -48,7 +49,7 @@ function GapForm({ card, veo, onFill, onUnknown, disabled }) {
   );
 }
 
-export default function ReviewScreen({ store, match, onSave, onBack }) {
+export default function ReviewScreen({ store, match, onSave, onBack, onReload }) {
   const [ops, setOps] = useState(match.ops);
   const [reviewed, setReviewed] = useState(match.reviewed || []);
   const [meta, setMeta] = useState(match.meta);
@@ -59,6 +60,7 @@ export default function ReviewScreen({ store, match, onSave, onBack }) {
   const [qi, setQi] = useState(0);
   const [autoVeo, setAutoVeo] = useState(true);
   const [toast, setToast] = useState(null);
+  const { save, conflict } = useSaver(store, match.rev);
   const ref = useRef({ ops, reviewed, meta, elapsed });
   ref.current = { ops, reviewed, meta, elapsed };
 
@@ -74,9 +76,9 @@ export default function ReviewScreen({ store, match, onSave, onBack }) {
   const persist = useCallback((next = {}) => {
     const s = { ...ref.current, ...next };
     const m = { ...s.meta, review: { ...(s.meta.review || {}), theme: s.meta.review?.theme || THEMES[0], elapsed_ms: s.elapsed } };
-    store.saveMatch(m, s.ops, s.reviewed, match.clock);
+    save(() => [m, s.ops, s.reviewed, match.clock]);
     onSave({ ...match, meta: m, ops: s.ops, reviewed: s.reviewed });
-  }, [store, match, onSave]);
+  }, [save, match, onSave]);
 
   // timer: runs while the screen is open, not paused, under the budget
   useEffect(() => {
@@ -187,6 +189,7 @@ export default function ReviewScreen({ store, match, onSave, onBack }) {
         <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={autoVeo} onChange={(e) => setAutoVeo(e.target.checked)} /> Ouvrir Veo à chaque carte</label>
         <div className="ml-auto flex gap-2 text-sm text-ink-3">{totalAnswered}/{cards.length} cartes <button className="btn" onClick={exportNow}>Exporter</button></div>
       </header>
+      {conflict && <div className="flex items-center justify-between bg-warn px-4 py-1 text-sm font-semibold text-paper">Ce match a été modifié ailleurs (autre onglet ou import) : cet écran n'enregistre plus. <button className="btn" onClick={onReload}>Recharger</button></div>}
       {locked && <div className="bg-warn px-4 py-1 text-sm font-semibold text-paper">Temps écoulé : les cartes restantes restent « non revues ». Exporte le match.</div>}
       {!meta.veo?.url || meta.veo?.offset_h1_ms == null ? <div className="bg-us/15 px-4 py-1 text-sm text-us-deep">Sans lien Veo ni coup d'envoi MT1 dans la feuille de match, les cartes ne peuvent pas ouvrir la vidéo.</div> : null}
 

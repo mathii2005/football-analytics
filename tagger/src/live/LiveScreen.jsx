@@ -8,6 +8,7 @@ import { download } from "../ui/util.js";
 import HelpOverlay from "./HelpOverlay.jsx";
 import Pitch from "./Pitch.jsx";
 import Journal from "./Journal.jsx";
+import { useSaver } from "../store/useSaver.js";
 
 const STATE_UI = {
   US: { label: "Notre ballon", cls: "bg-us text-paper" },
@@ -18,14 +19,14 @@ const RESTART_FR = { KICKOFF: "Engagement", THROW: "Touche", CORNER: "Corner", F
 const SNAPSHOT_MS = 5 * 60 * 1000;
 const LOAD = CODEBOOK.load;
 
-export default function LiveScreen({ store, match, onEditMeta, onReview, onQuit }) {
+export default function LiveScreen({ store, match, onEditMeta, onReview, onQuit, onReload }) {
   const [ops, setOps] = useState(match.ops);
   const [clock, setClock] = useState(match.clock);
   const [now, setNow] = useState(Date.now());
   const [toast, setToast] = useState(null);
   const [help, setHelp] = useState(false);
   const [flipPrompt, setFlipPrompt] = useState(false);
-  const [saved, setSaved] = useState(store.ok);
+  const { save, conflict, saved } = useSaver(store, match.rev);
   const opsRef = useRef(ops), clockRef = useRef(clock);
   opsRef.current = ops; clockRef.current = clock;
   const meta = match.meta;
@@ -36,10 +37,7 @@ export default function LiveScreen({ store, match, onEditMeta, onReview, onQuit 
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 1800); return () => clearTimeout(id); }, [toast]);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 250); return () => clearInterval(id); }, []);
 
-  const persist = useCallback(async (nextOps, nextClock) => {
-    await store.saveMatch(meta, nextOps, match.reviewed || [], nextClock);
-    setSaved(store.ok);
-  }, [store, meta, match.reviewed]);
+  const persist = useCallback((nextOps, nextClock) => save(() => [meta, nextOps, match.reviewed || [], nextClock]), [save, meta, match.reviewed]);
 
   const commit = useCallback((newOps, nextClock = clockRef.current) => {
     const next = opsRef.current.concat(newOps);
@@ -181,6 +179,12 @@ export default function LiveScreen({ store, match, onEditMeta, onReview, onQuit 
         </div>
       </header>
 
+      {conflict && (
+        <div className="flex items-center justify-between bg-warn px-4 py-2 text-sm font-semibold text-paper">
+          Ce match a été modifié ailleurs (autre onglet ou import) : cet écran n'enregistre plus. Recharge pour reprendre la bonne version.
+          <button className="btn" onClick={onReload}>Recharger</button>
+        </div>
+      )}
       <section className={`mx-4 mt-4 flex items-center justify-between rounded px-6 py-6 ${ui.cls}`}>
         <span className="text-5xl font-semibold">{ui.label}</span>
         <span className="text-xl">

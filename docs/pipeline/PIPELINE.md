@@ -171,7 +171,9 @@ The location is `FA_MATCH_DIR` (default `../laureats-tagger/matches/`). Old expo
 
 1. **Lancement ("Reprendre ou nouveau ?")**
    - The last session (opponent, date, number of presses).
-   - Buttons: **Reprendre** (resume), **Nouveau match**, **Importer un export (JSON)**.
+   - Buttons: **Reprendre** (resume), **Nouveau match**, **Importer un match**, **Importer pour la revue (passe 2)** (imports a tagged match and opens the quiz directly).
+   - Importing a match that is already stored never replaces it silently: a dialog offers **Fusionner** (keep each half from the version picked for it, by default the one with more presses; the other file's lines are renumbered with their links), **Remplacer** (after confirmation) or **Importer comme copie**.
+   - Old-tagger (v0) exports can't be reviewed: the quiz needs a match tagged with the v1 tagger.
    - The list of stored matches, each with Reprendre / Exporter / Revoir (opens the quiz).
 2. **Feuille de match (setup)**
    - Fields: opponent, date, venue, opponent tier, Veo URL, kick-off offset MT1 (mm:ss), kick-off offset MT2 (mm:ss), and the "inverser les zones en MT2" option.
@@ -491,6 +493,9 @@ Example with a Saturday match; shift the days for other match days. Each step li
 |---|---|
 | Lost track live | `T`, resume at the next dead ball; the GAP card fixes it |
 | Wrong key | `Backspace` / `Ctrl+Z` (adds a retraction) |
+| Same match open in two tabs, or imported while open | Every save carries a revision; a screen holding an older copy stops saving and shows « Recharger » instead of overwriting newer work |
+| One half tagged in one export, the other half in another | Import the second file: **Fusionner** keeps the most complete version of each half |
+| Can't see the play (flares, fog, camera blocked) | Press `T` (lost the thread), not `R`: the stretch becomes untrusted and is left out of the stats; `R` only creates a card and the pressed state keeps counting |
 | Clock drifted (paused during play) | Nudge it back as soon as you notice. The W5 check catches what's left; `V` patches fix individual clips |
 | Browser crash / reload | Reopen the file: the match resumes from IndexedDB |
 | Storage unavailable | Red badge; keep tagging; export every 5 min when prompted |

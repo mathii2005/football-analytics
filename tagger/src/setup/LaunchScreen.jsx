@@ -1,35 +1,87 @@
 import { useEffect, useRef, useState } from "react";
-import { parseImport, buildBundle, bundleFileName } from "../core/bundle.js";
-import { newClock } from "../core/clock.js";
+import { parseImport, buildBundle, bundleFileName, mergeExports, defaultPick, halfStats } from "../core/bundle.js";
 import { download } from "../ui/util.js";
 
-export default function LaunchScreen({ store, onNew, onOpen, onReview }) {
+// "Reprendre ou nouveau ?": resume, review, import (live or straight to the
+// review). Importing a match that already exists asks what to do instead of
+// silently replacing it.
+function ImportDialog({ existing, incoming, onDone, onCancel }) {
+  const [pick, setPick] = useState(defaultPick(existing, incoming));
+  const se = halfStats(existing), si = halfStats(incoming);
+  const Opt = ({ half, side, n }) => (
+    <label className="flex items-center gap-2 text-sm">
+      <input type="radio" name={`h${half}`} checked={pick[half] === side} onChange={() => setPick({ ...pick, [half]: side })} />
+      {side === "a" ? "Version enregistrée" : "Fichier importé"} · {n} entrées
+    </label>
+  );
+  return (
+    <div className="fixed inset-0 z-30 flex items-center justify-center bg-ink/50">
+      <div className="w-[min(560px,94vw)] rounded bg-paper p-6 shadow-lg">
+        <h2 className="text-lg font-semibold">Ce match existe déjà dans le tagger</h2>
+        <p className="mt-1 text-sm text-ink-3">{incoming.meta.opponent} · {incoming.meta.date}. Choisis quelle version garder pour chaque mi-temps (par défaut : la plus complète).</p>
+        <div className="mt-4 grid grid-cols-2 gap-4">
+          {[1, 2].map((h) => (
+            <div key={h} className="rounded border border-rule p-3">
+              <div className="label">MT{h}</div>
+              <Opt half={h} side="a" n={se[h]} />
+              <Opt half={h} side="b" n={si[h]} />
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button className="btn btn-primary" onClick={() => onDone("merge", pick)}>Fusionner</button>
+          <button className="btn" onClick={() => { if (window.confirm("Remplacer la version enregistrée par le fichier importé ?")) onDone("replace"); }}>Remplacer</button>
+          <button className="btn" onClick={() => onDone("copy")}>Importer comme copie</button>
+          <button className="btn" onClick={onCancel}>Annuler</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LaunchScreen({ store, onNew, onOpenStored }) {
   const [matches, setMatches] = useState([]);
   const [msg, setMsg] = useState(null);
+  const [dialog, setDialog] = useState(null);       // {existing, incoming, target}
   const fileRef = useRef(null);
+  const target = useRef("live");
   useEffect(() => { store.listMatches().then(setMatches); }, [store]);
 
-  const load = async (id) => {
-    const m = await store.loadMatch(id);
-    return m && { meta: m.meta, ops: m.ops, reviewed: m.reviewed || [], clock: m.clock || newClock() };
-  };
-  const resume = async (id) => { const m = await load(id); if (m) onOpen(m); };
-  const review = async (id) => { const m = await load(id); if (m) onReview(m); };
   const exportOne = async (id) => {
     const m = await store.loadMatch(id);
     if (m) download(bundleFileName(m.meta), buildBundle(m.meta, m.ops, m.reviewed || []));
   };
+  const saveAndOpen = async (meta, events, reviewed, to, force = true) => {
+    const current = await store.loadMatch(meta.id);
+    await store.saveMatch(meta, events, reviewed, current?.clock ?? null, force ? undefined : current?.rev);
+    onOpenStored(meta.id, to);
+  };
+  const pickFile = (to) => { target.current = to; fileRef.current?.click(); };
   const onFile = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setMsg(null);
     const r = parseImport(await file.text());
     e.target.value = "";
-    if (r.kind === "v1") {
-      await store.saveMatch(r.meta, r.events, r.reviewed, null);
-      onOpen({ meta: r.meta, ops: r.events, reviewed: r.reviewed, clock: newClock() });
-    } else if (r.kind === "v0") {
-      setMsg("Export de l'ancien tagger (v0) : il se lit dans le tableau de bord, pas ici.");
-    } else setMsg(r.error);
+    if (r.kind === "v0") return setMsg("Export de l'ancien tagger (v0) : il se lit dans le tableau de bord. La revue (passe 2) a besoin d'un match tagué avec ce tagger.");
+    if (r.kind !== "v1") return setMsg(r.error);
+    const incoming = { meta: r.meta, events: r.events, reviewed: r.reviewed };
+    const stored = await store.loadMatch(r.meta.id);
+    if (!stored) return saveAndOpen(r.meta, r.events, r.reviewed, target.current);
+    setDialog({ existing: { meta: stored.meta, events: stored.ops, reviewed: stored.reviewed || [] }, incoming, to: target.current });
+  };
+  const resolve = async (choice, pick) => {
+    const { existing, incoming, to } = dialog;
+    setDialog(null);
+    if (choice === "merge") {
+      const m = mergeExports(existing, incoming, pick);
+      return saveAndOpen(m.meta, m.events, m.reviewed, to);
+    }
+    if (choice === "replace") return saveAndOpen(incoming.meta, incoming.events, incoming.reviewed, to);
+    let n = 2;
+    while (matches.some((x) => x.id === `${incoming.meta.id}_copie${n}`)) n++;
+    const meta = { ...incoming.meta, id: `${incoming.meta.id}_copie${n}`, opponent: `${incoming.meta.opponent} (copie ${n})` };
+    return saveAndOpen(meta, incoming.events, incoming.reviewed, to);
   };
 
   const last = matches[0];
@@ -43,14 +95,15 @@ export default function LaunchScreen({ store, onNew, onOpen, onReview }) {
           <div className="mt-1 text-lg font-medium">{last.opponent || "—"} · {last.date || "—"}</div>
           <div className="text-sm text-ink-3">{last.n} entrées · sauvegardé {new Date(last.savedAt).toLocaleString("fr-CA")}</div>
           <div className="mt-3 flex gap-2">
-            <button className="btn btn-primary" onClick={() => resume(last.id)}>Reprendre</button>
-            <button className="btn" onClick={() => review(last.id)}>Revue (passe 2)</button>
+            <button className="btn btn-primary" onClick={() => onOpenStored(last.id, "live")}>Reprendre</button>
+            <button className="btn" onClick={() => onOpenStored(last.id, "review")}>Revue (passe 2)</button>
           </div>
         </section>
       )}
       <div className="mt-6 flex flex-wrap gap-2">
         <button className="btn btn-primary" onClick={onNew}>Nouveau match</button>
-        <button className="btn" onClick={() => fileRef.current?.click()}>↑ Importer un export (JSON)</button>
+        <button className="btn" onClick={() => pickFile("live")}>↑ Importer un match</button>
+        <button className="btn" onClick={() => pickFile("review")}>↑ Importer pour la revue (passe 2)</button>
         <input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={onFile} />
       </div>
       {msg && <p className="mt-3 text-sm text-warn">{msg}</p>}
@@ -62,8 +115,8 @@ export default function LaunchScreen({ store, onNew, onOpen, onReview }) {
               <li key={m.id} className="flex items-center justify-between px-3 py-2 text-sm">
                 <span>{m.date} · {m.opponent} <span className="text-ink-3">({m.n})</span></span>
                 <span className="flex gap-2">
-                  <button className="btn" onClick={() => resume(m.id)}>Reprendre</button>
-                  <button className="btn" onClick={() => review(m.id)}>Revue</button>
+                  <button className="btn" onClick={() => onOpenStored(m.id, "live")}>Reprendre</button>
+                  <button className="btn" onClick={() => onOpenStored(m.id, "review")}>Revue</button>
                   <button className="btn" onClick={() => exportOne(m.id)}>Exporter</button>
                 </span>
               </li>
@@ -71,6 +124,7 @@ export default function LaunchScreen({ store, onNew, onOpen, onReview }) {
           </ul>
         </section>
       )}
+      {dialog && <ImportDialog existing={dialog.existing} incoming={dialog.incoming} onDone={resolve} onCancel={() => setDialog(null)} />}
     </main>
   );
 }
