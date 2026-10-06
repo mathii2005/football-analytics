@@ -25,12 +25,14 @@ So the rule that fixes it: **press what has happened, never what is about to hap
 | **We move the ball into a new band** | The new zone when one of our players **controls** it there (receives, or carries over the line) | The zone where the pass is aimed |
 | **Box entry (5)** | `5` only when one of our players **touches the ball inside their box** (receives, carries in, or shoots from inside) | A cross into the box that the keeper catches or a defender clears first: that is `W` (then `5`, it is still their box), not our entry |
 | **Long ball / cross that goes out** | `E` when it crosses the line | No zone for where it was aimed |
-| **Shot** | (new zone if a player controlled the ball in a new band first) → `Z` / `X` / `C` at the strike | |
+| **Shot** | **The zone where the shot is struck** (a shot counts as a touch, even a first-time header after a long ball) → `Z` / `X` / `C` at the strike | Shooting without the zone: the shot's team comes from the zone, so a header in their box after a long ball from zone 2 would be counted as theirs |
 | **After a shot** | Out: `E`. Keeper holds it: `W` (their keeper has the ball, the zone stays 5). Rebound we win: `Q` | |
 | **Goal** | `C` only (dead ball and kick-off are automatic) | `E` |
 | **Ball out / whistle** | `E` → restart key (`A` touche, `S` corner, `D` coup franc / hors-jeu, `F` 6 m, `Shift+D` penalty) → zone of the restart for `A` and `D` (prompted) → `Q`/`W` at the first touch of the restart | |
 | **Something to look at later** | `R` (flag), any time after the moment | It never changes possession |
 | **You lost the thread** | `T`, and again `T` (or the next `Q`/`W`/`E`) when you are back | Guessing |
+
+**If a shot still ends up on the wrong team**, open it in the journal and switch « Équipe » (Lauréats / Adversaire); the choice is kept even if you move its time. The journal also lets you change the half of a line (a half can run past 45:00).
 
 **Within the same instant, possession comes before the zone.** The engine counts an entry for the team that has the ball when the zone is pressed: `Q` then `4` is our entry, `4` then `Q` is not.
 

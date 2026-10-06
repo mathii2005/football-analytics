@@ -14,11 +14,13 @@ const VALUES = {
 function Editor({ entry, onSave, onDelete, onRestore, onClose }) {
   const [v, setV] = useState(entry.v);
   const [t, setT] = useState(entry.t);
+  const [half, setHalf] = useState(entry.half);
+  const [team, setTeam] = useState(entry.team);
   const [txt, setTxt] = useState(fmtClock(entry.t));
   const [err, setErr] = useState(null);
   const shift = (d) => { const n = Math.max(0, t + d); setT(n); setTxt(fmtClock(n)); };
   const typed = (s) => { setTxt(s); const ms = parseMmSs(s); if (ms !== null) { setT(ms); setErr(null); } else setErr("mm:ss"); };
-  const changed = v !== entry.v || t !== entry.t;
+  const changed = v !== entry.v || t !== entry.t || half !== entry.half || team !== entry.team;
   return (
     <div className="mt-1 space-y-2 rounded border border-ink/20 bg-paper-2 p-2" onClick={(e) => e.stopPropagation()}>
       {VALUES[entry.k] && (
@@ -28,6 +30,19 @@ function Editor({ entry, onSave, onDelete, onRestore, onClose }) {
           ))}
         </div>
       )}
+      {entry.k === "SH" && (
+        <div className="flex flex-wrap items-center gap-1">
+          <span className="label mr-1">Équipe</span>
+          {[["US", "Lauréats"], ["THEM", "Adversaire"]].map(([val, label]) => (
+            <button key={val} className={`btn ${team === val ? "btn-primary" : ""}`} onClick={() => setTeam(val)}>{label}</button>
+          ))}
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-1">
+        <span className="label mr-1">Mi-temps</span>
+        {[1, 2].map((h) => <button key={h} className={`btn ${half === h ? "btn-primary" : ""}`} onClick={() => setHalf(h)}>MT{h}</button>)}
+        <span className="text-xs text-ink-3">la MT2 commence à 45:00 ; une mi-temps peut dépasser son temps (arrêts de jeu)</span>
+      </div>
       <div className="flex flex-wrap items-center gap-1">
         <span className="label mr-1">Temps</span>
         <button className="btn" onClick={() => shift(-5000)}>−5s</button>
@@ -40,7 +55,7 @@ function Editor({ entry, onSave, onDelete, onRestore, onClose }) {
       <div className="flex flex-wrap gap-1">
         {entry.retracted
           ? <button className="btn btn-primary" onClick={onRestore}>Restaurer</button>
-          : <button className="btn btn-primary" disabled={!changed || err} onClick={() => onSave({ v, t })}>Enregistrer</button>}
+          : <button className="btn btn-primary" disabled={!changed || err} onClick={() => onSave({ v, t, ...(half !== entry.half ? { half } : {}), ...(team !== entry.team ? { team } : {}) })}>Enregistrer</button>}
         {!entry.retracted && <button className="btn text-warn" onClick={onDelete}>Supprimer</button>}
         <button className="btn" onClick={onClose}>Fermer</button>
       </div>

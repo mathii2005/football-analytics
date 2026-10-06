@@ -187,3 +187,29 @@ test("restarting the match cancels every press, score corrections included, and 
   assert.equal(live.state, "DEAD");
   assert.ok(next.some((o) => o.k === "CLOCK" && o.v === "RESET"));
 });
+
+// ---- stoppage time, changing half, switching a shot's team ----
+test("a first-half line can be set after 45:00 (stoppage time)", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 3)]]);
+  const r = editOps(ops, seqOf(ops, "Z", 3), { t: 47 * 60000 + 25000 }, "w");
+  assert.equal(r.error, undefined);
+  assert.equal(r.ops.at(-1).t, 2845000);
+});
+
+test("a line can be moved to the other half, with a time inside that half", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 3)]]);
+  const moved = editOps(ops, seqOf(ops, "Z", 3), { half: 2, t: 2700000 + 60000 }, "w");
+  assert.equal(moved.ops.at(-1).half, 2);
+  assert.equal(editOps(ops, seqOf(ops, "Z", 3), { half: 2, t: 60000 }, "w").error, "Temps hors de la mi-temps");
+});
+
+test("a shot's team can be switched by hand and keeps it when its time is edited", () => {
+  const { ops } = play([[2000, op("S", "US")], [3000, op("Z", 2)], [5000, op("SH", "OFF")]]);
+  const shot = seqOf(ops, "SH", "OFF");
+  assert.equal(ops.find((o) => o.seq === shot).team, "THEM");          // zone 2 -> theirs by the zone rule
+  const switched = apply(ops, editOps(ops, shot, { team: "US" }, "w").ops);
+  const fixed = switched.at(-1);
+  assert.equal(fixed.team, "US"); assert.equal(fixed.team_fixed, true);
+  const later = apply(switched, editOps(switched, fixed.seq, { t: 6000 }, "w").ops);
+  assert.equal(later.at(-1).team, "US");
+});

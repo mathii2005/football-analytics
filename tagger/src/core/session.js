@@ -136,21 +136,24 @@ export function editOps(ops, targetSeq, change, wall) {
 
   if (change.delete) return retracted.has(targetSeq) ? { ops: [] } : { ops: [{ seq: seq++, t: target.t, half: target.half, k: "U", v: targetSeq, ...base }] };
 
+  // a half has no upper bound: stoppage time runs past 45:00 (the clock of half 2 starts at 45:00)
+  const half = change.half ?? target.half;
   const t = change.t ?? target.t;
-  const half = target.half;
-  const end = half === 1 ? HALF_START[2] : Infinity;
-  if (t < HALF_START[half] || t >= end) return { error: "Temps hors de la mi-temps" };
+  if (!HALF_START.hasOwnProperty(half) || t < HALF_START[half]) return { error: "Temps hors de la mi-temps" };
   const v = change.v !== undefined ? change.v : target.v;
 
   const out = [];
   if (!retracted.has(targetSeq)) out.push({ seq: seq++, t: target.t, half, k: "U", v: targetSeq, ...base });
-  else if (!change.restore && change.v === undefined && change.t === undefined) return { ops: [] };
+  else if (!change.restore && change.v === undefined && change.t === undefined && change.half === undefined && change.team === undefined) return { ops: [] };
   const withoutTarget = ops.concat(out);
   const before = deriveLive(withoutTarget.filter((o) => byTime(o, { half, t, seq: Infinity }) < 0 || o.k === "U"));
   const mk = (k, val, extra = {}) => ({ seq: seq++, t, half, k, v: val, ...base, ...extra });
-  const team = target.k === "SH" ? shotTeam(before).team : undefined;   // recomputed from the band at the new time
+  // shot team: switched by hand (kept from then on), else recomputed from the band at the new time
+  const fixedTeam = change.team ?? (target.team_fixed ? target.team : undefined);
+  const team = target.k === "SH" ? fixedTeam ?? shotTeam(before).team : undefined;
   const lines = linesFor(before, target.k, v, mk, team);
   lines[0].edit_of = targetSeq;
+  if (target.k === "SH" && fixedTeam) lines[0].team_fixed = true;
   return { ops: out.concat(lines) };
 }
 
