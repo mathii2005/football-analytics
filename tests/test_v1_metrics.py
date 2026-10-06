@@ -290,3 +290,18 @@ def test_only_free_kicks_in_the_attacking_half_count_as_set_pieces():
     L.add(8000, "SH", "OFF")
     m = run(L, end=60000)
     assert m["setpiece_shot_rate"]["n"] == 1 and m["setpiece_shot_rate"]["value"] == 1.0
+
+
+def test_a_band_press_marked_as_not_an_entry_counts_nowhere():
+    def log():
+        L = kickoff_then(Log())
+        L.S(1000, "US", auto_band=2)            # build-up from our half
+        bad = L.add(3000, "Z", 4)                # pressed zone 4, but it was not an entry
+        L.S(9000, "THEM")
+        return L, bad
+    L, _ = log()
+    clean = run(L, end=60000)
+    L, bad = log()
+    m = run(L, [{"card": f"ENTRY:{bad}", "q": {"invalid": "NOT_AN_ENTRY"}}], end=60000)
+    assert clean["buildup_progression"]["value"] == 1.0 and m["buildup_progression"]["value"] == 0.0
+    assert clean["field_tilt_time"]["value"] > 0 and not m["field_tilt_time"]["value"]

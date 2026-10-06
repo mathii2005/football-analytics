@@ -144,6 +144,7 @@ def without_tag_errors(tl, lab, answers, roots):
     « erreur de tag »: shots, flags, losses, set pieces, and entries (« pas une entrée »).
     The live presses themselves are not changed."""
     from copy import copy
+    from dataclasses import replace
     bad = lambda kind, seq: (answer_for(answers, roots, kind, seq) or {}).get("invalid")   # noqa: E731
     t2, l2 = copy(tl), copy(lab)
     t2.shots = [s for s in tl.shots if not bad("GOAL" if s.v == "GOAL" else "SHOT", s.seq)]
@@ -151,6 +152,10 @@ def without_tag_errors(tl, lab, answers, roots):
     t2.restarts = [r for r in tl.restarts if r.rseq is None or not bad("SET_PIECE", r.rseq)]
     l2.losses = [l for l in lab.losses if not bad("LOSS", l.seq)]
     l2.entries = [e for e in lab.entries if not bad("ENTRY" if e.team == "US" else "OPP_ENTRY", e.seq)]
+    # a band press that was « pas une entrée » keeps the band it came from, so no
+    # band-based metric (build-up, territory, red-zone possessions, xT) counts it
+    rejected = {e.seq for e in lab.entries} - {e.seq for e in l2.entries}
+    t2.bands = [replace(b, band=b.prev) if b.seq in rejected and b.prev is not None else b for b in tl.bands]
     return t2, l2
 
 
@@ -172,12 +177,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None, half=None)
         tl, lab = only_half(tl, lab, half)
         classic_tilt = None             # the classic formula is a whole-match number
     ctx = Ctx(tl, lab, answers, roots, meta)
-    invalid = _invalid_entries(ctx, lab)
-    if invalid:                         # left out of every entry metric and of xT
-        from copy import copy
-        lab = copy(lab)
-        lab.entries = [e for e in lab.entries if e.seq not in invalid]
-        ctx.lab = lab
+    invalid = _invalid_entries(ctx, lab)     # « pas une entrée »: also kept out of xT below
     tl, lab = without_tag_errors(tl, lab, answers, roots)
     ctx.tl, ctx.lab = tl, lab
     out = {}
