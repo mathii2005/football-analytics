@@ -1,10 +1,12 @@
 // Thin client for the analytics API. Every number shown in the dashboard
 // comes from here - no football logic in the frontend.
 
+import { stripVeo } from "./veo.js";
+
 async function get(path) {
   const res = await fetch(`/api${path}`);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText} (${path})`);
-  return res.json();
+  return stripVeo(await res.json());
 }
 
 export const fetchMatches = () => get("/matches");
@@ -25,10 +27,11 @@ export async function fetchMatch(id) {
   ]);
   // v1 matches (two-pass tagger): the metric catalogue and the v1 season
   const v1 = await get(`/matches/${m}/metrics`).catch(() => ({ available: false }));
-  const [seasonV1, recap] = v1.available
-    ? await Promise.all([get("/season/v1").catch(() => null), get(`/matches/${m}/recap`).catch(() => null)])
-    : [null, null];
-  return { report, possessions, losses, quality, clips, phases, timeline, season, v1, seasonV1, recap };
+  const [seasonV1, recap, details] = v1.available
+    ? await Promise.all([get("/season/v1").catch(() => null), get(`/matches/${m}/recap`).catch(() => null),
+                         get(`/matches/${m}/details`).catch(() => null)])
+    : [null, null, null];
+  return { report, possessions, losses, quality, clips, phases, timeline, season, v1, seasonV1, recap, details };
 }
 
 // v1 filters: one half of a match, or the season against one tier / at one venue

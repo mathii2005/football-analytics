@@ -3,9 +3,9 @@ import { US, THEM } from "../charts/palette.js";
 // Horizontal bars for a small breakdown {key: value}: thin marks, the value
 // written in ink next to the bar, keys in a fixed order (never sorted by rank
 // so colours and positions stay stable across matches).
-export default function Bars({ data, labels = {}, order, format = (v) => v, color = US, compare, compareColor = THEM, empty = "Pas encore de données.", onSelect }) {
+export default function Bars({ data, labels = {}, order, format = (v) => v, color = US, compare, compareColor = THEM, onSelect }) {
   const keys = (order || Object.keys(data || {})).filter((k) => (data && data[k] != null) || (compare && compare[k] != null));
-  if (!keys.length) return <p className="text-sm text-ink-3">{empty}</p>;
+  if (!keys.length) return null;
   const max = Math.max(...keys.map((k) => Math.max(data?.[k] || 0, compare?.[k] || 0)), 1e-9);
   return (
     <ul className="space-y-2">

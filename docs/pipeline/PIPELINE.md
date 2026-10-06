@@ -392,6 +392,17 @@ Built: the v1 pages above (Récap, Saison, Attaque, Couloirs & zone rouge, Posse
 
 Filters (P6, done): **Mi-temps** (Tout / MT1 / MT2) recomputes every metric on that half (`GET /matches/{id}/metrics?half=`; the classic field tilt, a whole-match formula, is not shown per half); **Adversaire** (haut / milieu / bas) and **Lieu** (domicile / extérieur) filter the season view and the reference statuses (`GET /season/v1?tier=&venue=`). **Click a bar → its clips**: xG by phase (ours and theirs), xT by lane and by phase open the drawer on the moments of that bar. **Phase is a breakdown, not a global filter**: filtering every metric by phase would mix definitions (possession minutes, entries, losses) — the phase splits live in the tiles that need them. Phone (390 px): tabs scroll, KPIs two per row, tiles in one column, the drawer full width; the filter bar is sticky only from tablet width up. Esc closes the drawer.
 
+Full dashboard (2026-10-06): the old staff views that have data for v1 matches are back on the v1 pages, and `GET /matches/{id}/details` feeds the list-type tiles (tag errors left out):
+- **Récap:** « Ce que disent les données » (key points).
+- **Saison:** radar and bullets against this season's matches (note: earlier matches come from the old tagger).
+- **Attaque:** how shots are created and where they are taken (us vs them), the sortable shots table (xG + card answers), half-time dumbbell.
+- **Possession:** game-state possession and halves, recovery value by zone, efficiency by start, the full possession table.
+- **Intensité:** closing within 3 s (distribution), counter-press by zone, recoveries / losses / balance pitches, defensive phases.
+- **CPA:** set pieces per type and half of the pitch, with shots within 20 s, for both teams.
+- **Défense:** opponent entries into our box (lane, method), how their shots are created and where, our losses followed by their shot within 20 s.
+- **Données:** tagging load per 15 min.
+- Veo links are switched off (`dashboard/src/veo.js`) until the second-half offsets are set; the Clips tab is hidden meanwhile.
+
 ### 7.3 Presentation mode (from Récap)
 
 - **16:9 full screen**, text 24 px or larger, arrow keys to move, a discreet 15-min timer, `Esc` to leave.

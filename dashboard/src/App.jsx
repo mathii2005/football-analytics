@@ -14,6 +14,7 @@ import ClipDrawer from "./v1ui/ClipDrawer.jsx";
 import Presentation from "./v1ui/Presentation.jsx";
 import { fmtValue } from "./v1ui/format.js";
 import * as V1 from "./v1ui/pages/Pages.jsx";
+import { SHOW_VEO } from "./veo.js";
 
 const TABS = [
   { id: "apercu", label: "Aperçu" },
@@ -52,10 +53,11 @@ const V1_KPIS = {
 };
 function v1Figures(tab, d) {
   const M = d.v1.metrics;
-  return (V1_KPIS[tab] || V1_KPIS.recap).filter((k) => M[k]).map((k) => {
+  return (V1_KPIS[tab] || V1_KPIS.recap).filter((k) => M[k] && M[k].value != null).map((k) => {
     const m = M[k];
-    const sub = [`n = ${m.n}`, m.coverage != null ? `revu ${Math.round(m.coverage * 100)} %` : null, m.status !== "ok" ? m.status : null].filter(Boolean).join(" · ");
-    return { label: m.label_fr + (k.endsWith("_against") ? " (adv.)" : ""), value: fmtValue(m), sub };
+    const sub = [`n = ${m.n}`, m.coverage != null ? `revu ${Math.round(m.coverage * 100)} %` : null].filter(Boolean).join(" · ");
+    const label = m.label_fr.replace(" (adversaire)", "") + (k.endsWith("_against") ? " (adv.)" : "");
+    return { label, value: fmtValue(m), sub };
   });
 }
 
@@ -173,7 +175,7 @@ export default function App() {
   }, [selected]);
 
   const isV1 = !!data?.v1?.available;
-  const tabs = isV1 ? V1_TABS : TABS;
+  const tabs = (isV1 ? V1_TABS : TABS).filter((t) => SHOW_VEO || t.id !== "clips");
   // a tab that does not exist for this kind of match falls back to the first one
   const current = tabs.some((t) => t.id === tab) ? tab : tabs[0].id;
   const info = data?.report.match;
@@ -210,7 +212,7 @@ export default function App() {
                     Match sur Veo <ExternalLink size={13} aria-hidden="true" />
                   </a>
                 )}
-                {data && current !== "clips" && (
+                {SHOW_VEO && data && current !== "clips" && (
                   <button type="button" onClick={() => setTab("clips")}
                     className="inline-flex items-center gap-1.5 rounded bg-gold px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:bg-gold-lift">
                     <Play size={14} strokeWidth={2.5} aria-hidden="true" /> Voir les clips ({data.clips.selection.length})

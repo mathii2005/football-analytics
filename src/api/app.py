@@ -30,6 +30,7 @@ from src.analytics.clips import review_clips
 from src.analytics.video import veo_info, video_url
 from src.v1.season import season_v1
 from src.v1.recap import build_recap
+from src.v1.details import match_details
 from src.v1.metrics import compute_metrics
 from src.v1.quality import calibration
 
@@ -37,7 +38,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def match_dir() -> Path:
-    return Path(os.environ.get("FA_MATCH_DIR", PROJECT_ROOT / "data" / "raw"))
+    return Path(os.environ.get("FA_MATCH_DIR", PROJECT_ROOT / "data" / "matches"))
 
 
 app = FastAPI(title="Football analytics API", version="0.1.0")
@@ -245,6 +246,17 @@ def metrics(match_id: str, half: int | None = Query(None, ge=1, le=2)):
         out["metrics"] = compute_metrics(v1["timeline"], v1["labels"], v1["answers"], v1["roots"], v1["meta"], half=half)
         out["half"] = half
     return out
+
+
+@app.get("/matches/{match_id}/details")
+def details(match_id: str):
+    """v1 breakdowns behind the dashboard tiles (shots table, origins, opponent entries, closing,
+    losses -> shots against, set pieces by zone, tagging load); {available: false} for old exports."""
+    match, _ = analyse(match_id)
+    if "v1" not in match:
+        return {"available": False}
+    v1 = match["v1"]
+    return {"available": True, **match_details(v1["timeline"], v1["labels"], v1["answers"], v1["roots"], v1["meta"], v1["ops"])}
 
 
 def _v1_matches():

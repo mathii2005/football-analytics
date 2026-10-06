@@ -137,6 +137,13 @@ def test_v1_metrics_endpoint(v1_client):
     assert v1_client.get("/matches/champlain_15min/metrics").json() == {"available": False}
 
 
+def test_v1_details_endpoint(v1_client):
+    d = v1_client.get("/matches/ahuntsic_h1/details").json()
+    assert d["available"] and sum(1 for s in d["shots"] if s["team"] == "US") == 4
+    assert {"shot_origin", "opp_entries", "closing", "losses_to_shots", "set_pieces", "load"} <= set(d)
+    assert v1_client.get("/matches/champlain_15min/details").json() == {"available": False}
+
+
 def test_season_v1_endpoint(v1_client):
     d = v1_client.get("/season/v1").json()
     assert [m["id"] for m in d["matches"]] == ["ahuntsic_h1"]

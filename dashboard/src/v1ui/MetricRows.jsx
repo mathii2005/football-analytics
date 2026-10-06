@@ -7,7 +7,7 @@ export default function MetricRows({ ids, metrics, season, openClips }) {
   return (
     <table className="w-full text-[13px]">
       <tbody>
-        {ids.filter((id) => metrics[id]).map((id) => {
+        {ids.filter((id) => metrics[id] && metrics[id].value != null).map((id) => {
           const m = metrics[id];
           return (
             <tr key={id} className="border-b border-rule last:border-0">

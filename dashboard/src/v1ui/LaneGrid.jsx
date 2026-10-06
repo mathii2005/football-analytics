@@ -7,7 +7,7 @@ export default function LaneGrid({ grid }) {
   const rows = [["5", "Surface"], ["4", "Zone 4"]];
   const vals = rows.flatMap(([b]) => LANES.map(([l]) => grid?.[`${l}:${b}`] || 0));
   const max = Math.max(...vals, 1);
-  if (!vals.some(Boolean)) return <p className="text-sm text-ink-3">Les couloirs viennent des cartes « Entrée » de la revue : pas encore de réponses.</p>;
+  if (!vals.some(Boolean)) return null;
   return (
     <div>
       <div className="grid grid-cols-[4.5rem_repeat(5,1fr)] gap-[2px] text-[11px]">

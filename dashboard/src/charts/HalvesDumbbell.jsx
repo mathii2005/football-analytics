@@ -15,10 +15,10 @@ const ROWS = [
   ["losses_opp_half", "Pertes dans leur moitié", (v) => v],
 ];
 
-export default function HalvesDumbbell({ halves, tempo }) {
+export default function HalvesDumbbell({ halves, tempo, hide = [] }) {
   if (halves.length < 2) return <p className="text-sm text-ink-3">Une seule mi-temps taguée.</p>;
   const [a, b] = halves;
-  const rows = [...ROWS, ["aps", "Actions par tir", (v) => (v == null ? "–" : dec(v))]];
+  const rows = [...ROWS, ["aps", "Actions par tir", (v) => (v == null ? "–" : dec(v))]].filter(([k]) => !hide.includes(k));
   const val = (h, k, i) => (k === "aps" ? tempo[i]?.actions_per_shot : h[k]);
   return (
     <div>

@@ -7,7 +7,9 @@ venv/
 .DS_Store
 .pytest_cache/
 
-# real season data stays local; only the sample fixtures are versioned
+# real season data stays local (the repo is public); only the sample fixtures are versioned
+data/matches/
+data/archive/
 data/raw/*.json
 !data/raw/*match_001*.json
 !data/raw/*match_002*.json

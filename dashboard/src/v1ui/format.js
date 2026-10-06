@@ -9,7 +9,7 @@ export function fmtValue(m) {
   if (u === "s") return `${dec(v)} s`;
   if (u.startsWith("xG") || u.startsWith("xT")) return v.toFixed(2);
   if (u.startsWith("/10")) return dec(v);
-  if (u === "players / %") return dec(v);
+  if (u === "players / %") return m.id?.endsWith("_share") ? pct(v) : dec(v);
   return Number.isInteger(v) ? String(v) : dec(v);
 }
 
@@ -17,7 +17,6 @@ export function subline(m) {
   if (!m) return "";
   const bits = [`n = ${m.n}`];
   if (m.coverage != null) bits.push(`revu ${pct(m.coverage)}`);
-  if (m.status && m.status !== "ok") bits.push(m.status);
   return bits.join(" · ");
 }
 
@@ -31,8 +30,8 @@ export const STATUS = {
 export const GROUP_FR = { identite: "Identité", phases: "Phases", xt: "Progression dangereuse", couloir_interieur: "Couloir intérieur",
   zone_rouge: "Zone rouge et 18 m", intensite: "Intensité" };
 
-export const LANE_FR = { L: "Couloir gauche", HS_L: "Intérieur gauche", C: "Axe", HS_R: "Intérieur droit", R: "Couloir droit", "?": "Couloir inconnu" };
-export const PHASE_FR = { TRANSITION: "Transition", BUILD_UP: "Construction", SETTLED: "Attaque placée", SET_PIECE: "CPA", "?": "Phase inconnue" };
+export const LANE_FR = { L: "Couloir gauche", HS_L: "Intérieur gauche", C: "Axe", HS_R: "Intérieur droit", R: "Couloir droit", "?": "Autre" };
+export const PHASE_FR = { TRANSITION: "Transition", BUILD_UP: "Construction", SETTLED: "Attaque placée", SET_PIECE: "CPA", "?": "Autre" };
 export const CAUSE_FR = { INTERCEPTED: "Passe interceptée", TACKLED: "Taclé", BAD_TOUCH: "Mauvais contrôle", OUT: "Sortie", FOUL: "Faute" };
 export const INTENT_FR = { PASS_INTO_HS: "Passe dans l'intérieur", THROUGH: "Passe en profondeur", CROSS: "Centre", DRIBBLE: "Dribble",
   SHORT_COMBINATION: "Combinaison courte", SWITCH: "Changement de jeu", CLEARANCE_LONG: "Dégagement long", OTHER: "Autre" };
@@ -44,3 +43,12 @@ export function toCsv(m) {
   for (const c of m.clips?.all || []) rows.push([c.half, c.t, c.what, c.url || ""]);
   return rows.map((r) => r.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(",")).join("\n");
 }
+export const ASSIST_FR = { THROUGH: "Passe dans le dos", CUTBACK: "Centre en retrait", CROSS: "Centre", HS_PASS: "Passe dans l'intérieur",
+  SET_PIECE_DELIVERY: "Coup de pied arrêté", REBOUND: "Rebond / 2e ballon", SOLO: "Action individuelle", REGAIN_DIRECT: "Direct après récupération",
+  NONE: "Sans passe", UNREVIEWED: "Non revu" };
+export const LOC_FR = { SIX: "6 m", CENTRAL_BOX: "Surface, axe", WIDE_BOX: "Surface, intérieur", CENTRAL_OUT: "Hors surface, axe",
+  WIDE_OUT: "Hors surface, côté", UNREVIEWED: "Non revu" };
+export const SITUATION_FR = { OPEN: "Jeu placé", FAST_BREAK: "Contre", SET_PIECE: "CPA", PENALTY: "Penalty" };
+export const BODY_FR = { FOOT: "Pied", HEAD: "Tête", OTHER: "Autre" };
+export const SHOT_V_FR = { OFF: "Non cadré", ON: "Cadré", GOAL: "But" };
+export const RESTART_FR = { CORNER: "Corner", FK: "Coup franc", THROW: "Touche", PEN: "Penalty", GK: "Dégagement", KICKOFF: "Engagement" };

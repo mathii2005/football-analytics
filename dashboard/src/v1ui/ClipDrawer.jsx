@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { X, Play } from "lucide-react";
 import { clock } from "../format.js";
+import { SHOW_VEO } from "../veo.js";
 
 // Right-hand drawer: the moments behind a number. Typical first, then extreme
 // (one lucky moment must not look like a pattern), then all of them.
@@ -9,7 +10,7 @@ function Row({ c }) {
     <li className="flex items-center justify-between gap-2 border-b border-rule py-1.5 text-[13px]">
       <span className="tabular text-ink-2">MT{c.half} · {clock(c.t)} <span className="text-ink">{c.what}</span></span>
       {c.url ? <a href={c.url} target="veo" rel="noreferrer" className="inline-flex items-center gap-1 rounded bg-gold px-2 py-0.5 text-[12px] font-semibold text-ink hover:bg-gold-lift"><Play size={12} /> Veo</a>
-        : <span className="text-[11px] text-ink-3">pas de lien Veo</span>}
+        : SHOW_VEO && <span className="text-[11px] text-ink-3">pas de lien Veo</span>}
     </li>
   );
 }
