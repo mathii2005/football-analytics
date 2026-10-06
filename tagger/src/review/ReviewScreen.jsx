@@ -204,7 +204,8 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
   const tierNow = elapsed < TIER_MIN[1] * 60000 ? 1 : elapsed < (TIER_MIN[1] + TIER_MIN[2]) * 60000 ? 2 : 3;
   const totalAnswered = Object.values(cov).reduce((s, c) => s + c.answered, 0);
   const contextLine = (c) => {
-    if (c.kind === "ENTRY" || c.kind === "OPP_ENTRY") return `Zone ${c.from} → ${c.to}`;
+    if (c.kind === "ENTRY") return c.to === 5 ? `Entrée dans la surface (zone ${c.from} → 5)` : `Entrée en zone rouge (zone ${c.from} → 4) : compte aussi, même sans entrer dans la surface`;
+    if (c.kind === "OPP_ENTRY") return `Zone ${c.from} → ${c.to}`;
     if (c.kind === "LOSS") return `Perte en zone ${c.band}`;
     if (c.kind === "SHOT" || c.kind === "GOAL") return c.team === "US" ? "Lauréats" : c.team === "THEM" ? "Adversaire" : "";
     if (c.kind === "SET_PIECE") return `${c.type === "CORNER" ? "Corner" : "Coup franc"} · ${c.team === "US" ? "Lauréats" : "Adversaire"}`;
