@@ -15,10 +15,13 @@ const LOAD = CODEBOOK.load;
 const CARD_SECONDS = 20;                 // estimate used to decide entry sampling
 const SAMPLE_ABOVE_MIN = 50;             // tiers 1 + 2 above this -> sample 3->4 entries at 50 %
 
-export function cardQuestions(kind) {
+// The questions of a card. Questions marked team "US" (who did it?) are only
+// asked when the action is ours: a card of the opponent skips them.
+export function cardQuestions(kind, card) {
   const c = CARD[kind];
   if (!c) return [];
-  return c.inherits ? [...cardQuestions(c.inherits), ...c.questions] : c.questions;
+  const qs = c.inherits ? [...cardQuestions(c.inherits), ...c.questions] : c.questions;
+  return card?.team === "THEM" ? qs.filter((q) => q.team !== "US") : qs;
 }
 
 function seeded(str) {                   // deterministic 0..1 generator from the match id

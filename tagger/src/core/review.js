@@ -14,20 +14,22 @@ export function latestAnswers(reviewed) {
 
 export const answerLine = (card, q, wall) => ({ card: card.id, seq: card.seq ?? null, q, at: wall, by: "analyst", cb: CB_VERSION });
 
-export function isAnswered(card, q) {
+// describe: description mode (CODEBOOK §5), every card also needs a free description
+export function isAnswered(card, q, { describe = false } = {}) {
   if (!q) return false;
   if (q.invalid && CARD_INVALID.has(card.kind)) return true;     // « erreur de tag »
-  const qs = cardQuestions(card.kind);
+  const qs = cardQuestions(card.kind, card);
   if (!qs.length) return q.result !== undefined;          // GAP
-  return qs.every((x) => q[x.id] !== undefined && q[x.id] !== null);
+  if (describe && !q.note?.trim()) return false;
+  return qs.every((x) => q[x.id] !== undefined && q[x.id] !== null && q[x.id] !== "");
 }
 
-export function coverage(cards, answers) {
+export function coverage(cards, answers, opts) {
   const out = {};
   for (const c of cards) {
     out[c.kind] ??= { answered: 0, total: 0 };
     out[c.kind].total += 1;
-    if (isAnswered(c, answers.get(c.id))) out[c.kind].answered += 1;
+    if (isAnswered(c, answers.get(c.id), opts)) out[c.kind].answered += 1;
   }
   return out;
 }

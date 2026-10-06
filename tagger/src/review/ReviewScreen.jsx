@@ -8,6 +8,8 @@ import { fmtClock } from "../core/clock.js";
 import { buildBundle, bundleFileName } from "../core/bundle.js";
 import { download, parseMmSs } from "../ui/util.js";
 import { useSaver } from "../store/useSaver.js";
+import { loadRoster } from "../core/roster.js";
+import PlayerPicker from "./PlayerPicker.jsx";
 
 // Pass 2: the quiz (PIPELINE §5). One card per moment the live log selected,
 // answered with number keys while Veo plays in a reused window.
@@ -18,6 +20,8 @@ const VL = CODEBOOK.value_labels_fr;
 const CL = CODEBOOK.card_labels_fr;
 const HINTS = CODEBOOK.review_hints_fr;
 const CHANCE_DEF = CODEBOOK.cards.find((c) => c.id === "FLAG").definitions.CHANCE_NO_SHOT;
+const DEFS = CODEBOOK.value_defs_fr;
+const DESCRIBE = CODEBOOK.review.describe;
 
 function GapForm({ card, veo, onFill, onUnknown, disabled }) {
   const [lines, setLines] = useState([]);
@@ -60,23 +64,30 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
   const [qi, setQi] = useState(0);
   const [autoVeo, setAutoVeo] = useState(true);
   const [toast, setToast] = useState(null);
+  // the squad: the copy saved in this match wins, else the one on this computer
+  const [roster] = useState(() => (match.meta.roster?.length ? match.meta.roster : loadRoster()));
+  const describe = meta.review?.describe ?? DESCRIBE.default;
+  const opts = { describe };
   const { save, conflict } = useSaver(store, match.rev);
   const ref = useRef({ ops, reviewed, meta, elapsed });
   ref.current = { ops, reviewed, meta, elapsed };
+  const [note, setNote] = useState("");
 
   const cards = useMemo(() => buildCards(ops, reviewed, { theme, matchId: meta.id }), [ops, reviewed, theme, meta.id]);
   const answers = useMemo(() => latestAnswers(reviewed), [reviewed]);
-  const cov = useMemo(() => coverage(cards, answers), [cards, answers]);
+  const cov = useMemo(() => coverage(cards, answers, opts), [cards, answers, describe]);   // eslint-disable-line react-hooks/exhaustive-deps
   const card = cards[Math.min(idx, cards.length - 1)];
   const over = elapsed >= BUDGET_MS;     // the 60 min is a guide: past it, the timer turns red and answering goes on
   const locked = false;
-  const questions = card ? cardQuestions(card.kind) : [];
+  const questions = card ? cardQuestions(card.kind, card) : [];
   const draft = card ? { ...card.prefill, ...(answers.get(card.id) || {}) } : {};
+
+  useEffect(() => { setNote((card && answers.get(card.id)?.note) || ""); }, [card?.id]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const say = (text) => { setToast(text); setTimeout(() => setToast(null), 1800); };
   const persist = useCallback((next = {}) => {
     const s = { ...ref.current, ...next };
-    const m = { ...s.meta, review: { ...(s.meta.review || {}), theme: s.meta.review?.theme || THEMES[0], elapsed_ms: s.elapsed } };
+    const m = { ...s.meta, roster: roster.length ? roster : s.meta.roster, review: { ...(s.meta.review || {}), theme: s.meta.review?.theme || THEMES[0], elapsed_ms: s.elapsed } };
     save(() => [m, s.ops, s.reviewed, match.clock]);
     onSave({ ...match, meta: m, ops: s.ops, reviewed: s.reviewed });
   }, [save, match, onSave]);
@@ -102,14 +113,27 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
 
   const answer = (qid, value) => {
     if (locked || !card) return;
-    const q = { ...draft, [qid]: value };
+    const q = { ...draft, [qid]: value, ...(note.trim() ? { note: note.trim() } : {}) };
     const line = answerLine(card, q, new Date().toISOString());
     const next = [...ref.current.reviewed, line];
     setReviewed(next); persist({ reviewed: next });
     const nextQ = questions.findIndex((x, i) => i > questions.findIndex((y) => y.id === qid) && q[x.id] === undefined);
     if (nextQ >= 0) setQi(nextQ);
-    else if (isAnswered(card, q)) go(idx + 1);
+    else if (isAnswered(card, q, opts)) go(idx + 1);
+    else if (describe && !q.note) document.getElementById("card-note")?.focus();
   };
+
+  // description mode: the free description is saved with the card's answers
+  const saveNote = (andNext = false) => {
+    if (!card) return;
+    const text = note.trim();
+    if (text === (draft.note || "")) { if (andNext && isAnswered(card, draft, opts)) go(idx + 1); return; }
+    const q = { ...draft, note: text };
+    const next = [...ref.current.reviewed, answerLine(card, q, new Date().toISOString())];
+    setReviewed(next); persist({ reviewed: next });
+    if (andNext && isAnswered(card, q, opts)) go(idx + 1);
+  };
+  const setDescribe = (on) => { const m = { ...meta, review: { ...(meta.review || {}), describe: on } }; setMeta(m); ref.current.meta = m; persist({ meta: m }); };
 
   // « erreur de tag »: the live press was a mistake (every card but GAP)
   const invalidOpt = card ? CODEBOOK.cards.find((c) => c.id === card.kind)?.invalid_option : null;
@@ -159,7 +183,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
       if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
       if (!card) return;
       const q = questions[qi];
-      if (/^Digit[0-9]$|^Numpad[0-9]$/.test(e.code) && q && card.kind !== "GAP") {
+      if (/^Digit[0-9]$|^Numpad[0-9]$/.test(e.code) && q && q.type !== "player" && card.kind !== "GAP") {
         const n = Number(e.code.slice(-1));
         if (n === 0) answer(q.id, "CANT_SEE");
         else if (n <= q.values.length) answer(q.id, q.values[n - 1]);
@@ -198,6 +222,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
         <span className="rounded bg-paper-2 px-2 py-0.5 text-sm">Palier {tierNow}</span>
         <label className="text-sm">Thème <select className="field mt-0 ml-1 inline-block w-36" value={theme} onChange={(e) => setTheme(e.target.value)}>{THEMES.map((t) => <option key={t} value={t}>{CL[t]}</option>)}</select></label>
         <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={autoVeo} onChange={(e) => setAutoVeo(e.target.checked)} /> Ouvrir Veo à chaque carte</label>
+        <label className="flex items-center gap-1 text-sm" title={DESCRIBE.why}><input type="checkbox" checked={describe} onChange={(e) => setDescribe(e.target.checked)} /> Mode description</label>
         <div className="ml-auto flex gap-2 text-sm text-ink-3">{totalAnswered}/{cards.length} cartes <button className="btn" onClick={exportNow}>Exporter</button></div>
       </header>
       {conflict && <div className="flex items-center justify-between bg-warn px-4 py-1 text-sm font-semibold text-paper">Ce match a été modifié ailleurs (autre onglet ou import) : cet écran n'enregistre plus. <button className="btn" onClick={onReload}>Recharger</button></div>}
@@ -210,7 +235,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
               <div className="label px-1">Palier {tier} · {TIER_MIN[tier]} min</div>
               {cards.map((c, i) => c.tier !== tier ? null : (
                 <button key={c.id} onClick={() => go(i)} className={`flex w-full justify-between rounded px-1 py-0.5 text-left hover:bg-paper-2 ${i === idx ? "bg-paper-2 font-semibold" : ""}`}>
-                  <span>{isAnswered(c, answers.get(c.id)) ? "✓ " : answers.get(c.id) ? "• " : "  "}{CL[c.kind]}</span>
+                  <span>{isAnswered(c, answers.get(c.id), opts) ? "✓ " : answers.get(c.id) ? "• " : "  "}{CL[c.kind]}</span>
                   <span className="tabular-nums text-ink-3">MT{c.half} {fmtClock(c.t)}</span>
                 </button>
               ))}
@@ -253,6 +278,10 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
                         {card.prefill[q.id] && <div className="text-xs text-ink-3">prérempli : {VL[card.prefill[q.id]]}</div>}
                       </div>
                       {HINTS[q.id] && <div className="mt-0.5 text-xs text-ink-3">{q.id === "type" ? CHANCE_DEF : HINTS[q.id]}</div>}
+                      {q.type === "player" ? (
+                        <PlayerPicker roster={roster} value={draft[q.id]} allowNone={q.values.includes("NONE")} active={i === qi}
+                          onPick={(v) => answer(q.id, v)} labels={{ none: "Aucun", cantSee: VL.CANT_SEE }} />
+                      ) : <>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {q.values.map((v, n) => (
                           <button key={v} disabled={locked} onClick={(e) => { e.stopPropagation(); answer(q.id, v); }}
@@ -261,9 +290,27 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
                         <button disabled={locked} onClick={(e) => { e.stopPropagation(); answer(q.id, "CANT_SEE"); }}
                           className={`btn ${draft[q.id] === "CANT_SEE" ? "btn-primary" : ""}`}><kbd className="mr-1">0</kbd>{VL.CANT_SEE}</button>
                       </div>
+                      {i === qi && (
+                        <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-xs">
+                          {q.values.filter((v) => DEFS[`${q.id}.${v}`]).map((v, n) => [
+                            <dt key={`${v}t`} className="font-medium text-ink-2">{n + 1} · {VL[v] ?? v}</dt>,
+                            <dd key={`${v}d`} className="text-ink-3">{DEFS[`${q.id}.${v}`]}</dd>,
+                          ])}
+                        </dl>
+                      )}
+                      </>}
                     </div>
                   ))}
                 </div>
+              )}
+              {describe && card.kind !== "GAP" && !draft.invalid && (
+                <label className="mt-5 block">
+                  <span className="label">{DESCRIBE.label_fr}</span>
+                  <textarea id="card-note" className="field h-24" value={note} onChange={(e) => setNote(e.target.value)} onBlur={() => saveNote(false)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); saveNote(true); } if (e.key === "Escape") e.target.blur(); }}
+                    placeholder="Ce que tu vois, avec tes mots : qui, quoi, où, comment ça finit." />
+                  <span className="text-xs text-ink-3">Obligatoire en mode description · ⌘/Ctrl + Entrée = enregistrer et carte suivante</span>
+                </label>
               )}
               <p className="mt-5 text-xs text-ink-3">Chiffres = répondre · 0 = je ne vois pas · ↑↓ = question · Entrée / → = carte suivante · ← = précédente · K = passer · O = Veo · V = déplacer le moment{invalidOpt ? ` · N = ${invalidOpt.label_fr.replace(" (erreur de tag)", "").toLowerCase()}` : ""}</p>
             </>

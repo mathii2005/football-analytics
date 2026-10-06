@@ -1,10 +1,30 @@
 import { useEffect, useRef, useState } from "react";
+import { parseRoster, rosterText, loadRoster, saveRoster } from "../core/roster.js";
 import { parseImport, buildBundle, bundleFileName, mergeExports, defaultPick, halfStats } from "../core/bundle.js";
 import { download } from "../ui/util.js";
 
 // "Reprendre ou nouveau ?": resume, review, import (live or straight to the
 // review). Importing a match that already exists asks what to do instead of
 // silently replacing it.
+// The squad: pasted once, kept on this computer, used by the review to answer « qui ? »
+function RosterEditor() {
+  const [text, setText] = useState(() => rosterText(loadRoster()));
+  const [saved, setSaved] = useState(null);
+  const parsed = parseRoster(text);
+  const save = () => { saveRoster(parsed); setText(rosterText(parsed)); setSaved(`${parsed.length} joueurs enregistrés`); };
+  return (
+    <section className="mt-10">
+      <div className="label">Effectif</div>
+      <p className="mt-1 text-xs text-ink-3">Un joueur par ligne, numéro d'abord (ex. « 10 Léo Tremblay »). Gardé sur cet ordinateur seulement.</p>
+      <textarea className="field mt-2 h-40 font-mono text-sm" value={text} onChange={(e) => { setText(e.target.value); setSaved(null); }} />
+      <div className="mt-2 flex items-center gap-3">
+        <button className="btn" onClick={save}>Enregistrer l'effectif</button>
+        <span className="text-sm text-ink-3">{saved ?? `${parsed.length} joueurs reconnus`}</span>
+      </div>
+    </section>
+  );
+}
+
 function ImportDialog({ existing, incoming, onDone, onCancel }) {
   const [pick, setPick] = useState(defaultPick(existing, incoming));
   const se = halfStats(existing), si = halfStats(incoming);
@@ -124,6 +144,7 @@ export default function LaunchScreen({ store, onNew, onOpenStored }) {
           </ul>
         </section>
       )}
+      <RosterEditor />
       {dialog && <ImportDialog existing={dialog.existing} incoming={dialog.incoming} onDone={resolve} onCancel={() => setDialog(null)} />}
     </main>
   );

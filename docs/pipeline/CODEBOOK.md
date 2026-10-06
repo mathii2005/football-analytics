@@ -207,7 +207,7 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 
 | Card | Trigger | Questions → values |
 |---|---|---|
-| **SHOT** (Tir) | every `SH` press, both teams | **loc**: `SIX` (6-yard box) / `CENTRAL_BOX` (in the box, in the centre lane: the width of the 6-yard box, outside the 6-yard box) / `WIDE_BOX` (in the box, in a half-space: between the 6-yard and 18-yard box lines) / `CENTRAL_OUT` (outside the box, within the width of the box) / `WIDE_OUT` (outside the box, in a wide lane) · **body**: `FOOT` / `HEAD` / `OTHER` · **situation**: `OPEN` / `FAST_BREAK` (≤ 10 s after a regain) / `SET_PIECE` / `PENALTY` · **assist**: `THROUGH` / `CUTBACK` / `CROSS` / `HS_PASS` / `SET_PIECE_DELIVERY` / `REBOUND` / `SOLO` / `REGAIN_DIRECT` (the shot comes straight from a ball we won: interception or press, then shot) / `NONE` (no pass leads to the shot) · **last_pass_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
+| **SHOT** (Tir) | every `SH` press, both teams | **loc**: `SIX` (6-yard box) / `CENTRAL_BOX` (in the box, in the centre lane: the width of the 6-yard box, outside the 6-yard box) / `WIDE_BOX` (in the box, in a half-space: between the 6-yard and 18-yard box lines) / `CENTRAL_OUT` (outside the box, within the width of the box) / `WIDE_OUT` (outside the box, in a wide lane) · **body**: `FOOT` / `HEAD` / `OTHER` · **situation**: `OPEN` / `FAST_BREAK` (≤ 10 s after a regain) / `SET_PIECE` / `PENALTY` · **assist**: `THROUGH` / `CUTBACK` / `CROSS` / `HS_PASS` / `SET_PIECE_DELIVERY` / `REBOUND` / `SOLO` / `REGAIN_DIRECT` (the shot comes straight from a ball we won: interception or press, then shot) / `NONE` (no pass leads to the shot) · **last_pass_lane** (where the passer was): `L` / `HS_L` / `C` / `HS_R` / `R` · our shots only: **shooter** (player) · **assister** (player, or `NONE`) |
 | **GOAL** (But) | every `SH:GOAL` press, both teams | Every SHOT question, plus **phase_check**: `TRANSITION` / `BUILD_UP` / `SETTLED` / `SET_PIECE` / `PENALTY` (a check against the computed phase) · **box_lane** (lane where the ball entered the box): `L` / `HS_L` / `C` / `HS_R` / `R` |
 | **GAP** (Trou) | every `LOST` window, every low-fidelity block | Re-enter the possession states and bands from the clip, as a patch (§4) |
 | **FLAG** (À revoir) | every `F` press | **type**: `CHANCE_NO_SHOT` / `KEY_DUEL` / `ERROR` / `SET_PIECE_ROUTINE` / `OTHER` · **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` |
@@ -221,18 +221,24 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 
 | Card | Trigger | Questions → values |
 |---|---|---|
-| **ENTRY** (Entrée) | Our band moving 3→4, or into 5 from ≤ 4, while state = US. If over budget: every entry into 5, plus a random 50 % of 3→4 (sampled by the engine, seed = match id) | **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` · **between_lines**: "received between their midfield and defensive lines in a half-space?" `YES` / `NO` · **outcome_15s**: `SHOT` / `BOX_ENTRY` / `CORNER` / `LOST` / `RECYCLED` |
-| **LOSS** (Perte) | Our open-play `Q→W` switch in bands 3–5 | **intent**: what were we trying? `PASS_INTO_HS` / `THROUGH` / `CROSS` / `DRIBBLE` / `SHORT_COMBINATION` / `SWITCH` / `CLEARANCE_LONG` / `OTHER` · **intent_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **cause**: `INTERCEPTED` / `TACKLED` / `BAD_TOUCH` / `OUT` / `FOUL` · **closing_3s**: number of our players closing the ball within 3 s, `0` / `1` / `2` / `3PLUS` · **regain_5s**: pre-filled from the log, confirm `Y` / `N` |
+| **ENTRY** (Entrée) | Our band moving 3→4, or into 5 from ≤ 4, while state = US. If over budget: every entry into 5, plus a random 50 % of 3→4 (sampled by the engine, seed = match id) | **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` · **between_lines**: "received between their midfield and defensive lines in a half-space?" `YES` / `NO` · **outcome_15s**: `SHOT` / `BOX_ENTRY` / `CORNER` / `LOST` / `RECYCLED` · **entry_player** (player who controls the ball entering) |
+| **LOSS** (Perte) | Our open-play `Q→W` switch in bands 3–5 | **intent**: what were we trying? `PASS_INTO_HS` / `THROUGH` / `CROSS` / `DRIBBLE` / `SHORT_COMBINATION` / `SWITCH` / `CLEARANCE_LONG` / `OTHER` · **intent_lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **cause**: `INTERCEPTED` / `TACKLED` / `BAD_TOUCH` / `OUT` / `FOUL` · **closing_3s**: number of our players closing the ball within 3 s, `0` / `1` / `2` / `3PLUS` · **regain_5s**: pre-filled from the log, confirm `Y` / `N` · **lost_by** (player) · **first_presser** (player, or `NONE`) |
 
 ### 5.3 Tier 3 — rotating theme (10 min; set pieces → duels → conceding, then repeat)
 
 | Card | Trigger | Questions → values |
 |---|---|---|
-| **SET_PIECE** (CPA) | Every `R:CORNER` / `R:FK` in bands 4–5 (ours) or 0–1 (theirs) | **delivery**: `SHORT` / `NEAR` / `CENTRAL` / `FAR` / `EDGE` · **first_contact**: `US` / `THEM` / `NONE` |
-| **DUEL** | Flags answered `KEY_DUEL` | **result**: `WON` / `LOST` / `NEUTRAL` · **recovery_run**: `Y` / `N` |
+| **SET_PIECE** (CPA) | Every `R:CORNER` / `R:FK` in bands 4–5 (ours) or 0–1 (theirs) | **delivery**: `SHORT` / `NEAR` / `CENTRAL` / `FAR` / `EDGE` · **first_contact**: `US` / `THEM` / `NONE` · our set pieces only: **sp_taker** (player) |
+| **DUEL** | Flags answered `KEY_DUEL` | **result**: `WON` / `LOST` / `NEUTRAL` · **recovery_run**: `Y` / `N` · **duel_player** (player) |
 | **OPP_ENTRY** (Entrée adverse) | Their band moving into 0 | **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` |
 
 **« Erreur de tag » (key `N`)** on every card except GAP: the live press was a tag error. ENTRY / OPP_ENTRY store `{"invalid": "NOT_AN_ENTRY"}` (« Pas une entrée »); SHOT, GOAL, FLAG, LOSS, SET_PIECE and DUEL store `{"invalid": "TAG_ERROR"}` (« Pas un tir », « Pas un but », « Rien à revoir », « Pas une perte », « Pas un CPA », « Pas un duel »). The card counts as answered and the moment is left out of every metric (entries also out of xT; a goal marked this way no longer counts as a goal in the stats). The live presses themselves are not changed (fix them in the journal if needed, e.g. the score).
+
+**Player questions** (`type: player`) are answered with a jersey number searched in the squad list (number or name), `NONE` where allowed, or `CANT_SEE`. They are asked only when the action is ours (opponent shots and set pieces skip them). The squad list stays on the analyst's computer and is copied into each match file; it never goes into the public repository.
+
+**Description mode** (on by default for the next 3 matches): every card also asks « Décris ce qui s'est passé », stored as `note`, and a card counts as answered only with a description. The descriptions are used to revise the answer options from what happens most often; the mode is then switched off.
+
+**Definitions** of every answer value are in the JSON (`value_defs_fr`, key `question.value`) and shown under the active question in the tagger.
 
 **Priority inside each tier:** chronological order. Tier 1 is always finished before Tier 2 starts.
 

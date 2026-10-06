@@ -56,7 +56,7 @@ test("duel cards appear once a flag is answered KEY_DUEL", () => {
 });
 
 test("goal cards ask the shot questions plus their own", () => {
-  assert.deepEqual(cardQuestions("GOAL").map((q) => q.id), ["loc", "body", "situation", "assist", "last_pass_lane", "phase_check", "box_lane"]);
+  assert.deepEqual(cardQuestions("GOAL").map((q) => q.id), ["loc", "body", "situation", "assist", "last_pass_lane", "shooter", "assister", "phase_check", "box_lane"]);
 });
 
 test("Veo links: 5 s lead, per-half offsets, and the reverse for moving a moment", () => {
@@ -71,12 +71,12 @@ test("Veo links: 5 s lead, per-half offsets, and the reverse for moving a moment
 
 test("answers: latest wins, coverage per kind, CANT_SEE counts as answered", () => {
   const card = { id: "LOSS:5", seq: 5, kind: "LOSS" };
-  const lines = [answerLine(card, { cause: "TACKLED" }, "w1"), answerLine(card, { intent: "THROUGH", intent_lane: "C", cause: "INTERCEPTED", closing_3s: "2", regain_5s: "N" }, "w2")];
+  const lines = [answerLine(card, { cause: "TACKLED" }, "w1"), answerLine(card, { intent: "THROUGH", intent_lane: "C", cause: "INTERCEPTED", closing_3s: "2", regain_5s: "N", lost_by: "8", first_presser: "NONE" }, "w2")];
   const answers = latestAnswers(lines);
   assert.equal(answers.get("LOSS:5").cause, "INTERCEPTED");
   assert.equal(isAnswered(card, answers.get("LOSS:5")), true);
   assert.equal(isAnswered(card, { cause: "CANT_SEE" }), false);
-  assert.equal(isAnswered(card, { intent: "CANT_SEE", intent_lane: "CANT_SEE", cause: "CANT_SEE", closing_3s: "CANT_SEE", regain_5s: "CANT_SEE" }), true);
+  assert.equal(isAnswered(card, { intent: "CANT_SEE", intent_lane: "CANT_SEE", cause: "CANT_SEE", closing_3s: "CANT_SEE", regain_5s: "CANT_SEE", lost_by: "CANT_SEE", first_presser: "CANT_SEE" }), true);
   assert.deepEqual(coverage([card, { id: "LOSS:9", seq: 9, kind: "LOSS" }], answers).LOSS, { answered: 1, total: 2 });
 });
 
@@ -91,4 +91,23 @@ test("every card but GAP can be marked as a tag error", () => {
     assert.equal(isAnswered({ kind }, { invalid: "TAG_ERROR" }), true, kind);
   }
   assert.equal(isAnswered({ kind: "GAP" }, { invalid: "TAG_ERROR" }), false);
+});
+
+test("player questions are asked only on our own actions", () => {
+  const ids = (card) => cardQuestions(card.kind, card).map((q) => q.id);
+  assert.ok(ids({ kind: "SHOT", team: "US" }).includes("shooter"));
+  assert.ok(!ids({ kind: "SHOT", team: "THEM" }).includes("shooter"));
+  assert.ok(ids({ kind: "GOAL", team: "US" }).includes("assister"));
+  assert.ok(ids({ kind: "LOSS" }).includes("lost_by") && ids({ kind: "LOSS" }).includes("first_presser"));
+  assert.ok(ids({ kind: "ENTRY" }).includes("entry_player"));
+});
+
+test("in description mode a card needs a description to count as answered", () => {
+  const card = { kind: "FLAG" };
+  const q = { type: "ERROR", lane: "C" };
+  assert.equal(isAnswered(card, q), true);
+  assert.equal(isAnswered(card, q, { describe: true }), false);
+  assert.equal(isAnswered(card, { ...q, note: "  " }, { describe: true }), false);
+  assert.equal(isAnswered(card, { ...q, note: "Perte au milieu, contre adverse" }, { describe: true }), true);
+  assert.equal(isAnswered(card, { invalid: "TAG_ERROR" }, { describe: true }), true);
 });

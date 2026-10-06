@@ -558,7 +558,12 @@
     "gap_answers": [
       "FILLED",
       "UNKNOWN"
-    ]
+    ],
+    "describe": {
+      "default": true,
+      "label_fr": "Décris ce qui s'est passé",
+      "why": "Pendant les 3 prochains matchs, chaque carte demande une description libre. Elle sert à revoir les options des questions à partir de ce qui arrive le plus souvent."
+    }
   },
   "cards": [
     {
@@ -621,6 +626,22 @@
             "C",
             "HS_R",
             "R"
+          ]
+        },
+        {
+          "id": "shooter",
+          "label_fr": "Tireur",
+          "type": "player",
+          "team": "US",
+          "values": []
+        },
+        {
+          "id": "assister",
+          "label_fr": "Passeur décisif",
+          "type": "player",
+          "team": "US",
+          "values": [
+            "NONE"
           ]
         }
       ],
@@ -758,6 +779,13 @@
             "LOST",
             "RECYCLED"
           ]
+        },
+        {
+          "id": "entry_player",
+          "label_fr": "Joueur qui entre",
+          "type": "player",
+          "team": "US",
+          "values": []
         }
       ],
       "invalid_option": {
@@ -825,6 +853,22 @@
             "Y",
             "N"
           ]
+        },
+        {
+          "id": "lost_by",
+          "label_fr": "Joueur qui perd le ballon",
+          "type": "player",
+          "team": "US",
+          "values": []
+        },
+        {
+          "id": "first_presser",
+          "label_fr": "Premier joueur qui presse",
+          "type": "player",
+          "team": "US",
+          "values": [
+            "NONE"
+          ]
         }
       ],
       "prefill": {
@@ -861,6 +905,13 @@
             "THEM",
             "NONE"
           ]
+        },
+        {
+          "id": "sp_taker",
+          "label_fr": "Tireur du CPA",
+          "type": "player",
+          "team": "US",
+          "values": []
         }
       ],
       "invalid_option": {
@@ -891,6 +942,13 @@
             "Y",
             "N"
           ]
+        },
+        {
+          "id": "duel_player",
+          "label_fr": "Notre joueur dans le duel",
+          "type": "player",
+          "team": "US",
+          "values": []
         }
       ],
       "invalid_option": {
@@ -1839,6 +1897,116 @@
     "lane": "Couloir intérieur = entre la ligne des 18 m et celle des 6 m, prolongées. Gauche/droite dans notre sens d'attaque.",
     "between_lines": "Reçu entre leur ligne de milieux et leur ligne de défense, dans un couloir intérieur.",
     "closing_3s": "Nombre de nos joueurs qui ferment le porteur dans les 3 s après la perte.",
-    "type": "Occasion sans tir = 1 contre 1 avec le gardien, coéquipier libre à ~11 m dans l'axe, ou remise devant le but que personne ne reprend."
+    "type": "Occasion sans tir = 1 contre 1 avec le gardien, coéquipier libre à ~11 m dans l'axe, ou remise devant le but que personne ne reprend.",
+    "shooter": "Le joueur qui frappe.",
+    "assister": "Le dernier coéquipier qui joue volontairement le ballon au tireur. « Aucun » s'il n'y a pas de passe.",
+    "entry_player": "Le joueur qui contrôle le ballon en entrant dans la zone (il reçoit ou il conduit).",
+    "lost_by": "Le joueur qui avait le ballon, ou qui a fait la passe perdue.",
+    "first_presser": "Le premier de nos joueurs qui presse le porteur après la perte. « Aucun » si personne en 3 s.",
+    "sp_taker": "Le joueur qui frappe le CPA.",
+    "duel_player": "Notre joueur engagé dans le duel.",
+    "last_pass_lane": "Couloir où se trouvait le passeur au moment de la passe.",
+    "box_lane": "Couloir où le ballon est entré dans la surface juste avant le but.",
+    "intent_lane": "Couloir visé par l'action qui a mené à la perte.",
+    "outcome_15s": "Ce qui arrive dans les 15 s après l'entrée (le premier événement compte)."
+  },
+  "value_defs_fr": {
+    "loc.SIX": "Dans la surface de 6 m.",
+    "loc.CENTRAL_BOX": "Dans la surface, dans la largeur des 6 m, hors des 6 m.",
+    "loc.WIDE_BOX": "Dans la surface, entre la ligne des 6 m et celle des 18 m (prolongées).",
+    "loc.CENTRAL_OUT": "Hors de la surface, dans la largeur de la surface.",
+    "loc.WIDE_OUT": "Hors de la surface, à l'extérieur de la largeur de la surface.",
+    "body.FOOT": "Pied, gauche ou droit.",
+    "body.HEAD": "Tête.",
+    "body.OTHER": "Autre partie du corps (poitrine, genou, épaule…).",
+    "situation.OPEN": "Jeu courant : ni contre, ni CPA.",
+    "situation.FAST_BREAK": "Tir au plus 10 s après une récupération en jeu.",
+    "situation.SET_PIECE": "Au plus 20 s après un corner, un coup franc ou une touche en zone 4–5 (0–1 pour eux).",
+    "situation.PENALTY": "Penalty.",
+    "assist.THROUGH": "Passe dans l'espace derrière la défense ; le tireur court sur le ballon.",
+    "assist.CUTBACK": "Passe en retrait depuis la ligne de but ou le bord des 6 m.",
+    "assist.CROSS": "Centre depuis un couloir extérieur, aérien ou tendu.",
+    "assist.HS_PASS": "Passe reçue dans un couloir intérieur, devant la défense.",
+    "assist.SET_PIECE_DELIVERY": "Ballon direct d'un corner ou d'un coup franc.",
+    "assist.REBOUND": "Ballon repoussé (gardien, poteau, contre) ou 2e ballon.",
+    "assist.SOLO": "Le tireur crée seul en dribblant un adversaire, sans passe décisive.",
+    "assist.REGAIN_DIRECT": "Le tireur récupère lui-même le ballon (interception, pressing) et frappe.",
+    "assist.NONE": "Aucune passe et aucun des cas ci-dessus (ex. frappe après un contrôle de dégagement).",
+    "phase_check.TRANSITION": "Au plus 10 s après une récupération en jeu.",
+    "phase_check.BUILD_UP": "Possession sortie de notre moitié (zones 0–2), ni transition ni CPA.",
+    "phase_check.SETTLED": "Possession installée dans leur moitié (zones 3–5).",
+    "phase_check.SET_PIECE": "Au plus 20 s après un CPA.",
+    "phase_check.PENALTY": "Penalty.",
+    "type.CHANCE_NO_SHOT": "Pas de tir, mais en zone 5 ou au bord central de la surface : 1 contre 1 avec le gardien, coéquipier libre à ~11 m dans l'axe, ou remise devant le but que personne ne reprend.",
+    "type.KEY_DUEL": "Duel qui décide d'une action (une occasion ou une transition se gagne ou se perd).",
+    "type.ERROR": "Erreur individuelle nette qui coûte un tir ou une occasion.",
+    "type.SET_PIECE_ROUTINE": "Combinaison de CPA à revoir.",
+    "type.OTHER": "Autre : décris-le.",
+    "method.PASS": "Passe contrôlée dans la zone.",
+    "method.CARRY": "Le joueur entre balle au pied.",
+    "method.CROSS": "Centre contrôlé par un coéquipier.",
+    "method.SET_PIECE": "Directement depuis un CPA.",
+    "method.LOOSE": "Ballon libre ou 2e ballon gagné dans la zone.",
+    "between_lines.YES": "Reçu entre leur ligne de milieux et leur ligne de défense, dans un couloir intérieur.",
+    "between_lines.NO": "Reçu ailleurs.",
+    "outcome_15s.SHOT": "Tir.",
+    "outcome_15s.BOX_ENTRY": "Entrée dans la surface, sans tir.",
+    "outcome_15s.CORNER": "Corner obtenu.",
+    "outcome_15s.LOST": "Ballon perdu.",
+    "outcome_15s.RECYCLED": "Ballon ressorti vers l'arrière, possession gardée.",
+    "intent.PASS_INTO_HS": "Passe vers un couloir intérieur.",
+    "intent.THROUGH": "Passe en profondeur derrière la défense.",
+    "intent.CROSS": "Centre.",
+    "intent.DRIBBLE": "Dribble, tentative de passer un adversaire.",
+    "intent.SHORT_COMBINATION": "Une-deux ou passes courtes.",
+    "intent.SWITCH": "Changement de jeu d'un côté à l'autre.",
+    "intent.CLEARANCE_LONG": "Long ballon ou dégagement sans cible précise.",
+    "intent.OTHER": "Autre : décris-le.",
+    "cause.INTERCEPTED": "Passe coupée par un adversaire.",
+    "cause.TACKLED": "Ballon pris au porteur (tacle, duel).",
+    "cause.BAD_TOUCH": "Mauvais contrôle ou passe ratée sans pression directe.",
+    "cause.OUT": "Le ballon sort ; remise pour eux.",
+    "cause.FOUL": "Faute de notre joueur.",
+    "closing_3s.0": "Personne ne ferme.",
+    "closing_3s.1": "Un joueur.",
+    "closing_3s.2": "Deux joueurs.",
+    "closing_3s.3PLUS": "Trois joueurs ou plus.",
+    "regain_5s.Y": "Repris en 5 s.",
+    "regain_5s.N": "Pas repris en 5 s.",
+    "delivery.SHORT": "Joué court.",
+    "delivery.NEAR": "1er poteau.",
+    "delivery.CENTRAL": "Point de penalty, axe.",
+    "delivery.FAR": "2e poteau.",
+    "delivery.EDGE": "Entrée de surface, en retrait.",
+    "first_contact.US": "Un de nos joueurs touche en premier.",
+    "first_contact.THEM": "Un adversaire touche en premier.",
+    "first_contact.NONE": "Personne ne touche (sortie, gardien sans duel).",
+    "result.WON": "Notre joueur garde ou gagne le ballon.",
+    "result.LOST": "L'adversaire garde ou gagne le ballon.",
+    "result.NEUTRAL": "Personne ne garde le ballon.",
+    "recovery_run.Y": "S'il perd, il fait la course de repli.",
+    "recovery_run.N": "Pas de course de repli.",
+    "last_pass_lane.L": "Entre la ligne de touche et le côté de la surface (prolongé). Gauche/droite dans notre sens d'attaque.",
+    "box_lane.L": "Entre la ligne de touche et le côté de la surface (prolongé). Gauche/droite dans notre sens d'attaque.",
+    "lane.L": "Entre la ligne de touche et le côté de la surface (prolongé). Gauche/droite dans notre sens d'attaque.",
+    "intent_lane.L": "Entre la ligne de touche et le côté de la surface (prolongé). Gauche/droite dans notre sens d'attaque.",
+    "last_pass_lane.HS_L": "Entre le côté de la surface et le côté des 6 m (prolongés). Gauche/droite dans notre sens d'attaque.",
+    "box_lane.HS_L": "Entre le côté de la surface et le côté des 6 m (prolongés). Gauche/droite dans notre sens d'attaque.",
+    "lane.HS_L": "Entre le côté de la surface et le côté des 6 m (prolongés). Gauche/droite dans notre sens d'attaque.",
+    "intent_lane.HS_L": "Entre le côté de la surface et le côté des 6 m (prolongés). Gauche/droite dans notre sens d'attaque.",
+    "last_pass_lane.C": "Dans la largeur des 6 m (prolongée). Gauche/droite dans notre sens d'attaque.",
+    "box_lane.C": "Dans la largeur des 6 m (prolongée). Gauche/droite dans notre sens d'attaque.",
+    "lane.C": "Dans la largeur des 6 m (prolongée). Gauche/droite dans notre sens d'attaque.",
+    "intent_lane.C": "Dans la largeur des 6 m (prolongée). Gauche/droite dans notre sens d'attaque.",
+    "last_pass_lane.HS_R": "Miroir de l'intérieur gauche. Gauche/droite dans notre sens d'attaque.",
+    "box_lane.HS_R": "Miroir de l'intérieur gauche. Gauche/droite dans notre sens d'attaque.",
+    "lane.HS_R": "Miroir de l'intérieur gauche. Gauche/droite dans notre sens d'attaque.",
+    "intent_lane.HS_R": "Miroir de l'intérieur gauche. Gauche/droite dans notre sens d'attaque.",
+    "last_pass_lane.R": "Miroir du couloir gauche. Gauche/droite dans notre sens d'attaque.",
+    "box_lane.R": "Miroir du couloir gauche. Gauche/droite dans notre sens d'attaque.",
+    "lane.R": "Miroir du couloir gauche. Gauche/droite dans notre sens d'attaque.",
+    "intent_lane.R": "Miroir du couloir gauche. Gauche/droite dans notre sens d'attaque.",
+    "assister.NONE": "Pas de passe décisive.",
+    "first_presser.NONE": "Personne ne presse en 3 s."
   }
 }
