@@ -11,6 +11,7 @@ the metrics (metrics.without_tag_errors).
     losses_to_shots our losses followed by their shot within 20 s, ball kept
     set_pieces      restarts per type and half of the pitch, and how many led to a shot (20 s)
     load            live presses per 15 minutes of each half (tagging load)
+    possession_share our share of the live-ball time (US / (US + THEM))
 """
 
 from collections import Counter
@@ -86,7 +87,9 @@ def match_details(tl, lab, answers, roots, meta, ops) -> dict:
         start = tl.halves.get(o["half"], (0, 0))[0]
         load[(o["half"], int(max(0, o["t"] - start) // BLOCK_MS))] += 1
 
-    return {"shots": shots, "shot_origin": origin, "shot_loc": locs, "opp_entries": opp_entries, "closing": closing,
+    live = {t: sum(x.end - x.start for x in tl.states if x.state == t) for t in LIVE}
+    possession = live["US"] / (live["US"] + live["THEM"]) if live["US"] + live["THEM"] else None
+    return {"possession_share": possession, "shots": shots, "shot_origin": origin, "shot_loc": locs, "opp_entries": opp_entries, "closing": closing,
             "losses_to_shots": {"n_losses": n_losses, "n_shots": len(moments), "moments": moments},
             "set_pieces": set_pieces,
             "load": [{"half": h, "block": b, "presses": n, "per_min": round(n / _block_min(tl, h, b), 1)} for (h, b), n in sorted(load.items())]}

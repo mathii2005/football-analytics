@@ -20,7 +20,7 @@ export default function FilterBar({ half, setHalf, tier, setTier, venue, setVenu
         <Seg label="Mi-temps" value={half} onChange={setHalf} options={[[null, "Tout"], [1, "MT1"], [2, "MT2"]]} />
         <Seg label="Adversaire" value={tier} onChange={setTier} options={[[null, "Tous"], ["top", "Haut"], ["mid", "Milieu"], ["bottom", "Bas"]]} />
         <Seg label="Lieu" value={venue} onChange={setVenue} options={[[null, "Tous"], ["home", "Domicile"], ["away", "Extérieur"]]} />
-        <span className="text-[11px] text-ink-3">{half ? `Chiffres de la MT${half} seulement · ` : ""}Saison : {nSeason ?? 0} match{(nSeason ?? 0) > 1 ? "s" : ""} v1{tier || venue ? " (filtrés)" : ""}</span>
+        <span className="text-[11px] text-ink-3">{half ? `Chiffres de la MT${half} seulement · ` : ""}Saison : {nSeason ?? 0} match{(nSeason ?? 0) > 1 ? "s" : ""}{tier || venue ? " (filtrés)" : ""}</span>
       </div>
     </div>
   );

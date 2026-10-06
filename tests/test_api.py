@@ -19,9 +19,9 @@ def client(tmp_path, monkeypatch):
     return TestClient(app)
 
 
-def test_list_matches_skips_non_exports(client):
-    ids = [m["id"] for m in client.get("/matches").json()]
-    assert sorted(ids) == ["champlain_15min", "match_001"]
+def test_old_tagger_matches_are_not_listed(client):
+    # retagging is mandatory with the v1 tagger: old exports stay readable by id but are not listed
+    assert client.get("/matches").json() == []
 
 
 def test_unknown_match_404(client):
@@ -112,6 +112,7 @@ def v1_client(tmp_path, monkeypatch):
 
 def test_v1_match_is_listed_and_summarised(v1_client):
     listed = {m["id"]: m for m in v1_client.get("/matches").json()}
+    assert list(listed) == ["ahuntsic_h1"]
     assert listed["ahuntsic_h1"]["opponent"] == "Ahuntsic"
     assert listed["ahuntsic_h1"]["final_score"] == {"us": 0, "them": 2}
     s = v1_client.get("/matches/ahuntsic_h1/summary").json()
@@ -137,8 +138,14 @@ def test_v1_metrics_endpoint(v1_client):
     assert v1_client.get("/matches/champlain_15min/metrics").json() == {"available": False}
 
 
+def test_v1_metrics_carry_the_match_card(v1_client):
+    d = v1_client.get("/matches/ahuntsic_h1/metrics").json()
+    assert d["match"]["opponent"] == "Ahuntsic" and d["match"]["final_score"] == {"us": 0, "them": 2}
+
+
 def test_v1_details_endpoint(v1_client):
     d = v1_client.get("/matches/ahuntsic_h1/details").json()
+    assert 0.5 < d["possession_share"] < 0.65
     assert d["available"] and sum(1 for s in d["shots"] if s["team"] == "US") == 4
     assert {"shot_origin", "opp_entries", "closing", "losses_to_shots", "set_pieces", "load"} <= set(d)
     assert v1_client.get("/matches/champlain_15min/details").json() == {"available": False}

@@ -93,6 +93,8 @@ def list_matches():
             match, _ = analyse(path.stem)
         except (json.JSONDecodeError, KeyError, TypeError):
             continue  # not a tagger export
+        if "v1" not in match:
+            continue  # old-tagger export: retagging with the v1 tagger is mandatory
         out.append(match_info(path.stem, match))
     return sorted(out, key=lambda m: m["date"] or "", reverse=True)
 
@@ -218,11 +220,12 @@ def quality(match_id: str):
 
 # ── v1 (two-pass tagger) ───────────────────────────────────────────
 
-def _v1_payload(match):
+def _v1_payload(match, match_id=None):
     v1 = match["v1"]
     tl = v1["timeline"]
     return {
         "available": True,
+        "match": match_info(match_id, match),
         "codebook_version": v1["meta"].get("codebook_version"),
         "metrics": v1["metrics"],
         "gates": v1["gates"],
@@ -240,7 +243,7 @@ def metrics(match_id: str, half: int | None = Query(None, ge=1, le=2)):
     match, _ = analyse(match_id)
     if "v1" not in match:
         return {"available": False}
-    out = _v1_payload(match)
+    out = _v1_payload(match, match_id)
     if half is not None:
         v1 = match["v1"]
         out["metrics"] = compute_metrics(v1["timeline"], v1["labels"], v1["answers"], v1["roots"], v1["meta"], half=half)

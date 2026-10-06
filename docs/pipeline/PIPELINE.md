@@ -392,16 +392,19 @@ Built: the v1 pages above (Récap, Saison, Attaque, Couloirs & zone rouge, Posse
 
 Filters (P6, done): **Mi-temps** (Tout / MT1 / MT2) recomputes every metric on that half (`GET /matches/{id}/metrics?half=`; the classic field tilt, a whole-match formula, is not shown per half); **Adversaire** (haut / milieu / bas) and **Lieu** (domicile / extérieur) filter the season view and the reference statuses (`GET /season/v1?tier=&venue=`). **Click a bar → its clips**: xG by phase (ours and theirs), xT by lane and by phase open the drawer on the moments of that bar. **Phase is a breakdown, not a global filter**: filtering every metric by phase would mix definitions (possession minutes, entries, losses) — the phase splits live in the tiles that need them. Phone (390 px): tabs scroll, KPIs two per row, tiles in one column, the drawer full width; the filter bar is sticky only from tablet width up. Esc closes the drawer.
 
-Full dashboard (2026-10-06): the old staff views that have data for v1 matches are back on the v1 pages, and `GET /matches/{id}/details` feeds the list-type tiles (tag errors left out):
-- **Récap:** « Ce que disent les données » (key points).
-- **Saison:** radar and bullets against this season's matches (note: earlier matches come from the old tagger).
-- **Attaque:** how shots are created and where they are taken (us vs them), the sortable shots table (xG + card answers), half-time dumbbell.
-- **Possession:** game-state possession and halves, recovery value by zone, efficiency by start, the full possession table.
-- **Intensité:** closing within 3 s (distribution), counter-press by zone, recoveries / losses / balance pitches, defensive phases.
-- **CPA:** set pieces per type and half of the pitch, with shots within 20 s, for both teams.
-- **Défense:** opponent entries into our box (lane, method), how their shots are created and where, our losses followed by their shot within 20 s.
-- **Données:** tagging load per 15 min.
-- Veo links are switched off (`dashboard/src/veo.js`) until the second-half offsets are set; the Clips tab is hidden meanwhile.
+Hierarchy (2026-10-06): the dashboard shows **only the v1 engine** (old-engine views removed; old-tagger matches are not listed, retagging is mandatory) and **few visuals per page**, in order of staff priority:
+
+| Tab | Visuals |
+|---|---|
+| Récap | KPIs (score, possession, xG for / against, chances) · the match in xG (cumulative, goals) · our priorities · what worked / to work on · « Récap » button (slides) |
+| Attaque | how our shots are created and where (vs them) · xG per phase · red zone → box → shot → goal |
+| Couloirs & zone rouge | lane × depth grid · entry methods · half-space and box metrics |
+| Intensité | players closing within 3 s · where and why we lose the ball · what we were trying · our losses followed by their shot |
+| Défense | how their shots are created and where · their xG per phase · their entries into our box (when that review theme came up) |
+| CPA | our / their set pieces by type and zone with shots within 20 s · set-piece metrics |
+| Saison | our priorities match after match (value, trend, status) |
+
+**Analyst page** (`#analyste`, no tab, for the analyst only): what was not measured and why, integrity gates, typed time, review coverage, tagging load, all shots, xT by lane and phase, every possession, the full catalogue, and « Exporter tout (CSV) ». Text about missing data appears only here. Veo links are off (`dashboard/src/veo.js`) until the second-half offsets are set.
 
 ### 7.3 Presentation mode (from Récap)
 

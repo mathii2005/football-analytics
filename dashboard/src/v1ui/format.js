@@ -52,3 +52,13 @@ export const SITUATION_FR = { OPEN: "Jeu placé", FAST_BREAK: "Contre", SET_PIEC
 export const BODY_FR = { FOOT: "Pied", HEAD: "Tête", OTHER: "Autre" };
 export const SHOT_V_FR = { OFF: "Non cadré", ON: "Cadré", GOAL: "But" };
 export const RESTART_FR = { CORNER: "Corner", FK: "Coup franc", THROW: "Touche", PEN: "Penalty", GK: "Dégagement", KICKOFF: "Engagement" };
+
+// the whole catalogue in one CSV (analyst sheet): one row per metric
+export function catalogueCsv(metrics, matchLabel) {
+  const rows = [["match", "métrique", "id", "groupe", "valeur", "unité", "n", "couverture", "statut"]];
+  for (const m of Object.values(metrics)) {
+    const v = m.value != null && typeof m.value === "object" ? JSON.stringify(m.value) : m.value ?? "";
+    rows.push([matchLabel, m.label_fr, m.id, m.group ?? "", v, m.unit ?? "", m.n, m.coverage ?? "", m.status ?? ""]);
+  }
+  return rows.map((r) => r.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(",")).join("\n");
+}

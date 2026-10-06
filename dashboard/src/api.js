@@ -13,25 +13,15 @@ export const fetchMatches = () => get("/matches");
 
 export async function fetchMatch(id) {
   const m = encodeURIComponent(id);
-  const [report, possessions, losses, quality, clips, phases, timeline, season] = await Promise.all([
-    get(`/matches/${m}/report`),
-    get(`/matches/${m}/possessions`),
-    get(`/matches/${m}/losses`),
-    get(`/matches/${m}/quality`),
-    get(`/matches/${m}/clips`),
-    get(`/matches/${m}/phases`),
-    get(`/matches/${m}/timeline`),
-    // the season baseline is optional: if it fails only the radar and
-    // bullets say "indisponible", the match page still loads
-    get("/season").catch(() => null),
+  const v1 = await get(`/matches/${m}/metrics`);
+  // optional parts: if one fails, the pages that need it hide their tiles
+  const [seasonV1, recap, details, possessions] = await Promise.all([
+    get("/season/v1").catch(() => null),
+    get(`/matches/${m}/recap`).catch(() => null),
+    get(`/matches/${m}/details`).catch(() => null),
+    get(`/matches/${m}/possessions`).catch(() => null),
   ]);
-  // v1 matches (two-pass tagger): the metric catalogue and the v1 season
-  const v1 = await get(`/matches/${m}/metrics`).catch(() => ({ available: false }));
-  const [seasonV1, recap, details] = v1.available
-    ? await Promise.all([get("/season/v1").catch(() => null), get(`/matches/${m}/recap`).catch(() => null),
-                         get(`/matches/${m}/details`).catch(() => null)])
-    : [null, null, null];
-  return { report, possessions, losses, quality, clips, phases, timeline, season, v1, seasonV1, recap, details };
+  return { v1, seasonV1, recap, details, possessions };
 }
 
 // v1 filters: one half of a match, or the season against one tier / at one venue
