@@ -232,7 +232,7 @@ One JSON object per line. The file is **only ever appended to**: nothing is edit
 | **DUEL** | Flags answered `KEY_DUEL` | **result**: `WON` / `LOST` / `NEUTRAL` · **recovery_run**: `Y` / `N` |
 | **OPP_ENTRY** (Entrée adverse) | Their band moving into 0 | **lane**: `L` / `HS_L` / `C` / `HS_R` / `R` · **method**: `PASS` / `CARRY` / `CROSS` / `SET_PIECE` / `LOOSE` |
 
-**« Pas une entrée » (key `N`)** on ENTRY and OPP_ENTRY cards: the band press was a tag error, there was no entry. Stored as `{"invalid": "NOT_AN_ENTRY"}`; the card counts as answered and the entry is left out of every entry metric and of xT. The band presses themselves are not changed (fix them in the journal if needed).
+**« Erreur de tag » (key `N`)** on every card except GAP: the live press was a tag error. ENTRY / OPP_ENTRY store `{"invalid": "NOT_AN_ENTRY"}` (« Pas une entrée »); SHOT, GOAL, FLAG, LOSS, SET_PIECE and DUEL store `{"invalid": "TAG_ERROR"}` (« Pas un tir », « Pas un but », « Rien à revoir », « Pas une perte », « Pas un CPA », « Pas un duel »). The card counts as answered and the moment is left out of every metric (entries also out of xT; a goal marked this way no longer counts as a goal in the stats). The live presses themselves are not changed (fix them in the journal if needed, e.g. the score).
 
 **Priority inside each tier:** chronological order. Tier 1 is always finished before Tier 2 starts.
 
@@ -318,7 +318,7 @@ Success rate = successes ÷ (successes + failures). Only cards that were answere
      - **loc**: from its x/y using §1 geometry. 6-yard box = `SIX`. Rest of the box: lanes HS–C–HS = `CENTRAL_BOX`, otherwise `WIDE_BOX`. Outside the box: the same split gives `CENTRAL_OUT` / `WIDE_OUT`.
      - **body**: Head → HEAD, Other → HEAD, otherwise FOOT.
      - **situation**: StatsBomb play pattern "From Counter", or a shot ≤ 10 s after a possession change → FAST_BREAK. Set-piece play patterns → SET_PIECE. Otherwise OPEN.
-  3. Cell value = goals ÷ shots in that cell. A cell with fewer than 200 shots is merged with its `situation = OPEN` neighbour.
+  3. Cell value = goals ÷ shots in that cell. A cell with fewer than 200 shots is merged with its `situation = OPEN` neighbour; still under 200, it takes every shot of the same location and body part (all situations); still under 200, every shot of the location.
   4. Store the values, the shot count per cell, the source and the build date. The SHA-256 of the table goes into the codebook JSON.
 - **Built table** (StatsBomb open data, 244 matches (FIFA World Cup 2018, FIFA World Cup 2022, UEFA Euro 2020, UEFA Euro 2024, Copa America 2024, African Cup of Nations 2023), 5942 non-penalty shots; tools/build_xg_table.py; built 2026-10-05; cell counts in the JSON):
 
@@ -386,8 +386,8 @@ Conventions:
 | `transition_to_box` | Transitions → surface en 10 s | regains followed by a box entry within 10 s ÷ regains | % | 20 regains | ↑ |
 | `transition_speed` | Vitesse de transition | median time from regain to the next shot or box entry (existing classic formula: excluded if a loss happens in between, or > 60 s, or a dead ball in between) | s | 20 | ↓ |
 | `buildup_progression` | Construction → zone 4 | build-up possessions (starting in bands 0–2, not transition or set piece) that reach band 4 ÷ build-up possessions | % | 30 | ↑ |
-| `setpiece_shot_rate` | CPA → tir en 20 s | our set pieces (corner / FK / pen / throw in 4–5) followed by our shot within 20 s with no loss in between ÷ our set pieces | % | 15 | ↑ |
-| `setpiece_xg` | xG par CPA | xG of shots in SET_PIECE phase ÷ our set pieces | xG | 15 | ↑ |
+| `setpiece_shot_rate` | CPA → tir en 20 s | our set pieces (corner / pen / FK in their half, bands 3–5 / throw in 4–5) followed by our shot within 20 s with no loss in between ÷ our set pieces | % | 15 | ↑ |
+| `setpiece_xg` | xG par CPA | xG of shots in SET_PIECE phase ÷ our set pieces (same set pieces as above) | xG | 15 | ↑ |
 | `first_contact_won` | Premier contact gagné | `first_contact = US` ÷ answered (US + THEM) | % | 15 | ↑ |
 | `*_against` | (mirror) | the same for opponent possessions | | | ↓ |
 
@@ -515,5 +515,5 @@ A blocked report still lets the clip list be sent (once G3 passes).
 
 | Version | Date | Change |
 |---|---|---|
-| 1.1.0 | 2026-10-05 | MINOR: ENTRY / OPP_ENTRY « Pas une entrée » (key N) for tag errors. Shot assist values `REGAIN_DIRECT` (shot straight from a regain) and `NONE` (no pass leads to the shot). Clarification of shot locations (centre lane vs half-space inside the box). xG table built from StatsBomb open data and xT grid built from Karun Singh's grid (§7), provisional values removed. |
+| 1.1.0 | 2026-10-05 | MINOR: set pieces = corners, penalties, free kicks in the opponent's half and throw-ins in bands 4–5 (free kicks in our own half no longer count). « erreur de tag » (key N) on every card except GAP (« Pas une entrée » on ENTRY / OPP_ENTRY). xG back-off through (loc, body) before (loc). Shot assist values `REGAIN_DIRECT` (shot straight from a regain) and `NONE` (no pass leads to the shot). Clarification of shot locations (centre lane vs half-space inside the box). xG table built from StatsBomb open data and xT grid built from Karun Singh's grid (§7), provisional values removed. |
 | 1.0.0 | 2026-10-02 | Pre-release edits (before any v1 match): band of throw-ins and free kicks prompted after the restart key; offside = free kick; bands clickable on a pitch view; editable journal (edit = retraction + corrected line with `edit_of`); shot team decided by the zone; Recommencer button; Inverser usable in either half. Definitions confirmed by the analyst. Review budget softened to a 60 min target (no hard stop). First version: two-pass model (live state + review quiz), 6 bands, 5 lanes from pitch markings, attempts via LOSS intent, published xG / xT, improvement rule, reliability merges. Old tagger comfort keys kept (Space clock, nudges, M, score keys, import, Veo offsets, flip); flag on `R`, lost thread on `T`. |

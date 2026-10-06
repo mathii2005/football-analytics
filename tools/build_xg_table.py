@@ -7,7 +7,8 @@ StatsBomb open data (github.com/statsbomb/open-data). Run once:
 
 Shots of the competitions below (men, non-penalty) are bucketed into our
 categories, then cell value = goals / shots. A cell with fewer than
-min_cell_shots shots backs off to (loc, body, OPEN), then to (loc). The table,
+min_cell_shots shots backs off to (loc, body, OPEN), then to (loc, body),
+then to (loc). The table,
 the shot count per cell, the source and the date are written into
 shared/codebook.v1.json (xg.table, xg.counts) and the provisional flag is
 removed. Downloads are cached in data/statsbomb/ (git-ignored).
@@ -113,7 +114,9 @@ def build(shots, min_cell):
                 if n < min_cell:
                     v, n2 = rate([s for s in shots if (s["loc"], s["body"]) == (loc, body) and s["sit"] in (sit, "OPEN")])
                     if n2 < min_cell:
-                        v, _ = rate([s for s in shots if s["loc"] == loc])
+                        v, n3 = rate([s for s in shots if (s["loc"], s["body"]) == (loc, body)])
+                        if n3 < min_cell:
+                            v, _ = rate([s for s in shots if s["loc"] == loc])
                 table[loc][body][sit] = round(v, 4)
                 counts[loc][body][sit] = n
     return table, counts

@@ -623,7 +623,12 @@
             "R"
           ]
         }
-      ]
+      ],
+      "invalid_option": {
+        "key": "N",
+        "value": "TAG_ERROR",
+        "label_fr": "Pas un tir (erreur de tag)"
+      }
     },
     {
       "id": "GOAL",
@@ -654,7 +659,12 @@
             "R"
           ]
         }
-      ]
+      ],
+      "invalid_option": {
+        "key": "N",
+        "value": "TAG_ERROR",
+        "label_fr": "Pas un but (erreur de tag)"
+      }
     },
     {
       "id": "GAP",
@@ -695,6 +705,11 @@
       ],
       "definitions": {
         "CHANCE_NO_SHOT": "No shot, and in band 5 or on the central edge of the box: a 1v1 with the keeper, a free teammate within ~11 m of goal in lanes HS_L-C-HS_R, or a cut-back across the 6-yard box that nobody reached."
+      },
+      "invalid_option": {
+        "key": "N",
+        "value": "TAG_ERROR",
+        "label_fr": "Rien à revoir (erreur de tag)"
       }
     },
     {
@@ -814,6 +829,11 @@
       ],
       "prefill": {
         "regain_5s": "computed from the log"
+      },
+      "invalid_option": {
+        "key": "N",
+        "value": "TAG_ERROR",
+        "label_fr": "Pas une perte (erreur de tag)"
       }
     },
     {
@@ -842,7 +862,12 @@
             "NONE"
           ]
         }
-      ]
+      ],
+      "invalid_option": {
+        "key": "N",
+        "value": "TAG_ERROR",
+        "label_fr": "Pas un CPA (erreur de tag)"
+      }
     },
     {
       "id": "DUEL",
@@ -867,7 +892,12 @@
             "N"
           ]
         }
-      ]
+      ],
+      "invalid_option": {
+        "key": "N",
+        "value": "TAG_ERROR",
+        "label_fr": "Pas un duel (erreur de tag)"
+      }
     },
     {
       "id": "OPP_ENTRY",
@@ -990,13 +1020,13 @@
     "table": {
       "SIX": {
         "FOOT": {
-          "OPEN": 0.2571,
-          "FAST_BREAK": 0.2571,
+          "OPEN": 0.3084,
+          "FAST_BREAK": 0.3084,
           "SET_PIECE": 0.2885
         },
         "HEAD": {
-          "OPEN": 0.2571,
-          "FAST_BREAK": 0.2571,
+          "OPEN": 0.2135,
+          "FAST_BREAK": 0.2135,
           "SET_PIECE": 0.2159
         }
       },
@@ -1693,7 +1723,7 @@
     {
       "version": "1.1.0",
       "date": "2026-10-05",
-      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data. ENTRY / OPP_ENTRY cards: « Pas une entrée » (key N) excludes a tag error."
+      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data. ENTRY / OPP_ENTRY cards: « Pas une entrée » (key N) excludes a tag error; every other card (except GAP) gets the same « erreur de tag » option (TAG_ERROR). xG back-off: (loc, body) before (loc). Set pieces: free kicks only in the opponent's half."
     },
     {
       "version": "1.0.0",

@@ -83,5 +83,12 @@ test("answers: latest wins, coverage per kind, CANT_SEE counts as answered", () 
 test("an entry marked « pas une entrée » counts as answered", () => {
   const card = { id: "ENTRY:5", seq: 5, kind: "ENTRY" };
   assert.equal(isAnswered(card, { invalid: "NOT_AN_ENTRY" }), true);
-  assert.equal(isAnswered({ id: "SHOT:5", seq: 5, kind: "SHOT" }, { invalid: "NOT_AN_ENTRY" }), false);
+  assert.equal(isAnswered({ id: "GAP:block:1:0", kind: "GAP" }, { invalid: "NOT_AN_ENTRY" }), false);
+});
+
+test("every card but GAP can be marked as a tag error", () => {
+  for (const kind of ["SHOT", "GOAL", "FLAG", "LOSS", "SET_PIECE", "DUEL"]) {
+    assert.equal(isAnswered({ kind }, { invalid: "TAG_ERROR" }), true, kind);
+  }
+  assert.equal(isAnswered({ kind: "GAP" }, { invalid: "TAG_ERROR" }), false);
 });

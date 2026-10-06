@@ -16,7 +16,7 @@ export const answerLine = (card, q, wall) => ({ card: card.id, seq: card.seq ?? 
 
 export function isAnswered(card, q) {
   if (!q) return false;
-  if (q.invalid && CARD_INVALID.has(card.kind)) return true;     // « pas une entrée »
+  if (q.invalid && CARD_INVALID.has(card.kind)) return true;     // « erreur de tag »
   const qs = cardQuestions(card.kind);
   if (!qs.length) return q.result !== undefined;          // GAP
   return qs.every((x) => q[x.id] !== undefined && q[x.id] !== null);

@@ -237,3 +237,56 @@ def test_later_matches_compare_with_the_season():
     assert r["mode"] == "vs_season" and r["n_other_matches"] == 3
     assert {x["id"] for x in r["best"]} == {"box_entries", "opp_possession_length"}
     assert [x["id"] for x in r["worst"]] == ["counterpress_5s"]
+
+
+def _tag_error_log():
+    L = kickoff_then(Log())
+    L.S(1000, "US", auto_band=2)
+    L.add(2000, "Z", 4)
+    seqs = {"shot": L.add(3000, "SH", "ON"), "flag": L.add(4000, "F"), "loss": L.S(6000, "THEM")}
+    L.S(20000, "DEAD")
+    seqs["fk"] = L.add(21000, "R", "FK")
+    L.S(22000, "US")
+    L.add(24000, "SH", "OFF")
+    return L, seqs
+
+
+def test_every_card_kind_can_mark_a_tag_error():
+    L, _ = _tag_error_log()
+    clean = run(L, end=60000)
+    L, s = _tag_error_log()
+    err = {"invalid": "TAG_ERROR"}
+    m = run(L, [{"card": f"SHOT:{s['shot']}", "q": err}, {"card": f"FLAG:{s['flag']}", "q": err},
+                {"card": f"LOSS:{s['loss']}", "q": err}, {"card": f"SET_PIECE:{s['fk']}", "q": err}], end=60000)
+    assert clean["shots_for"]["value"] == 2 and m["shots_for"]["value"] == 1
+    assert clean["chances_for"]["coverage"] == 0.0 and m["chances_for"]["coverage"] is None   # the only flag is gone
+    assert clean["counterpress_5s"]["n"] == 1 and m["counterpress_5s"]["n"] == 0
+    assert clean["setpiece_shot_rate"]["n"] == 1 and m["setpiece_shot_rate"]["n"] == 0
+
+
+def test_tag_errors_also_leave_the_older_views():
+    raw = json.loads((FIX / "ahuntsic_2026-10-02_full_v1.json").read_text())
+    before, _ = normalize_match(raw, "a")
+    shot = next(s.seq for s in before["v1"]["timeline"].shots if s.v != "GOAL")
+    raw["reviewed"] = [{"card": f"SHOT:{shot}", "seq": shot, "q": {"invalid": "TAG_ERROR"}}]
+    after, _ = normalize_match(raw, "a")
+    tirs = lambda m: sum(e.get("code", e.get("type")) in ("TIR_C", "TIR_HC") for e in m["events"])   # noqa: E731
+    assert tirs(after) == tirs(before) - 1
+    assert after["v1"]["metrics"]["shots_for"]["n"] + after["v1"]["metrics"]["shots_against"]["n"] == \
+        before["v1"]["metrics"]["shots_for"]["n"] + before["v1"]["metrics"]["shots_against"]["n"] - 1
+
+
+def test_only_free_kicks_in_the_attacking_half_count_as_set_pieces():
+    L = kickoff_then(Log())
+    L.S(1000, "US", auto_band=2)
+    L.S(2000, "DEAD")
+    L.add(2500, "R", "FK")
+    L.add(2600, "Z", 1)                    # our own half: not a set piece
+    L.S(3000, "US")
+    L.S(5000, "DEAD")
+    L.add(5500, "R", "FK")
+    L.add(5600, "Z", 3)                    # their half: a set piece
+    L.S(6000, "US")
+    L.add(8000, "SH", "OFF")
+    m = run(L, end=60000)
+    assert m["setpiece_shot_rate"]["n"] == 1 and m["setpiece_shot_rate"]["value"] == 1.0

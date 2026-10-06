@@ -139,6 +139,21 @@ def _invalid_entries(ctx, lab):
             if (ctx.ans("ENTRY" if e.team == "US" else "OPP_ENTRY", e.seq) or {}).get("invalid")}
 
 
+def without_tag_errors(tl, lab, answers, roots):
+    """Copies of the timeline and labels without the moments whose review card says
+    « erreur de tag »: shots, flags, losses, set pieces, and entries (« pas une entrée »).
+    The live presses themselves are not changed."""
+    from copy import copy
+    bad = lambda kind, seq: (answer_for(answers, roots, kind, seq) or {}).get("invalid")   # noqa: E731
+    t2, l2 = copy(tl), copy(lab)
+    t2.shots = [s for s in tl.shots if not bad("GOAL" if s.v == "GOAL" else "SHOT", s.seq)]
+    t2.flags = [f for f in tl.flags if not bad("FLAG", f[2])]
+    t2.restarts = [r for r in tl.restarts if r.rseq is None or not bad("SET_PIECE", r.rseq)]
+    l2.losses = [l for l in lab.losses if not bad("LOSS", l.seq)]
+    l2.entries = [e for e in lab.entries if not bad("ENTRY" if e.team == "US" else "OPP_ENTRY", e.seq)]
+    return t2, l2
+
+
 def only_half(tl, lab, half):
     """Copies of the timeline and labels restricted to one half (the half filter)."""
     from copy import copy
@@ -163,6 +178,8 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None, half=None)
         lab = copy(lab)
         lab.entries = [e for e in lab.entries if e.seq not in invalid]
         ctx.lab = lab
+    tl, lab = without_tag_errors(tl, lab, answers, roots)
+    ctx.tl, ctx.lab = tl, lab
     out = {}
     put = lambda m: out.__setitem__(m["id"], m)   # noqa: E731
 
@@ -247,8 +264,10 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None, half=None)
                     [ctx.clip(p.half, p.start_ms, 1, "Construction") for p in reached]))
 
     attacking = {"US": (4, 5), "THEM": (0, 1)}
+    their_half = {"US": (3, 4, 5), "THEM": (0, 1, 2)}
     for t, sfx in (("US", ""), ("THEM", "_against")):
-        sps = [r for r in tl.restarts if r.team == t and (r.type in ("CORNER", "FK", "PEN") or (r.type == "THROW" and r.band in attacking[t]))]
+        sps = [r for r in tl.restarts if r.team == t and (r.type in ("CORNER", "PEN") or (r.type == "FK" and r.band in their_half[t])
+                                                          or (r.type == "THROW" and r.band in attacking[t]))]
         shot_after = [r for r in sps if any(s.half == r.half and r.t <= s.t <= r.t + 20000 and kept_ball(t, r.half, r.t, s.t) for s, _, _ in by_team[t])]
         put(_metric(ctx, f"setpiece_shot_rate{sfx}", _ratio(len(shot_after), len(sps)), len(sps),
                     [ctx.clip(r.half, r.t, 1, r.type) for r in shot_after]))

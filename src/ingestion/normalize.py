@@ -14,7 +14,7 @@ from src.v1.answers import latest_answers, root_seq
 from src.v1.gates import integrity_gates
 from src.v1.labels import label_match
 from src.v1.log import effective_ops
-from src.v1.metrics import compute_metrics
+from src.v1.metrics import compute_metrics, without_tag_errors
 from src.analytics.classic import classic_report
 from src.v1.timeline import build_timeline
 
@@ -33,7 +33,8 @@ def normalize_match(raw: dict, match_id: str):
     meta = raw["meta"]
     tl = build_timeline(effective_ops(raw["events"]))
     lab = label_match(tl, match_id)
-    events = legacy_events(tl, lab)
+    answers, roots = latest_answers(raw.get("reviewed", [])), root_seq(raw["events"])
+    events = legacy_events(*without_tag_errors(tl, lab, answers, roots))   # older views skip tag errors too
     possessions = attach_events(lab.possessions, events)
     veo = meta.get("veo") or {}
     kickoff = next((r.team for r in tl.restarts if r.half == 1 and r.type == "KICKOFF"), None)
@@ -48,7 +49,7 @@ def normalize_match(raw: dict, match_id: str):
         "events": events,
         "v1": {"timeline": tl, "labels": lab, "gates": integrity_gates(raw, tl),
                "meta": meta, "reviewed": raw.get("reviewed", []),
-               "answers": latest_answers(raw.get("reviewed", [])), "roots": root_seq(raw["events"]), "ops": raw["events"]},
+               "answers": answers, "roots": roots, "ops": raw["events"]},
     }
     v1 = match["v1"]
     v1["metrics"] = compute_metrics(tl, lab, v1["answers"], v1["roots"], meta,

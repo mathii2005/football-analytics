@@ -111,7 +111,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
     else if (isAnswered(card, q)) go(idx + 1);
   };
 
-  // « pas une entrée »: the band press was a tag error (ENTRY / OPP_ENTRY only)
+  // « erreur de tag »: the live press was a mistake (every card but GAP)
   const invalidOpt = card ? CODEBOOK.cards.find((c) => c.id === card.kind)?.invalid_option : null;
   const markInvalid = (undo = false) => {
     if (!card || !invalidOpt) return;
@@ -237,7 +237,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
               </div>
               {invalidOpt && draft.invalid && (
                 <div className="mt-3 flex items-center justify-between rounded border border-warn/40 bg-warn/10 px-3 py-2 text-sm">
-                  <span>Marquée « pas une entrée » : exclue des statistiques. Corrige la zone dans le journal si besoin.</span>
+                  <span>Marquée « {invalidOpt.label_fr.replace(" (erreur de tag)", "").toLowerCase()} » : exclue des statistiques. Corrige le journal si besoin.</span>
                   <button className="btn" onClick={() => markInvalid(true)}>Annuler</button>
                 </div>
               )}
@@ -265,7 +265,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
                   ))}
                 </div>
               )}
-              <p className="mt-5 text-xs text-ink-3">Chiffres = répondre · 0 = je ne vois pas · ↑↓ = question · Entrée / → = carte suivante · ← = précédente · K = passer · O = Veo · V = déplacer le moment{invalidOpt ? " · N = pas une entrée" : ""}</p>
+              <p className="mt-5 text-xs text-ink-3">Chiffres = répondre · 0 = je ne vois pas · ↑↓ = question · Entrée / → = carte suivante · ← = précédente · K = passer · O = Veo · V = déplacer le moment{invalidOpt ? ` · N = ${invalidOpt.label_fr.replace(" (erreur de tag)", "").toLowerCase()}` : ""}</p>
             </>
           )}
         </main>
