@@ -4,12 +4,12 @@ For retagging this season's matches and every new match. The definitions are the
 
 ## Why this guide exists
 
-On Ahuntsic, 31 of the 52 reviewed live entries into zone 4 or the box were « pas une entrée » in the review. They were not caused by early possession switches: possession had started a median of 10 s before. The pattern was:
+On Ahuntsic, 31 of the 52 reviewed live entries were marked « pas une entrée ». Most of them were not tagging errors:
 
-- **19 of the 31 rejected entries were followed by ball out of play** (vs 7 of the 21 real ones): the zone was pressed where a long ball or a cross was *going*, and the ball never arrived under control.
-- **13 were followed straight away by a box press**: a cross into the box counted as an entry while nobody controlled it.
+- **24 of the 31 were zone 3 → 4 entries** rejected because only box entries were thought to count. **An entry is any move of our ball into the red zone: zone 3 → 4, or into the box (5).** Both create an « Entrée » card; the card header says which one (« Zone 3 → 4 » or « Zone 4 → 5 »).
+- **7 were box entries that did not happen**, mostly crosses or long balls into the box that nobody of ours controlled.
 
-So the rule that fixes it: **press what has happened, never what is about to happen.**
+So two rules: answer zone-4 entries like box entries, and **press what has happened, never what is about to happen.**
 
 ## The two anchors
 
@@ -50,7 +50,7 @@ Every card shows the definition of each answer under the active question. Summar
 |---|---|---|
 | **Tir / But** | every shot, both teams | lieu (6 m · surface axe · surface côté · hors surface axe · hors surface côté) · surface de contact · situation (jeu · contre ≤ 10 s · CPA ≤ 20 s · penalty) · passe décisive (profondeur · retrait · centre · intérieur · ballon de CPA · rebond · solo · récupération directe · aucune) · couloir du passeur · **our shots: tireur, passeur (search)** · goals add phase and the lane where the ball entered the box |
 | **À revoir** | every `R` | type (occasion sans tir · duel clé · erreur · combinaison CPA · autre) · couloir |
-| **Entrée** | our band 3 → 4, or into 5 | couloir · méthode (passe · conduite · centre · CPA · ballon libre) · reçu entre les lignes · issue en 15 s · **joueur qui entre** |
+| **Entrée** | our band 3 → 4 (red zone) **or** into 5 (box): both are entries | couloir · méthode (passe · conduite · centre · CPA · ballon libre) · reçu entre les lignes · issue en 15 s · **joueur qui entre** |
 | **Perte** | our loss in bands 3–5 | que tentait-on · couloir visé · cause · joueurs qui ferment en 3 s · récupéré en 5 s (prérempli) · **joueur qui perd · premier presseur** |
 | **CPA** (theme) | corner / free kick in the attacking zones | livraison · premier contact · **our set pieces: tireur** |
 | **Duel** (theme) | flags answered « duel clé » | résultat · course de repli · **notre joueur** |
