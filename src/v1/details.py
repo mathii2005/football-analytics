@@ -12,6 +12,9 @@ the metrics (metrics.without_tag_errors).
     set_pieces      restarts per type and half of the pitch, and how many led to a shot (20 s)
     load            live presses per 15 minutes of each half (tagging load)
     possession_share our share of the live-ball time (US / (US + THEM))
+    players         per player (squad numbers from the review): shots, goals, assists, red-zone
+                    entries, losses, first presses, set pieces taken; unpressed_losses = losses
+                    where nobody pressed
 """
 
 from collections import Counter
@@ -87,9 +90,10 @@ def match_details(tl, lab, answers, roots, meta, ops) -> dict:
         start = tl.halves.get(o["half"], (0, 0))[0]
         load[(o["half"], int(max(0, o["t"] - start) // BLOCK_MS))] += 1
 
+    players, unpressed = _players(tl, lab, ans, meta)
     live = {t: sum(x.end - x.start for x in tl.states if x.state == t) for t in LIVE}
     possession = live["US"] / (live["US"] + live["THEM"]) if live["US"] + live["THEM"] else None
-    return {"possession_share": possession, "shots": shots, "shot_origin": origin, "shot_loc": locs, "opp_entries": opp_entries, "closing": closing,
+    return {"possession_share": possession, "players": players, "unpressed_losses": unpressed, "shots": shots, "shot_origin": origin, "shot_loc": locs, "opp_entries": opp_entries, "closing": closing,
             "losses_to_shots": {"n_losses": n_losses, "n_shots": len(moments), "moments": moments},
             "set_pieces": set_pieces,
             "load": [{"half": h, "block": b, "presses": n, "per_min": round(n / _block_min(tl, h, b), 1)} for (h, b), n in sorted(load.items())]}
@@ -99,3 +103,39 @@ def _block_min(tl, half, block):
     """Length of a 15-min block in minutes (the last one of a half is shorter)."""
     start, end = tl.halves.get(half, (0, 0))
     return max(1.0, min(BLOCK_MS, end - start - block * BLOCK_MS) / 60000)
+
+
+PLAYER_FIELDS = ("shots", "goals", "assists", "entries", "losses", "first_presses", "set_pieces")
+
+
+def _players(tl, lab, ans, meta):
+    """Who did what, from the review answers (tag errors already left out of tl / lab)."""
+    names = {p["num"]: p["name"] for p in (meta or {}).get("roster") or []}
+    rows = {}
+
+    def add(num, field):
+        if num in (None, "", "NONE", "CANT_SEE"):
+            return
+        r = rows.setdefault(str(num), {"num": str(num), "name": names.get(str(num)), **{f: 0 for f in PLAYER_FIELDS}})
+        r[field] += 1
+
+    for s in tl.shots:
+        if s.team != "US":
+            continue
+        a = ans("GOAL" if s.v == "GOAL" else "SHOT", s.seq) or {}
+        add(a.get("shooter"), "goals" if s.v == "GOAL" else "shots")
+        if s.v == "GOAL":
+            add(a.get("shooter"), "shots")
+        add(a.get("assister"), "assists")
+    for seq in {e.seq for e in lab.entries if e.team == "US"}:      # one press 3 -> 5 is both kinds: count it once
+        add((ans("ENTRY", seq) or {}).get("entry_player"), "entries")
+    unpressed = 0
+    for l in lab.losses:
+        a = ans("LOSS", l.seq) or {}
+        add(a.get("lost_by"), "losses")
+        add(a.get("first_presser"), "first_presses")
+        unpressed += a.get("first_presser") == "NONE"
+    for r in tl.restarts:
+        if r.team == "US" and r.rseq is not None:
+            add((ans("SET_PIECE", r.rseq) or {}).get("sp_taker"), "set_pieces")
+    return sorted(rows.values(), key=lambda r: int(r["num"]) if r["num"].isdigit() else 999), unpressed

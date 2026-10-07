@@ -33,8 +33,8 @@ export const GROUP_FR = { identite: "Identité", phases: "Phases", xt: "Progress
 export const LANE_FR = { L: "Couloir gauche", HS_L: "Intérieur gauche", C: "Axe", HS_R: "Intérieur droit", R: "Couloir droit", "?": "Autre" };
 export const PHASE_FR = { TRANSITION: "Transition", BUILD_UP: "Construction", SETTLED: "Attaque placée", SET_PIECE: "CPA", "?": "Autre" };
 export const CAUSE_FR = { INTERCEPTED: "Passe interceptée", TACKLED: "Taclé", BAD_TOUCH: "Mauvais contrôle", OUT: "Sortie", FOUL: "Faute" };
-export const INTENT_FR = { PASS_INTO_HS: "Passe dans l'intérieur", THROUGH: "Passe en profondeur", CROSS: "Centre", DRIBBLE: "Dribble",
-  SHORT_COMBINATION: "Combinaison courte", SWITCH: "Changement de jeu", CLEARANCE_LONG: "Dégagement long", OTHER: "Autre" };
+export const INTENT_FR = { PASS_INTO_HS: "Passe dans l'intérieur", THROUGH: "Passe en profondeur", CROSS: "Centre", CUTBACK: "Remise en retrait", DRIBBLE: "Dribble",
+  SHORT_COMBINATION: "Combinaison courte", PASS_WIDE: "Passe vers l'aile", SWITCH: "Changement de jeu", CLEARANCE_LONG: "Dégagement long", OTHER: "Autre" };
 export const METHOD_FR = { PASS: "Passe", CARRY: "Conduite", CROSS: "Centre", SET_PIECE: "CPA", LOOSE: "Ballon libre" };
 
 export function toCsv(m) {

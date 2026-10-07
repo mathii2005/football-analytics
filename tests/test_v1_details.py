@@ -67,3 +67,18 @@ def test_tagging_load_per_15_minutes():
     L, _ = build()
     d = details(L)
     assert d["load"][0]["half"] == 1 and d["load"][0]["block"] == 0 and d["load"][0]["presses"] > 0
+
+
+def test_player_table_counts_who_did_what_from_the_review():
+    L, s = build()
+    roster = [{"num": "9", "name": "Saad Annoub"}, {"num": "10", "name": "Éloi Kingsley"}]
+    L.add(60000, "H", "END")
+    tl = build_timeline(effective_ops(L.ops)); lab = label_match(tl, "m")
+    answers = {f"SHOT:{s['shot']}": {"loc": "SIX", "shooter": "9", "assister": "10"},
+               f"LOSS:{s['loss']}": {"lost_by": "10", "first_presser": "NONE"}}
+    roots = {o["seq"]: o["seq"] for o in L.ops}
+    d = match_details(tl, lab, answers, roots, {"veo": {}, "roster": roster}, L.ops)
+    p = {r["num"]: r for r in d["players"]}
+    assert p["9"]["name"] == "Saad Annoub" and p["9"]["shots"] == 1 and p["9"]["goals"] == 0
+    assert p["10"]["assists"] == 1 and p["10"]["losses"] == 1 and p["10"]["first_presses"] == 0
+    assert d["unpressed_losses"] == 1

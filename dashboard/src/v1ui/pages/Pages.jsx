@@ -251,6 +251,24 @@ export function Saison({ v1, d, openClips }) {
 }
 
 // ---------- Analyste (no tab: #analyste) ----------
+const PLAYER_COLS = [["shots", "Tirs"], ["goals", "Buts"], ["assists", "Passes déc."], ["entries", "Entrées zone rouge"], ["losses", "Pertes"], ["first_presses", "1er pressing"], ["set_pieces", "CPA tirés"]];
+function PlayerTable({ rows }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[40rem] text-[12px]">
+        <thead><tr className="border-b border-rule text-left text-ink-3"><th className="py-1 font-medium">Joueur</th>
+          {PLAYER_COLS.map(([, l]) => <th key={l} className="py-1 text-right font-medium">{l}</th>)}</tr></thead>
+        <tbody>{rows.map((r) => (
+          <tr key={r.num} className="border-b border-rule last:border-0">
+            <td className="py-1"><span className="tabular text-ink-3">#{r.num}</span> {r.name ?? ""}</td>
+            {PLAYER_COLS.map(([k]) => <td key={k} className={`py-1 text-right tabular ${r[k] ? "text-ink" : "text-ink-3"}`}>{r[k] || "·"}</td>)}
+          </tr>
+        ))}</tbody>
+      </table>
+    </div>
+  );
+}
+
 export function Analyste({ v1, d, openClips }) {
   const M = v1.metrics, S = d.seasonV1?.metrics || {}, D = det(d);
   const missing = Object.values(M).filter((m) => m.value == null || m.coverage === 0);
@@ -280,9 +298,12 @@ export function Analyste({ v1, d, openClips }) {
         <ul className="space-y-1 text-[13px]">{judged.map((m) => <li key={m.id} className="flex justify-between gap-2"><span className="text-ink-2">{m.label_fr}</span><span className="tabular">{pct(m.coverage)}</span></li>)}</ul>
       </Tile>
       <Tile className="lg:col-span-6" title="Charge de tagging" note="Pressions tapées par minute, par bloc de 15 min (corrections incluses). Cible 10, plafond 12.">
-        <Bars data={Object.fromEntries((D?.load || []).map((b) => [`MT${b.half} · ${b.block * 15}–${b.block * 15 + 15}'`, b.per_min]))} format={(v) => dec(v)} />
+        <Bars data={Object.fromEntries((D?.load || []).map((b) => [`MT${b.half} · ${(b.half === 2 ? 45 : 0) + b.block * 15}–${(b.half === 2 ? 45 : 0) + b.block * 15 + 15}'`, b.per_min]))} format={(v) => dec(v)} />
         <p className="mt-3 text-[12px] text-ink-2">{v1.calibration.n ? `Décalage médian ${(v1.calibration.median_lag_ms / 1000).toFixed(1)} s sur ${v1.calibration.n} moments déplacés.` : "Aucun moment déplacé dans la revue."}</p>
       </Tile>
+      {D?.players?.length > 0 && <Tile className="lg:col-span-12" title="Joueurs" note={`Ce que la revue attribue à chaque joueur. Une perte suit le volume de jeu : à lire avec les actions de chacun, jamais comme un reproche. Pertes sans pressing : ${D.unpressed_losses}.`}>
+        <PlayerTable rows={D.players} />
+      </Tile>}
       {D && <Tile className="lg:col-span-12" title="Tous les tirs"><ShotsTable shots={D.shots} /></Tile>}
       <MetricTile className="lg:col-span-6" title="Progression dangereuse par couloir (xT)" metric={M.xt_gained} openClips={openClips}>
         <Bars data={M.xt_by_lane?.value} order={[...LANES, "?"]} labels={LANE_FR} format={(v) => v.toFixed(3)} onSelect={(k) => openClips(only(M.xt_gained, "lane", k, LANE_FR[k]))} />
