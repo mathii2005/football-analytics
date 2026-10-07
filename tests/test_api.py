@@ -151,6 +151,17 @@ def test_v1_details_endpoint(v1_client):
     assert v1_client.get("/matches/champlain_15min/details").json() == {"available": False}
 
 
+def test_texts_endpoint_templates_and_edits(v1_client, tmp_path, monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setenv("FA_TEXTS_DIR", str(tmp_path / "texts"))
+    t = v1_client.get("/matches/ahuntsic_h1/texts").json()
+    assert t["source"] == "template" and "recap.headline" in t["texts"]
+    r = v1_client.put("/matches/ahuntsic_h1/texts/recap.headline", json={"text": "Ma phrase."})
+    assert r.status_code == 200
+    assert v1_client.get("/matches/ahuntsic_h1/texts").json()["texts"]["recap.headline"] == "Ma phrase."
+    assert v1_client.put("/matches/ahuntsic_h1/texts/nope", json={"text": "x"}).status_code == 404
+
+
 def test_season_v1_endpoint(v1_client):
     d = v1_client.get("/season/v1").json()
     assert [m["id"] for m in d["matches"]] == ["ahuntsic_h1"]

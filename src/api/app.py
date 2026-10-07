@@ -33,6 +33,8 @@ from src.v1.recap import build_recap
 from src.v1.details import match_details
 from src.v1.metrics import compute_metrics
 from src.v1.quality import calibration
+from src.v1.texts import TextStore, build_facts
+from pydantic import BaseModel
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -305,3 +307,47 @@ def recap(match_id: str):
     others = [m["metrics"] for m in all_v1 if m["match_id"] != me]
     status = season_v1(all_v1) if len(all_v1) > 1 else None
     return {"available": True, **build_recap(match["v1"]["metrics"], others, status)}
+
+
+# ---- automatic sentences (titles, headline, recap): templates, Claude when a key is set, analyst edits ----
+
+def _texts_store():
+    return TextStore(os.environ.get("FA_TEXTS_DIR", PROJECT_ROOT / "data" / "texts"))
+
+
+def _texts_client():
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return None
+    import anthropic
+    return anthropic.Anthropic()
+
+
+def _facts(match_id):
+    match, _ = analyse(match_id)
+    if "v1" not in match:
+        raise HTTPException(404, "not a v1 match")
+    v1 = match["v1"]
+    d = match_details(v1["timeline"], v1["labels"], v1["answers"], v1["roots"], v1["meta"], v1["ops"])
+    rc = recap(match_id)
+    info = match_info(match_id, match)
+    return build_facts(v1["metrics"], d, rc, {"opponent": info.get("opponent"), "final_score": info.get("final_score")})
+
+
+@app.get("/matches/{match_id}/texts")
+def texts(match_id: str, regenerate: bool = False):
+    """Sentences of the dashboard: {source, texts: {key: sentence}, llm_keys, edited}. Regenerated only when
+    the numbers change (or ?regenerate=true); the analyst's edits always win."""
+    return _texts_store().get_or_make(match_id, _facts(match_id), client=_texts_client(), regenerate=regenerate)
+
+
+class TextEdit(BaseModel):
+    text: str
+
+
+@app.put("/matches/{match_id}/texts/{key}")
+def edit_text(match_id: str, key: str, body: TextEdit):
+    """The analyst's own sentence for one key; an empty text goes back to the generated one."""
+    if key not in _facts(match_id):
+        raise HTTPException(404, "unknown sentence")
+    _texts_store().edit(match_id, key, body.text)
+    return {"ok": True}

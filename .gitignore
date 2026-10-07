@@ -11,6 +11,7 @@ venv/
 data/matches/
 data/archive/
 data/roster*.txt
+data/texts/
 data/raw/*.json
 !data/raw/*match_001*.json
 !data/raw/*match_002*.json
