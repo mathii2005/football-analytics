@@ -46,6 +46,15 @@ export function PitchPicker({ team = "US", value, onPick }) {
         <circle cx={gx + dir * 11} cy={34} r={0.4} fill="#6f6c66" />
         <path d={turned ? "M 69 26.7 A 9.15 9.15 0 0 1 69 41.3" : "M 88.5 26.7 A 9.15 9.15 0 0 0 88.5 41.3"} {...LINE} />
         <rect x={turned ? 51.3 : 105} y={30.34} width={1.2} height={7.32} fill="#45433f" />
+        {[10, 20, 30, 40, 50].map((yd) => {
+          const x = gx + dir * yd * 0.9144;
+          return (
+            <g key={`yd${yd}`}>
+              <line x1={x} x2={x} y1={0} y2={68} stroke="#6f6c66" strokeWidth={0.18} strokeDasharray="0.8 0.8" />
+              <text x={x} y={66.8} textAnchor="middle" fontSize={1.8} fill="#6f6c66">{yd} v</text>
+            </g>
+          );
+        })}
         {[13.84, 24.84, 43.16, 54.16].map((y) => <line key={y} x1={52.5} x2={105} y1={y} y2={y} stroke="#6f6c66" strokeWidth={0.15} strokeDasharray="1 1" />)}
         <text x={turned ? 104 : 53.5} y={3.5} fontSize={2.6} fill="#6f6c66" textAnchor={turned ? "end" : "start"}>{attacksRight ? "on attaque →" : "ils attaquent →"}</text>
         {v && <circle cx={v.x} cy={v.y} r={1.3} fill="#b8862e" stroke="#fff" strokeWidth={0.4} />}

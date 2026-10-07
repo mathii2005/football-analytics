@@ -17,10 +17,32 @@ export function cell(band, lane) {
   return x ? { x: x[0], y: y0, w: x[1] - x[0], h: y1 - y0 } : null;
 }
 
+const YD = 0.9144;
+const YARDS = [10, 20, 30, 40, 50];
+
+// dashed lines every 10 yards from a goal line, labelled « 10 v » (verges)
+function YardLines({ goalX, dir }) {
+  return (
+    <g>
+      {YARDS.map((yd) => {
+        const x = goalX + dir * yd * YD;
+        return (
+          <g key={yd}>
+            <line x1={x} x2={x} y1={0} y2={H} stroke="var(--ink-3)" strokeWidth={0.18} strokeDasharray="0.8 0.8" opacity={0.6} />
+            <text x={x} y={H + 2.6} textAnchor="middle" fontSize={1.9} fill="var(--ink-3)">{yd} v</text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 export function PitchLines({ half = false }) {
   const s = { fill: "none", stroke: "var(--ink-3)", strokeWidth: 0.35, opacity: 0.7 };
   return (
     <g>
+      <YardLines goalX={W} dir={-1} />
+      {!half && <YardLines goalX={0} dir={1} />}
       <rect x={0} y={0} width={W} height={H} {...s} />
       {!half && <line x1={52.5} y1={0} x2={52.5} y2={H} {...s} />}
       {!half && <circle cx={52.5} cy={34} r={9.15} {...s} />}
@@ -48,7 +70,7 @@ export function PitchGrid({ values = {}, bands = [0, 1, 2, 3, 4, 5], team = "us"
   const half = x0 >= 52.5;
   const bandX = (b) => { const cs = lanes.map((l) => cell(b, l)).filter(Boolean); const lo = Math.min(...cs.map((c) => c.x)), hi = Math.max(...cs.map((c) => c.x + c.w)); return (lo + hi) / 2; };
   return (
-    <svg viewBox={`${half ? 38 : -14} -7 ${half ? 69 : 121} 80`} className={half ? "mx-auto block h-[340px] w-auto max-w-full" : "h-auto w-full"} role="img" aria-label={title}>
+    <svg viewBox={`${half ? 38 : -14} -7 ${half ? 69 : 121} 83`} className={half ? "mx-auto block h-[340px] w-auto max-w-full" : "h-auto w-full"} role="img" aria-label={title}>
       {bands.map((b) => <text key={`b${b}`} x={b === 4 ? 83.6 : bandX(b)} y={-2.4} textAnchor="middle" fontSize={2.8} fontWeight={600} fill="var(--ink-2)">{BAND_FR[b]}</text>)}
       {lanes.map((l) => <text key={`l${l}`} x={(half ? 52.5 : 0) - 1.2} y={(LANE_Y[l][0] + LANE_Y[l][1]) / 2 + 1} textAnchor="end" fontSize={2.5} fill="var(--ink-2)">{LANE_FR[l]}</text>)}
       {bands.flatMap((b) => lanes.map((l) => {
@@ -66,7 +88,7 @@ export function PitchGrid({ values = {}, bands = [0, 1, 2, 3, 4, 5], team = "us"
         );
       }))}
       <PitchLines half={half} />
-      <text x={half ? 103 : 103} y={71} textAnchor="end" fontSize={3} fill="var(--ink-3)">sens de l'attaque →</text>
+      <text x={103} y={75} textAnchor="end" fontSize={2.6} fill="var(--ink-3)">sens de l'attaque →</text>
     </svg>
   );
 }
@@ -91,7 +113,7 @@ export function ShotZoneMap({ shots = [], team = "US", title }) {
   const max = Math.max(1, ...Object.values(by).map((z) => z.n));
   return (
     <div>
-    <svg viewBox="68 -2 39 72" className="mx-auto block h-[360px] w-auto max-w-full" role="img" aria-label={title}>
+    <svg viewBox="68 -2 39 75" className="mx-auto block h-[370px] w-auto max-w-full" role="img" aria-label={title}>
       {Object.entries(SHOT_ZONES).map(([z, rects]) => rects.map(([x, y, w, h], i) => {
         const d = by[z];
         const shade = dots.length ? 0.04 + 0.3 * (d.n / max) : 0.12 + 0.78 * (d.n / max);
@@ -133,7 +155,7 @@ export function DeliveryMap({ deliveries = {}, team = "us" }) {
   const color = team === "us" ? "var(--us)" : "var(--them)";
   const max = Math.max(1, ...Object.values(deliveries).map((d) => d.n));
   return (
-    <svg viewBox="70 -2 37 72" className="mx-auto block h-[320px] w-auto max-w-full" role="img" aria-label="Livraison des coups de pied arrêtés">
+    <svg viewBox="68 -2 39 75" className="mx-auto block h-[330px] w-auto max-w-full" role="img" aria-label="Livraison des coups de pied arrêtés">
       <PitchLines half />
       {Object.values(deliveries).flatMap((d) => d.points || []).map((p, i) => (
         <circle key={`p${i}`} cx={p.x} cy={p.y} r={1} fill={p.won ? color : "var(--paper)"} stroke={color} strokeWidth={0.4}>
