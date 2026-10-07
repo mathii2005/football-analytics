@@ -11,6 +11,11 @@ On Ahuntsic, 31 of the 52 reviewed live entries were marked « pas une entrée �
 
 So two rules: answer zone-4 entries like box entries, and **press what has happened, never what is about to happen.**
 
+## The clock and Veo
+
+- **Veo's on-screen match clock is not our clock.** It carries first-half stoppage time over: the second half can start at 47:00 on Veo, while our tagger always starts it at 45:00 (`M`). **Never sync the tagger clock to Veo's on-screen clock** in the second half; on Ahuntsic this put every second-half time 2 minutes ahead.
+- **The match sheet's Veo kick-offs are video times** (the position in the recording, e.g. 23:14 and 83:36), not Veo's match clock. If a half's clips land off by a constant amount, change that half's kick-off in the match sheet rather than the tags.
+
 ## The two anchors
 
 1. **Possession (`Q` / `W`) = a controlled touch.** A player of that team has the ball under control: a touch that keeps the ball (controls it, carries it, or plays a deliberate pass). Not a deflection, not a block, not a header that only clears, not a 50/50 still in the air.
