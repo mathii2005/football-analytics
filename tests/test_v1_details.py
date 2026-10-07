@@ -117,9 +117,9 @@ def test_minutes_played_come_from_the_lineup():
 
 
 def test_fifteen_minute_blocks_entry_outcomes_and_deliveries():
-    d, s, corner, goal = _full({"SET_PIECE:{corner}": {"delivery": "NEAR", "first_contact": "US"}})
+    d, s, corner, goal = _full({"SET_PIECE:{corner}": {"delivery": "NEAR", "first_contact": "US", "landing": {"x": 100, "y": 30}}})
     b = d["blocks"][0]
     assert (b["half"], b["start_min"]) == (1, 0) and b["shots"]["US"] == 2 and b["xg"]["US"] > 0
     assert 0 < b["possession"] < 1
-    assert d["deliveries"]["US"] == {"NEAR": {"n": 1, "won": 1}}
+    assert d["deliveries"]["US"] == {"NEAR": {"n": 1, "won": 1, "points": [{"x": 100, "y": 30, "won": True}]}}
     assert isinstance(d["entry_outcomes"], dict)

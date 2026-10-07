@@ -573,6 +573,12 @@
       "trigger": "every SH press, both teams",
       "questions": [
         {
+          "id": "pos",
+          "label_fr": "Position du tir",
+          "type": "pitch_point",
+          "values": []
+        },
+        {
           "id": "loc",
           "label_fr": "Position du tir",
           "values": [
@@ -628,6 +634,12 @@
             "R",
             "NONE"
           ]
+        },
+        {
+          "id": "end",
+          "label_fr": "Où va le tir",
+          "type": "goal_point",
+          "values": []
         },
         {
           "id": "shooter",
@@ -890,6 +902,12 @@
       "tier": 3,
       "trigger": "every R:CORNER / R:FK / R:THROW in bands 4-5 (ours) or 0-1 (theirs)",
       "questions": [
+        {
+          "id": "landing",
+          "label_fr": "Où arrive le ballon",
+          "type": "pitch_point",
+          "values": []
+        },
         {
           "id": "delivery",
           "label_fr": "Livraison",
@@ -1205,7 +1223,30 @@
         }
       }
     },
-    "built": "2026-10-05"
+    "built": "2026-10-05",
+    "position_model": {
+      "features": [
+        "const",
+        "distance",
+        "angle",
+        "head",
+        "fast_break",
+        "set_piece"
+      ],
+      "coefficients": [
+        -1.57482,
+        -0.09578,
+        1.58479,
+        -1.09371,
+        0.32564,
+        -0.29744
+      ],
+      "units": "metres on a 105 x 68 pitch, seen from the shooter; angle in radians (visible goal mouth)",
+      "fitted_on": "StatsBomb open data, 7509 non-penalty shots; tools/build_xg_model.py",
+      "built": "2026-10-07",
+      "cv_share_of_statsbomb_gain": 0.617,
+      "cv_share_table": 0.4
+    }
   },
   "xt": {
     "label_fr": "progression dangereuse (xT, grille publique, grossière)",
@@ -1917,7 +1958,10 @@
     "last_pass_lane": "Couloir où se trouvait le passeur au moment de la passe.",
     "box_lane": "Couloir où le ballon est entré dans la surface juste avant le but.",
     "intent_lane": "Couloir visé par l'action qui a mené à la perte.",
-    "outcome_15s": "Ce qui arrive dans les 15 s après l'entrée (le premier événement compte)."
+    "outcome_15s": "Ce qui arrive dans les 15 s après l'entrée (le premier événement compte).",
+    "pos": "Clique l'endroit exact de la frappe sur la moitié de terrain (la zone du tir se remplit toute seule).",
+    "end": "Clique où le ballon passe : dans le cadre = cadré, autour = à côté ou au-dessus ; « Contré » si un joueur bloque.",
+    "landing": "Clique l'endroit où le ballon arrive (premier contact ou point de chute)."
   },
   "value_defs_fr": {
     "loc.SIX": "Dans la surface de 6 m.",

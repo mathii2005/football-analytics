@@ -10,6 +10,8 @@ import { download, parseMmSs } from "../ui/util.js";
 import { useSaver } from "../store/useSaver.js";
 import { loadRoster } from "../core/roster.js";
 import PlayerPicker from "./PlayerPicker.jsx";
+import { PitchPicker, GoalPicker } from "./PointPickers.jsx";
+import { locFromPoint } from "../core/points.js";
 
 // Pass 2: the quiz (PIPELINE §5). One card per moment the live log selected,
 // answered with number keys while Veo plays in a reused window.
@@ -114,6 +116,8 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
   const answer = (qid, value) => {
     if (locked || !card) return;
     const q = { ...draft, [qid]: value, ...(note.trim() ? { note: note.trim() } : {}) };
+    // the exact shot position fills the shot zone (the analyst can still change it)
+    if (qid === "pos" && value && typeof value === "object") q.loc = locFromPoint(value, card.team);
     const line = answerLine(card, q, new Date().toISOString());
     const next = [...ref.current.reviewed, line];
     setReviewed(next); persist({ reviewed: next });
@@ -183,7 +187,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
       if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
       if (!card) return;
       const q = questions[qi];
-      if (/^Digit[0-9]$|^Numpad[0-9]$/.test(e.code) && q && q.type !== "player" && card.kind !== "GAP") {
+      if (/^Digit[0-9]$|^Numpad[0-9]$/.test(e.code) && q && !["player", "pitch_point", "goal_point"].includes(q.type) && card.kind !== "GAP") {
         const n = Number(e.code.slice(-1));
         if (n === 0) answer(q.id, "CANT_SEE");
         else if (n <= q.values.length) answer(q.id, q.values[n - 1]);
@@ -279,7 +283,13 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
                         {card.prefill[q.id] && <div className="text-xs text-ink-3">prérempli : {VL[card.prefill[q.id]]}</div>}
                       </div>
                       {HINTS[q.id] && <div className="mt-0.5 text-xs text-ink-3">{q.id === "type" ? CHANCE_DEF : HINTS[q.id]}</div>}
-                      {q.type === "player" ? (
+                      {q.type === "pitch_point" ? (<>
+                        <PitchPicker team={card.team} value={draft[q.id]} onPick={(v) => answer(q.id, v)} />
+                        <button className={`btn mt-1 ${draft[q.id] === "CANT_SEE" ? "btn-primary" : ""}`} onClick={(e) => { e.stopPropagation(); answer(q.id, "CANT_SEE"); }}>{VL.CANT_SEE}</button>
+                      </>) : q.type === "goal_point" ? (<>
+                        <GoalPicker value={draft[q.id]} onPick={(v) => answer(q.id, v)} />
+                        <button className={`btn mt-1 ${draft[q.id] === "CANT_SEE" ? "btn-primary" : ""}`} onClick={(e) => { e.stopPropagation(); answer(q.id, "CANT_SEE"); }}>{VL.CANT_SEE}</button>
+                      </>) : q.type === "player" ? (
                         <PlayerPicker roster={roster} value={draft[q.id]} allowNone={q.values.includes("NONE")} active={i === qi}
                           onPick={(v) => answer(q.id, v)} labels={{ none: "Aucun", cantSee: VL.CANT_SEE }} />
                       ) : <>

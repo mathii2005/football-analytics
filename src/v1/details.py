@@ -43,7 +43,8 @@ def match_details(tl, lab, answers, roots, meta, ops) -> dict:
         shots.append({"team": s.team, "half": s.half, "t": s.t, "v": s.v, "xg": round(xg, 3), "estimated": est,
                       "loc": a.get("loc"), "body": a.get("body"), "situation": a.get("situation"), "assist": a.get("assist"),
                       "phase": ctx.phase_at(s.team, s.half, s.t) or ctx.phase_at(s.team, s.half, s.t - 1),   # a goal closes its phase
-                      "band": s.band, "reviewed": bool(a), "shooter": a.get("shooter"), "assister": a.get("assister")})
+                      "band": s.band, "reviewed": bool(a), "shooter": a.get("shooter"), "assister": a.get("assister"),
+                      "pos": _shooter_point(a.get("pos"), s.team), "end": a.get("end") if isinstance(a.get("end"), dict) else None})
     origin = {t: dict(Counter(x["assist"] if x["reviewed"] and x["assist"] else "UNREVIEWED" for x in shots if x["team"] == t)) for t in LIVE}
     locs = {t: dict(Counter(x["loc"] or "UNREVIEWED" for x in shots if x["team"] == t)) for t in LIVE}
 
@@ -228,12 +229,22 @@ def _entry_outcomes(lab, ans):
     return dict(c)
 
 
+def _shooter_point(p, team):
+    """A clicked pitch point seen from the team's attacking direction (their attack mirrored)."""
+    if not isinstance(p, dict) or "x" not in p:
+        return None
+    return {"x": round(105 - p["x"], 1), "y": round(68 - p["y"], 1)} if team == "THEM" else {"x": p["x"], "y": p["y"]}
+
+
 def _deliveries(tl, ans):
     out = {t: {} for t in LIVE}
     for r in tl.restarts:
         a = ans("SET_PIECE", r.rseq) if r.rseq is not None else None
         if not a or a.get("delivery") in (None, "CANT_SEE"):
             continue
-        d = out[r.team].setdefault(a["delivery"], {"n": 0, "won": 0})
+        d = out[r.team].setdefault(a["delivery"], {"n": 0, "won": 0, "points": []})
         d["n"] += 1; d["won"] += a.get("first_contact") == r.team
+        pt = _shooter_point(a.get("landing"), r.team)
+        if pt:
+            d["points"].append({**pt, "won": a.get("first_contact") == r.team})
     return out

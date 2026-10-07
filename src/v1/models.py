@@ -3,7 +3,9 @@ models - xG of a shot and xT gains of band changes (CODEBOOK §7). Tables come
 from the codebook (built by tools/build_xg_table.py and tools/build_xt_grid.py).
 
 xG of a shot
-    loc / body / situation from its review card (SHOT or GOAL).
+    With an exact position clicked on the card (pos), the position model
+    (logistic on distance, angle, header, fast break, set piece). Otherwise
+    loc / body / situation from its review card (SHOT or GOAL) in the table.
     PENALTY -> xg.penalty. OTHER body -> HEAD. Unanswered or CANT_SEE body ->
     FOOT, situation -> OPEN (the most common). Unanswered loc -> the
     shot-weighted average of the cells of its band (band 5 or 0: the box
@@ -17,6 +19,7 @@ xT gains
     gain = max(0, xT[B] - xT[A]), counted only if >= xt.min_gain.
 """
 
+import math
 from dataclasses import dataclass
 
 from src.codebook import load_codebook
@@ -48,6 +51,10 @@ def shot_xg(shot, answer):
         body, estimated = "FOOT", True
     if sit not in ("OPEN", "FAST_BREAK", "SET_PIECE"):
         sit, estimated = "OPEN", True
+    pos = a.get("pos")
+    if isinstance(pos, dict) and "x" in pos and "y" in pos:       # exact position clicked in the review
+        x, y = (105 - pos["x"], 68 - pos["y"]) if shot.team == "THEM" else (pos["x"], pos["y"])
+        return position_xg(x, y, body, sit), estimated
     loc = a.get("loc")
     if loc in cb["table"]:
         return cb["table"][loc][body][sit], estimated
@@ -56,6 +63,29 @@ def shot_xg(shot, answer):
         band = 5 - band                       # seen from the shooting team
     cells = BOX if band == 5 else OUTSIDE if band is not None else BOX + OUTSIDE
     return _weighted(cells, body, sit), True
+
+
+GOAL_Y = (34 - 3.66, 34 + 3.66)      # posts, metres on a 68 m wide pitch
+
+
+def shot_geometry(x, y):
+    """(distance to the goal centre, visible goal angle in radians) for a shot at (x, y)
+    in metres, seen from the shooter (attacking the goal at x = 105)."""
+    dx = 105 - x
+    d = math.hypot(dx, 34 - y)
+    a = abs(math.atan2(GOAL_Y[1] - y, dx) - math.atan2(GOAL_Y[0] - y, dx))
+    return d, a
+
+
+def position_xg(x, y, body, situation):
+    """xG from the exact position (codebook xg.position_model): logistic on distance,
+    angle, header, fast break and set piece. body / situation as on the shot card."""
+    m = load_codebook()["xg"]["position_model"]
+    d, a = shot_geometry(x, y)
+    feats = {"const": 1.0, "distance": d, "angle": a, "head": body in ("HEAD", "OTHER"),
+             "fast_break": situation == "FAST_BREAK", "set_piece": situation == "SET_PIECE"}
+    z = sum(c * float(feats[f]) for f, c in zip(m["features"], m["coefficients"]))
+    return 1 / (1 + math.exp(-z))
 
 
 def xt_value(band, lane=None):

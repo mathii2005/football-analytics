@@ -56,7 +56,7 @@ test("duel cards appear once a flag is answered KEY_DUEL", () => {
 });
 
 test("goal cards ask the shot questions plus their own", () => {
-  assert.deepEqual(cardQuestions("GOAL").map((q) => q.id), ["loc", "body", "situation", "assist", "last_pass_lane", "shooter", "assister", "phase_check", "box_lane"]);
+  assert.deepEqual(cardQuestions("GOAL").map((q) => q.id), ["pos", "loc", "body", "situation", "assist", "last_pass_lane", "end", "shooter", "assister", "phase_check", "box_lane"]);
 });
 
 test("Veo links: 5 s lead, per-half offsets, and the reverse for moving a moment", () => {

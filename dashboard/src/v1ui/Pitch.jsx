@@ -5,6 +5,8 @@
 const W = 105, H = 68;
 const LANE_Y = { L: [0, 13.84], HS_L: [13.84, 24.84], C: [24.84, 43.16], HS_R: [43.16, 54.16], R: [54.16, 68] };
 const BOX_LANES = new Set(["HS_L", "C", "HS_R"]);
+const BAND_FR = { 0: "Notre surface", 1: "Zone 1", 2: "Zone 2", 3: "Zone 3", 4: "Zone 4", 5: "Surface" };
+const LANE_FR = { L: "Gauche", HS_L: "Int. gauche", C: "Axe", HS_R: "Int. droit", R: "Droite" };
 
 // the rectangle of a (band, lane) cell; null when the cell does not exist (wide lanes in a box)
 export function cell(band, lane) {
@@ -44,8 +46,11 @@ export function PitchGrid({ values = {}, bands = [0, 1, 2, 3, 4, 5], team = "us"
   const max = Math.max(1e-9, ...bands.flatMap((b) => lanes.map((l) => val(b, l))));
   const x0 = Math.min(...bands.map((b) => Math.min(...lanes.map((l) => cell(b, l)?.x ?? 999))));
   const half = x0 >= 52.5;
+  const bandX = (b) => { const cs = lanes.map((l) => cell(b, l)).filter(Boolean); const lo = Math.min(...cs.map((c) => c.x)), hi = Math.max(...cs.map((c) => c.x + c.w)); return (lo + hi) / 2; };
   return (
-    <svg viewBox={`${half ? 50 : -2} -2 ${half ? 57 : 109} 72`} className={half ? "mx-auto block h-[300px] w-auto max-w-full" : "h-auto w-full"} role="img" aria-label={title}>
+    <svg viewBox={`${half ? 38 : -14} -7 ${half ? 69 : 121} 80`} className={half ? "mx-auto block h-[340px] w-auto max-w-full" : "h-auto w-full"} role="img" aria-label={title}>
+      {bands.map((b) => <text key={`b${b}`} x={b === 4 ? 83.6 : bandX(b)} y={-2.4} textAnchor="middle" fontSize={2.8} fontWeight={600} fill="var(--ink-2)">{BAND_FR[b]}</text>)}
+      {lanes.map((l) => <text key={`l${l}`} x={(half ? 52.5 : 0) - 1.2} y={(LANE_Y[l][0] + LANE_Y[l][1]) / 2 + 1} textAnchor="end" fontSize={2.5} fill="var(--ink-2)">{LANE_FR[l]}</text>)}
       {bands.flatMap((b) => lanes.map((l) => {
         const c = cell(b, l);
         if (!c) return null;
@@ -74,24 +79,29 @@ const SHOT_ZONES = {
   CENTRAL_OUT: [[75, 13.84, 13.5, 40.32]],
   WIDE_OUT: [[75, 0, 30, 13.84], [75, 54.16, 30, 13.84]],
 };
+const ZONE_FR = { SIX: "6 m", CENTRAL_BOX: "Surface, axe", WIDE_BOX: "Surface, intérieur", CENTRAL_OUT: "Hors surface, axe", WIDE_OUT: "Hors surface, côté" };
 export function ShotZoneMap({ shots = [], team = "US", title }) {
   const color = team === "US" ? "var(--us)" : "var(--them)";
   const mine = shots.filter((s) => s.team === team);
+  const dots = mine.filter((s) => s.pos);
   const by = Object.fromEntries(Object.keys(SHOT_ZONES).map((z) => {
     const sel = mine.filter((s) => s.loc === z);
     return [z, { n: sel.length, xg: sel.reduce((a, s) => a + s.xg, 0), goals: sel.filter((s) => s.v === "GOAL").length }];
   }));
   const max = Math.max(1, ...Object.values(by).map((z) => z.n));
   return (
-    <svg viewBox="70 -2 37 72" className="mx-auto block h-[320px] w-auto max-w-full" role="img" aria-label={title}>
+    <div>
+    <svg viewBox="68 -2 39 72" className="mx-auto block h-[360px] w-auto max-w-full" role="img" aria-label={title}>
       {Object.entries(SHOT_ZONES).map(([z, rects]) => rects.map(([x, y, w, h], i) => {
         const d = by[z];
+        const shade = dots.length ? 0.04 + 0.3 * (d.n / max) : 0.12 + 0.78 * (d.n / max);
         return (
           <g key={`${z}${i}`}>
-            <rect x={x} y={y} width={w} height={h} fill={color} fillOpacity={d.n ? 0.12 + 0.78 * (d.n / max) : 0.03} stroke="var(--paper)" strokeWidth={0.4}>
+            <rect x={x} y={y} width={w} height={h} fill={color} fillOpacity={d.n ? shade : 0.03} stroke="var(--paper)" strokeWidth={0.4}>
               <title>{`${z} : ${d.n} tirs, ${d.xg.toFixed(2)} xG, ${d.goals} buts`}</title>
             </rect>
-            {i === 0 && d.n > 0 && (
+            {z !== "SIX" && (i === 0 || z === "WIDE_OUT" || z === "WIDE_BOX") && <text x={x + 0.8} y={y + (z === "WIDE_OUT" && i === 1 ? h - 1 : 2.6)} fontSize={1.9} fill="var(--ink-2)">{ZONE_FR[z]}</text>}
+            {i === 0 && d.n > 0 && !dots.length && (
               <g fill={d.n / max > 0.55 ? "var(--paper)" : "var(--ink)"} textAnchor="middle">
                 <text x={x + w / 2} y={y + h / 2 + 0.6} fontSize={z === "SIX" ? 3.6 : 4.6} fontWeight={700}>{d.n}</text>
                 {z !== "SIX" && <text x={x + w / 2} y={y + h / 2 + 4.4} fontSize={2.4}>{d.xg.toFixed(2).replace(".", ",")} xG</text>}
@@ -104,7 +114,15 @@ export function ShotZoneMap({ shots = [], team = "US", title }) {
         );
       }))}
       <PitchLines half />
+      {dots.map((s) => (
+        <circle key={`${s.half}-${s.t}`} cx={s.pos.x} cy={s.pos.y} r={0.7 + 2.6 * Math.sqrt(s.xg)}
+          fill={s.v === "GOAL" ? "var(--gold)" : color} fillOpacity={s.v === "GOAL" ? 1 : 0.8} stroke={s.v === "GOAL" ? "var(--ink)" : "var(--paper)"} strokeWidth={0.3}>
+          <title>{`${s.v === "GOAL" ? "But" : s.v === "ON" ? "Cadré" : "Non cadré"} · xG ${s.xg.toFixed(2)}`}</title>
+        </circle>
+      ))}
     </svg>
+    <p className="mt-1 text-center text-[11px] text-ink-3">{dots.length ? `${dots.length} tirs placés · taille = xG · doré = but` : "Couleur = nombre de tirs ; chiffre = tirs, xG dessous ; points dorés = buts"}</p>
+    </div>
   );
 }
 
@@ -117,6 +135,11 @@ export function DeliveryMap({ deliveries = {}, team = "us" }) {
   return (
     <svg viewBox="70 -2 37 72" className="mx-auto block h-[320px] w-auto max-w-full" role="img" aria-label="Livraison des coups de pied arrêtés">
       <PitchLines half />
+      {Object.values(deliveries).flatMap((d) => d.points || []).map((p, i) => (
+        <circle key={`p${i}`} cx={p.x} cy={p.y} r={1} fill={p.won ? color : "var(--paper)"} stroke={color} strokeWidth={0.4}>
+          <title>{p.won ? "Premier contact gagné" : "Premier contact perdu"}</title>
+        </circle>
+      ))}
       {Object.entries(deliveries).map(([k, d]) => {
         const [x, y] = DELIVERY_AT[k] || [95, 34];
         return (
