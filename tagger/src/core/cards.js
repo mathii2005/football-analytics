@@ -118,7 +118,7 @@ export function buildCards(ops, reviewed, { theme, matchId }) {
   }
 
   for (const r of restarts) {
-    if (!["CORNER", "FK"].includes(r.type) || !r.op) continue;
+    if (!["CORNER", "FK", "THROW"].includes(r.type) || !r.op) continue;   // throw-ins: only in the attacking zones, like the rest
     if (ATTACKING[r.team].includes(bandAt(r.half, r.t))) add("SET_PIECE", r.op, { t: r.t, team: r.team, type: r.type });
   }
 

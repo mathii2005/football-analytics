@@ -625,7 +625,8 @@
             "HS_L",
             "C",
             "HS_R",
-            "R"
+            "R",
+            "NONE"
           ]
         },
         {
@@ -709,6 +710,7 @@
             "KEY_DUEL",
             "ERROR",
             "SET_PIECE_ROUTINE",
+            "CARD",
             "OTHER"
           ]
         },
@@ -776,6 +778,7 @@
             "SHOT",
             "BOX_ENTRY",
             "CORNER",
+            "FOUL_WON",
             "LOST",
             "RECYCLED"
           ]
@@ -807,9 +810,10 @@
             "PASS_INTO_HS",
             "THROUGH",
             "CROSS",
+            "CUTBACK",
             "DRIBBLE",
             "SHORT_COMBINATION",
-            "SWITCH",
+            "PASS_WIDE",
             "CLEARANCE_LONG",
             "OTHER"
           ]
@@ -884,7 +888,7 @@
       "id": "SET_PIECE",
       "label_fr": "CPA",
       "tier": 3,
-      "trigger": "every R:CORNER / R:FK in bands 4-5 (ours) or 0-1 (theirs)",
+      "trigger": "every R:CORNER / R:FK / R:THROW in bands 4-5 (ours) or 0-1 (theirs)",
       "questions": [
         {
           "id": "delivery",
@@ -894,7 +898,8 @@
             "NEAR",
             "CENTRAL",
             "FAR",
-            "EDGE"
+            "EDGE",
+            "DIRECT"
           ]
         },
         {
@@ -1781,7 +1786,7 @@
     {
       "version": "1.1.0",
       "date": "2026-10-05",
-      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data. ENTRY / OPP_ENTRY cards: « Pas une entrée » (key N) excludes a tag error; every other card (except GAP) gets the same « erreur de tag » option (TAG_ERROR). xG back-off: (loc, body) before (loc). Set pieces: free kicks only in the opponent's half."
+      "change": "Shot assist REGAIN_DIRECT and NONE; shot locations clarified (centre lane vs half-space inside the box); xG table and xT grid built from public data. ENTRY / OPP_ENTRY cards: « Pas une entrée » (key N) excludes a tag error; every other card (except GAP) gets the same « erreur de tag » option (TAG_ERROR). xG back-off: (loc, body) before (loc). Set pieces: free kicks only in the opponent's half. From the Ahuntsic descriptions: last-pass lane NONE, flag CARD, entry outcome FOUL_WON, loss intents PASS_WIDE and CUTBACK, set-piece delivery DIRECT; throw-ins in the attacking zones get a set-piece card."
     },
     {
       "version": "1.0.0",
@@ -1880,7 +1885,11 @@
     "WON": "Gagné",
     "NEUTRAL": "Neutre",
     "CANT_SEE": "Je ne vois pas",
-    "REGAIN_DIRECT": "Récupération directe"
+    "REGAIN_DIRECT": "Récupération directe",
+    "CARD": "Carton",
+    "FOUL_WON": "Faute obtenue",
+    "PASS_WIDE": "Passe vers le couloir extérieur",
+    "DIRECT": "Tir direct"
   },
   "card_labels_fr": {
     "SHOT": "Tir",
@@ -1959,7 +1968,6 @@
     "intent.CROSS": "Centre.",
     "intent.DRIBBLE": "Dribble, tentative de passer un adversaire.",
     "intent.SHORT_COMBINATION": "Une-deux ou passes courtes.",
-    "intent.SWITCH": "Changement de jeu d'un côté à l'autre.",
     "intent.CLEARANCE_LONG": "Long ballon ou dégagement sans cible précise.",
     "intent.OTHER": "Autre : décris-le.",
     "cause.INTERCEPTED": "Passe coupée par un adversaire.",
@@ -2007,6 +2015,12 @@
     "lane.R": "Miroir du couloir gauche. Gauche/droite dans notre sens d'attaque.",
     "intent_lane.R": "Miroir du couloir gauche. Gauche/droite dans notre sens d'attaque.",
     "assister.NONE": "Pas de passe décisive.",
-    "first_presser.NONE": "Personne ne presse en 3 s."
+    "first_presser.NONE": "Personne ne presse en 3 s.",
+    "last_pass_lane.NONE": "Pas de passe avant le tir (solo, récupération directe, rebond).",
+    "type.CARD": "Carton jaune ou rouge, pour l'une ou l'autre équipe (le décrire).",
+    "outcome_15s.FOUL_WON": "Faute obtenue (coup franc pour nous).",
+    "intent.PASS_WIDE": "Passe vers un joueur dans un couloir extérieur (aile), changement de jeu compris.",
+    "intent.CUTBACK": "Remise en retrait depuis la ligne de but ou le bord des 6 m.",
+    "delivery.DIRECT": "Coup franc tiré directement au but."
   }
 }

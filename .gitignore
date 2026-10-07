@@ -10,6 +10,7 @@ venv/
 # real season data stays local (the repo is public); only the sample fixtures are versioned
 data/matches/
 data/archive/
+data/roster*.txt
 data/raw/*.json
 !data/raw/*match_001*.json
 !data/raw/*match_002*.json

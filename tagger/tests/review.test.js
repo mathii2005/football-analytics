@@ -10,7 +10,7 @@ const count = (cards) => cards.reduce((m, c) => ({ ...m, [c.kind]: (m[c.kind] ||
 
 test("cards on the Ahuntsic half match the engine's counts", () => {
   const cards = buildCards(ahuntsic.events, [], { theme: "SET_PIECE", matchId: ahuntsic.meta.id });
-  assert.deepEqual(count(cards), { SHOT: 9, GOAL: 2, FLAG: 5, ENTRY: 14, LOSS: 28, SET_PIECE: 1 });
+  assert.deepEqual(count(cards), { SHOT: 9, GOAL: 2, FLAG: 5, ENTRY: 14, LOSS: 28, SET_PIECE: 4 });   // 3 throw-ins in the attacking zones
   const opp = buildCards(ahuntsic.events, [], { theme: "OPP_ENTRY", matchId: ahuntsic.meta.id });
   assert.equal(count(opp).OPP_ENTRY, 6);
 });
@@ -110,4 +110,12 @@ test("in description mode a card needs a description to count as answered", () =
   assert.equal(isAnswered(card, { ...q, note: "  " }, { describe: true }), false);
   assert.equal(isAnswered(card, { ...q, note: "Perte au milieu, contre adverse" }, { describe: true }), true);
   assert.equal(isAnswered(card, { invalid: "TAG_ERROR" }, { describe: true }), true);
+});
+
+test("a throw-in in the attacking zones gets a set-piece card, like corners and free kicks", () => {
+  const ops = [op(1, 0, "H", "START"), op(2, 1000, "S", "US"), op(3, 1000, "Z", 2, { auto: true, src: 2 }),
+    op(4, 3000, "Z", 4), op(5, 5000, "S", "DEAD"), op(6, 6000, "R", "THROW"), op(7, 6500, "Z", 4), op(8, 8000, "S", "US"),
+    op(9, 12000, "Z", 3), op(10, 14000, "S", "DEAD"), op(11, 15000, "R", "THROW"), op(12, 15500, "Z", 3), op(13, 17000, "S", "US")];
+  const sp = buildCards(ops, [], { theme: "SET_PIECE", matchId: "m" }).filter((c) => c.kind === "SET_PIECE");
+  assert.deepEqual(sp.map((c) => [c.type, c.seq]), [["THROW", 6]]);
 });

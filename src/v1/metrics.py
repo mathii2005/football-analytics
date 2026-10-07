@@ -273,7 +273,7 @@ def compute_metrics(tl, lab, answers, roots, meta, classic_tilt=None, half=None)
                     [ctx.clip(r.half, r.t, 1, r.type) for r in shot_after]))
         sp_xg = sum(xg for s, xg, _ in by_team[t] if ctx.phase_at(t, s.half, s.t) == "SET_PIECE")
         put(_metric(ctx, f"setpiece_xg{sfx}", _ratio(sp_xg, len(sps)), len(sps)))
-        cards = [r for r in tl.restarts if r.team == t and r.type in ("CORNER", "FK") and r.band in attacking[t]]
+        cards = [r for r in tl.restarts if r.team == t and r.type in ("CORNER", "FK", "THROW") and r.band in attacking[t]]
         answered = [ctx.ans("SET_PIECE", r.rseq) for r in cards]
         fc = [a.get("first_contact") for a in answered if a and a.get("first_contact") in LIVE]
         put(_metric(ctx, f"first_contact_won{sfx}", _ratio(sum(x == t for x in fc), len(fc)), len(fc),

@@ -42,7 +42,7 @@ COARSE = {
     "closing_3s": lambda v: "0-1" if v in ("0", "1") else "2+" if v in ("2", "3PLUS") else v,
     "assist": lambda v: "CROSS" if v == "CROSS" else "NOT_CROSS",
     "intent": lambda v: {"PASS_INTO_HS": "INSIDE", "SHORT_COMBINATION": "INSIDE", "THROUGH": "BEHIND", "DRIBBLE": "BEHIND",
-                         "CROSS": "WIDE", "SWITCH": "WIDE"}.get(v, "OTHER"),
+                         "CROSS": "WIDE", "SWITCH": "WIDE", "PASS_WIDE": "WIDE", "CUTBACK": "WIDE"}.get(v, "OTHER"),
 }
 
 

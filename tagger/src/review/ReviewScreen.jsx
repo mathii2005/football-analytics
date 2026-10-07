@@ -208,7 +208,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
     if (c.kind === "OPP_ENTRY") return `Zone ${c.from} → ${c.to}`;
     if (c.kind === "LOSS") return `Perte en zone ${c.band}`;
     if (c.kind === "SHOT" || c.kind === "GOAL") return c.team === "US" ? "Lauréats" : c.team === "THEM" ? "Adversaire" : "";
-    if (c.kind === "SET_PIECE") return `${c.type === "CORNER" ? "Corner" : "Coup franc"} · ${c.team === "US" ? "Lauréats" : "Adversaire"}`;
+    if (c.kind === "SET_PIECE") return `${{ CORNER: "Corner", FK: "Coup franc", THROW: "Touche" }[c.type]} · ${c.team === "US" ? "Lauréats" : "Adversaire"}`;
     if (c.lowFidelity) return "Bloc de 15 min trop chargé";
     return "";
   };
