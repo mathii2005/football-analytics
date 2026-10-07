@@ -30,3 +30,5 @@ dashboard/dist/
 
 # public data downloaded by tools/ (xG table, xT grid)
 data/statsbomb/
+data/exports/
+dashboard/dist-snapshot/

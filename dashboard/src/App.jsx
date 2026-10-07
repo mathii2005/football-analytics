@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { fetchMatch, fetchMatches, fetchMetrics, fetchSeasonV1, saveText } from "./api.js";
 import { TextsContext } from "./v1ui/story.jsx";
+import { SNAPSHOT } from "./snapshot.js";
 import FilterBar from "./v1ui/FilterBar.jsx";
 import { pct, matchDate, VENUE } from "./format.js";
 import Scoreboard from "./components/Scoreboard.jsx";
@@ -23,7 +24,8 @@ const V1_TABS = [
   { id: "saison", label: "Saison", Page: V1.Saison },
 ];
 const ANALYST = { id: "analyste", label: "Analyste", Page: V1.Analyste };
-const ALL_IDS = new Set([...V1_TABS, ANALYST].map((t) => t.id));
+// the staff export has no analyst page
+const ALL_IDS = new Set([...V1_TABS, ...(SNAPSHOT ? [] : [ANALYST])].map((t) => t.id));
 
 // KPI row of a page: catalogue metrics (only those with a value)
 const V1_KPIS = {
@@ -118,7 +120,7 @@ export default function App() {
   const isV1 = !!data?.v1?.available;
   const tabs = V1_TABS;
   // a tab that does not exist for this kind of match falls back to the first one
-  const current = tab === ANALYST.id || tabs.some((t) => t.id === tab) ? tab : tabs[0].id;
+  const current = (tab === ANALYST.id && !SNAPSHOT) || tabs.some((t) => t.id === tab) ? tab : tabs[0].id;
   const page = current === ANALYST.id ? ANALYST : tabs.find((t) => t.id === current);
   const info = data?.v1?.match;
   const score = info?.final_score;
@@ -194,7 +196,7 @@ export default function App() {
         )}
         {data && !isV1 && <p className="text-sm text-ink-3">Ce match n'a pas été tagué avec le tagger v1.</p>}
         {data && isV1 && page?.Page && (
-          <TextsContext.Provider value={{ texts: data.texts?.texts || {}, edit: editText }}>
+          <TextsContext.Provider value={{ texts: data.texts?.texts || {}, edit: SNAPSHOT ? null : editText }}>
             <page.Page d={data} v1={data.v1} openClips={setDrawer} present={() => setPresenting(true)} />
           </TextsContext.Provider>
         )}

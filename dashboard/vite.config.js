@@ -1,10 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 // The dashboard never computes football logic: /api is proxied to the
 // FastAPI server (src/api/app.py), which serves already-calculated results.
-export default defineConfig({
-  plugins: [react()],
+// `vite build --mode snapshot`: one self-contained HTML file (dist-snapshot/index.html)
+// for the staff export (tools/export_snapshot.py fills in the match data).
+export default defineConfig(({ mode }) => ({
+  plugins: mode === "snapshot" ? [react(), viteSingleFile()] : [react()],
+  build: mode === "snapshot" ? { outDir: "dist-snapshot" } : {},
   server: {
     port: 3000,
     proxy: {
@@ -14,4 +18,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

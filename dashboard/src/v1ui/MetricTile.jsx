@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MoreHorizontal } from "lucide-react";
 import Tile from "../charts/Tile.jsx";
 import { subline, toCsv } from "./format.js";
+import { SNAPSHOT } from "../snapshot.js";
 
 // A tile bound to one metric: question as title, n / coverage / status as the
 // note, and a menu: clips, definition, CSV.
@@ -23,7 +24,7 @@ export default function MetricTile({ title, metric, openClips, className, childr
           <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-paper-2" disabled={!metric.clips?.all?.length}
             onClick={() => { setMenu(false); openClips(metric); }}>Voir les clips ({metric.clips?.all?.length ?? 0})</button>
           <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-paper-2" onClick={() => { setMenu(false); setDef((d) => !d); }}>Définition</button>
-          <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-paper-2" onClick={() => { setMenu(false); csv(); }}>Exporter CSV</button>
+          {!SNAPSHOT && <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-paper-2" onClick={() => { setMenu(false); csv(); }}>Exporter CSV</button>}
         </div>
       )}
     </div>

@@ -2,8 +2,10 @@
 // comes from here - no football logic in the frontend.
 
 import { stripVeo } from "./veo.js";
+import { SNAPSHOT, lookup } from "./snapshot.js";
 
 async function get(path) {
+  if (SNAPSHOT) return stripVeo(lookup(SNAPSHOT, path));     // staff export: no server
   const res = await fetch(`/api${path}`);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText} (${path})`);
   return stripVeo(await res.json());
@@ -34,6 +36,7 @@ export const fetchSeasonV1 = ({ tier, venue } = {}) => {
 
 // the sentences of the dashboard: the analyst's own version of one (empty = back to the generated one)
 export async function saveText(id, key, text) {
+  if (SNAPSHOT) throw new Error("Lecture seule");
   const res = await fetch(`/api/matches/${encodeURIComponent(id)}/texts/${encodeURIComponent(key)}`, {
     method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);

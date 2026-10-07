@@ -410,6 +410,15 @@ Dashboard v2 (2026-10-07): storytelling first. Built from the council on data st
 
 **Analyst page** (`#analyste`, no tab): what was not measured, gates, coverage, tagging load, shots table, xT, possessions, full catalogue, CSV export. Player names are shown (agreed with the coach). Veo links stay off (`dashboard/src/veo.js`) until the second-half offsets are checked.
 
+**Staff export (read-only link).** The whole dashboard of one match frozen in one HTML page, published as a private claude.ai link that the analyst shares with the staff only (named player stats: never a public site):
+
+```bash
+cd dashboard && npm run build:snapshot        # after any dashboard change
+.venv/bin/python -m tools.export_snapshot <match_id>   # -> data/exports/<match_id>_staff.html
+```
+
+Then publish the file (a new link per match, or republish to keep the same one). The export embeds every answer the staff pages need (both halves, every season filter); editing, the analyst page and CSV export are off.
+
 ### 7.3 Presentation mode (from Récap)
 
 - **16:9 full screen**, text 24 px or larger, arrow keys to move, a discreet 15-min timer, `Esc` to leave.
