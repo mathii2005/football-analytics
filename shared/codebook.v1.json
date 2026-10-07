@@ -1960,7 +1960,7 @@
     "intent_lane": "Couloir visé par l'action qui a mené à la perte.",
     "outcome_15s": "Ce qui arrive dans les 15 s après l'entrée (le premier événement compte).",
     "pos": "Clique l'endroit exact de la frappe sur la moitié de terrain (la zone du tir se remplit toute seule).",
-    "end": "Clique où le ballon passe : dans le cadre = cadré, autour = à côté ou au-dessus ; « Contré » si un joueur bloque.",
+    "end": "Clique où le ballon passe, vu du tireur : dans le cadre = cadré (un arrêt du gardien est cadré : clique où il l'arrête), autour = à côté ou au-dessus. « Contré » seulement si un joueur de champ bloque le tir.",
     "landing": "Clique l'endroit où le ballon arrive (premier contact ou point de chute)."
   },
   "value_defs_fr": {
