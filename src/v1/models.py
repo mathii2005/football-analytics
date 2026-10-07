@@ -3,9 +3,10 @@ models - xG of a shot and xT gains of band changes (CODEBOOK §7). Tables come
 from the codebook (built by tools/build_xg_table.py and tools/build_xt_grid.py).
 
 xG of a shot
-    With an exact position clicked on the card (pos), the position model
-    (logistic on distance, angle, header, fast break, set piece). Otherwise
     loc / body / situation from its review card (SHOT or GOAL) in the table.
+    The position model (logistic on the clicked position: distance, angle,
+    header, fast break, set piece) is coded but off (xg.use_position_model):
+    the analyst keeps the table until it is re-evaluated after 5 matches.
     PENALTY -> xg.penalty. OTHER body -> HEAD. Unanswered or CANT_SEE body ->
     FOOT, situation -> OPEN (the most common). Unanswered loc -> the
     shot-weighted average of the cells of its band (band 5 or 0: the box
@@ -37,7 +38,7 @@ def _weighted(cells, body, sit):
     return sum(v * n for v, n in vals) / w
 
 
-def shot_xg(shot, answer):
+def shot_xg(shot, answer, use_position=None):
     """(xg, estimated) for a timeline Shot and its card answer (dict or None)."""
     cb = load_codebook()["xg"]
     a = answer or {}
@@ -52,7 +53,9 @@ def shot_xg(shot, answer):
     if sit not in ("OPEN", "FAST_BREAK", "SET_PIECE"):
         sit, estimated = "OPEN", True
     pos = a.get("pos")
-    if isinstance(pos, dict) and "x" in pos and "y" in pos:       # exact position clicked in the review
+    if use_position is None:
+        use_position = cb.get("use_position_model", False)
+    if use_position and isinstance(pos, dict) and "x" in pos and "y" in pos:       # exact position clicked in the review
         x, y = (105 - pos["x"], 68 - pos["y"]) if shot.team == "THEM" else (pos["x"], pos["y"])
         return position_xg(x, y, body, sit), estimated
     loc = a.get("loc")

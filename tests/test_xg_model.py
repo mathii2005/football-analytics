@@ -21,12 +21,21 @@ def test_position_xg_falls_with_distance_and_angle_and_is_lower_for_headers():
     assert position_xg(100, 8, "FOOT", "OPEN") < position_xg(100, 34, "FOOT", "OPEN")
 
 
-def test_a_shot_with_a_clicked_position_uses_the_position_model():
+def test_the_table_is_used_by_default_even_with_a_clicked_position():
+    from src.codebook import load_codebook
+    from src.v1.models import shot_xg
+    from src.v1.timeline import Shot
+    table = load_codebook()["xg"]["table"]
+    ours = Shot(1, 1, 0, "ON", "US", 5)
+    assert shot_xg(ours, {"pos": {"x": 100, "y": 34}, "body": "FOOT", "situation": "OPEN", "loc": "CENTRAL_BOX"})[0] == table["CENTRAL_BOX"]["FOOT"]["OPEN"]
+
+
+def test_the_position_model_when_switched_on():
     from src.v1.models import shot_xg
     from src.v1.timeline import Shot
     ours = Shot(1, 1, 0, "ON", "US", 5)
-    xg, est = shot_xg(ours, {"pos": {"x": 100, "y": 34}, "body": "FOOT", "situation": "OPEN", "loc": "CENTRAL_BOX"})
+    xg, est = shot_xg(ours, {"pos": {"x": 100, "y": 34}, "body": "FOOT", "situation": "OPEN", "loc": "CENTRAL_BOX"}, use_position=True)
     assert abs(xg - position_xg(100, 34, "FOOT", "OPEN")) < 1e-9 and not est
     theirs = Shot(2, 1, 0, "ON", "THEM", 0)                      # their shot at our goal: mirrored
-    assert abs(shot_xg(theirs, {"pos": {"x": 5, "y": 34}, "body": "FOOT", "situation": "OPEN"})[0] - position_xg(100, 34, "FOOT", "OPEN")) < 1e-9
+    assert abs(shot_xg(theirs, {"pos": {"x": 5, "y": 34}, "body": "FOOT", "situation": "OPEN"}, use_position=True)[0] - position_xg(100, 34, "FOOT", "OPEN")) < 1e-9
     assert shot_xg(ours, {"pos": "CANT_SEE", "loc": "SIX", "body": "FOOT", "situation": "OPEN"})[0] > 0.25   # table fallback

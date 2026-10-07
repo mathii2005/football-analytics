@@ -1245,8 +1245,10 @@
       "fitted_on": "StatsBomb open data, 7509 non-penalty shots; tools/build_xg_model.py",
       "built": "2026-10-07",
       "cv_share_of_statsbomb_gain": 0.617,
-      "cv_share_table": 0.4
-    }
+      "cv_share_table": 0.4,
+      "status": "off: the 5-zone table is used (analyst's choice, 2026-10-07); re-evaluate after 5 v1 matches against our real goals"
+    },
+    "use_position_model": false
   },
   "xt": {
     "label_fr": "progression dangereuse (xT, grille publique, grossière)",
