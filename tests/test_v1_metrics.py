@@ -161,8 +161,9 @@ def test_in_season_baseline():
 
 def test_calibration_from_time_only_edits():
     from src.v1.quality import calibration
-    ops = [{"seq": 1, "t": 10000, "k": "S", "v": "US"}, {"seq": 2, "t": 7000, "k": "S", "v": "US", "edit_of": 1},
-           {"seq": 3, "t": 20000, "k": "Z", "v": 3}, {"seq": 4, "t": 20000, "k": "Z", "v": 4, "edit_of": 3}]
+    ops = [{"seq": 1, "t": 10000, "k": "S", "v": "US"}, {"seq": 2, "t": 7000, "k": "S", "v": "US", "edit_of": 1, "origin": "review"},
+           {"seq": 3, "t": 20000, "k": "Z", "v": 3}, {"seq": 4, "t": 20000, "k": "Z", "v": 4, "edit_of": 3},
+           {"seq": 5, "t": 900000, "k": "SH", "v": "OFF"}, {"seq": 6, "t": 600000, "k": "SH", "v": "OFF", "edit_of": 5}]   # journal edit: not a review move
     c = calibration(ops)
     assert (c["n"], c["median_lag_ms"], c["propose_longer_lead"]) == (1, 3000, False)
 
@@ -210,21 +211,31 @@ def test_an_entry_marked_as_a_tag_error_is_left_out():
 
 # ---------- recap (P7) ----------
 
-def _m(mid, value, direction="↑", status="ok", n=10):
-    return {"id": mid, "label_fr": mid, "unit": "%", "value": value, "n": n, "status": status, "direction": direction,
+def _m(mid, value, direction="↑", status="ok", n=10, unit="%"):
+    return {"id": mid, "label_fr": mid, "unit": unit, "value": value, "n": n, "status": status, "direction": direction,
             "clips": {"typical": [{"half": 1, "t": 1000, "url": "u"}], "extreme": [], "all": [{"half": 1, "t": 1000, "url": "u"}]}}
 
 
 def test_first_match_compares_with_the_opponent():
     from src.v1.recap import build_recap
-    M = {k: _m(k, v) for k, v in {"shots_for": 11, "shots_against": 15, "xg_for": 1.0, "xg_against": 1.1,
-                                  "transition_to_box": 0.03, "transition_to_box_against": 0.01,
-                                  "setpiece_shot_rate": 0.19, "setpiece_shot_rate_against": 0.40}.items()}
+    M = {"shots_for": _m("shots_for", 13, unit="per match", n=13), "shots_against": _m("shots_against", 14, unit="per match", n=14),
+         "xg_for": _m("xg_for", 1.67, unit="xG", n=13), "xg_against": _m("xg_against", 1.42, unit="xG", n=14),
+         "setpiece_shot_rate": _m("setpiece_shot_rate", 0.31, n=16), "setpiece_shot_rate_against": _m("setpiece_shot_rate_against", 0.13, n=8),
+         "buildup_progression": _m("buildup_progression", 0.15, n=25), "buildup_progression_against": _m("buildup_progression_against", 0.40, n=38)}
     r = build_recap(M, [])
     assert r["mode"] == "vs_opponent"
-    assert [x["id"] for x in r["best"]] == ["transition_to_box"]
-    assert [x["id"] for x in r["worst"]] == ["setpiece_shot_rate", "shots_for"]
+    assert [x["id"] for x in r["best"]] == ["setpiece_shot_rate"]
+    assert [x["id"] for x in r["worst"]] == ["buildup_progression"]
     assert r["worst"][0]["compare"] == {"label": "adversaire", "value": 0.40} and r["worst"][0]["clips"]
+
+
+def test_the_recap_ignores_small_samples_and_small_gaps():
+    from src.v1.recap import build_recap
+    M = {"transition_to_box": _m("transition_to_box", 0.0, n=79), "transition_to_box_against": _m("transition_to_box_against", 0.039, n=77),
+         "first_contact_won": _m("first_contact_won", 1.0, n=2), "first_contact_won_against": _m("first_contact_won_against", 0.0, n=3),
+         "chances_for": _m("chances_for", 13, unit="per match", n=13), "chances_against": _m("chances_against", 15, unit="per match", n=15)}
+    r = build_recap(M, [])
+    assert r["best"] == [] and r["worst"] == []
 
 
 def test_later_matches_compare_with_the_season():

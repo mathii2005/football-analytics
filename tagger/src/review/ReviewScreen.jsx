@@ -152,7 +152,7 @@ export default function ReviewScreen({ store, match, onSave, onBack, onReload })
     if (v === null) return;
     const t = liveFromVideo(meta.veo, card.half, v);
     if (t === null) return say("Il faut le coup d'envoi Veo dans la feuille de match");
-    const r = editOps(ref.current.ops, card.opSeq, { t }, new Date().toISOString());
+    const r = editOps(ref.current.ops, card.opSeq, { t, origin: "review" }, new Date().toISOString());
     if (r.error) return say(r.error);
     const next = ref.current.ops.concat(r.ops);
     setOps(next); persist({ ops: next }); say("Moment déplacé");

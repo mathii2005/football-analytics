@@ -19,9 +19,10 @@ LEAD_ALERT_MS = 4000
 
 def calibration(ops):
     by = {o["seq"]: o for o in ops}
+    # only moments moved from the review (V); journal corrections while tagging are not a lag
     lags = [by[o["edit_of"]]["t"] - o["t"] for o in ops
-            if o.get("edit_of") in by and by[o["edit_of"]]["k"] == o["k"] and by[o["edit_of"]]["v"] == o["v"]
-            and by[o["edit_of"]]["t"] != o["t"]]
+            if o.get("origin") == "review" and o.get("edit_of") in by and by[o["edit_of"]]["k"] == o["k"]
+            and by[o["edit_of"]]["v"] == o["v"] and by[o["edit_of"]]["t"] != o["t"]]
     med = median(lags) if lags else None
     return {"n": len(lags), "median_lag_ms": med, "lead_ms": load_codebook()["clock"]["clip_lead_ms"],
             "propose_longer_lead": med is not None and med > LEAD_ALERT_MS}

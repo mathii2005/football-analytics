@@ -13,6 +13,9 @@ The comparison depends on what exists (the mode is shown on the slides):
                  Best = the highest z (>= Z_MIN), worst = the lowest (<= -Z_MIN).
     A metric needs a value on both sides; at most TOP per slide; each item
     carries up to CLIPS clips (typical first).
+    Against the opponent, a pair only counts when both sides rest on at least
+    MIN_N cases and the gap is large enough to mean something (MIN_GAP: 10
+    points for a rate, 0.3 xG, 3 for a count); otherwise noise would top the slides.
 """
 
 from statistics import mean, pstdev
@@ -26,6 +29,20 @@ PAIRS = [("shots_for", "shots_against"), ("xg_for", "xg_against"), ("chances_for
          ("setpiece_shot_rate", "setpiece_shot_rate_against"), ("first_contact_won", "first_contact_won_against")]
 BRIEF = ["goals_for", "goals_against", "xg_for", "xg_against", "chances_for", "field_tilt_time"]
 SKIP_SEASON = {"goals_for", "goals_against", "field_tilt_classic", "xgd"}     # outcomes / duplicates, not levers
+MIN_N = 8
+MIN_GAP = {"%": 0.10, "xG": 0.3}
+MIN_GAP_COUNT = 3
+
+
+def _meaningful(us, them):
+    if min(us.get("n") or 0, them.get("n") or 0) < MIN_N:
+        return False
+    unit, diff = us.get("unit") or "", abs(us["value"] - them["value"])
+    if unit == "%":
+        return diff >= MIN_GAP["%"]
+    if unit.startswith("xG"):
+        return diff >= MIN_GAP["xG"]
+    return diff >= MIN_GAP_COUNT
 
 
 def _num(m):
@@ -50,7 +67,7 @@ def _vs_opponent(M):
     scored = []
     for us_id, them_id in PAIRS:
         us, them = M.get(us_id), M.get(them_id)
-        if not (_num(us) and _num(them)):
+        if not (_num(us) and _num(them)) or not _meaningful(us, them):
             continue
         top = max(abs(us["value"]), abs(them["value"]))
         if top == 0:

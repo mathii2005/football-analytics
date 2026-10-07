@@ -154,6 +154,7 @@ export function editOps(ops, targetSeq, change, wall) {
   const lines = linesFor(before, target.k, v, mk, team);
   lines[0].edit_of = targetSeq;
   if (target.k === "SH" && fixedTeam) lines[0].team_fixed = true;
+  if (change.origin) lines[0].origin = change.origin;      // "review": a moment moved with V (tagging lag)
   return { ops: out.concat(lines) };
 }
 
