@@ -5,7 +5,7 @@ import { SHOT_V_FR } from "./format.js";
 // shot), goals as large dots, half-time as a dashed line. One shared scale.
 const W = 800, H = 240, L = 36, R = 744, T = 12, B = 206;
 
-export default function XgFlow({ shots }) {
+export default function XgFlow({ shots, names = {} }) {
   if (!shots?.length) return null;
   const end = Math.max(95, ...shots.map((s) => s.t / 60000 + 1));
   const total = (team) => shots.filter((s) => s.team === team).reduce((a, s) => a + s.xg, 0);
@@ -41,6 +41,11 @@ export default function XgFlow({ shots }) {
           <g key={s.team}>
             <path d={s.d} fill="none" stroke={s.color} strokeWidth="2.5" strokeLinejoin="round" />
             <text x={R + 6} y={y(s.cum) + 4} fontSize="12" fontWeight="600" fill={s.color}>{s.cum.toFixed(2).replace(".", ",")}</text>
+            {s.pts.filter((p) => p.v === "GOAL").map((p) => (
+              <text key={`g${p.half}-${p.t}`} x={x(p.t / 60000)} y={y(p.cum) - 11} textAnchor="middle" fontSize="11" fontWeight="600" fill={s.color}>
+                {`${p.shooter && names[p.shooter] ? `${names[p.shooter]} ` : ""}${Math.floor(p.t / 60000)}'`}
+              </text>
+            ))}
             {s.pts.map((p) => (
               <circle key={`${p.half}-${p.t}`} cx={x(p.t / 60000)} cy={y(p.cum)} r={p.v === "GOAL" ? 6.5 : 3.5}
                 fill={p.v === "GOAL" ? s.color : "var(--paper)"} stroke={p.v === "GOAL" ? "var(--paper)" : s.color} strokeWidth="2">

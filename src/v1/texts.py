@@ -187,6 +187,13 @@ def build_facts(metrics, details, recap, match):
              "shots": n(d["shots"]), "goals": n(d["goals"])}
         put("joueurs.duos", f, f"Le duo le plus dangereux : {f['a']} pour {f['b']} ({f['shots']} {plural(f['shots'], 'tir')}, {f['xg']} xG, {f['goals']} {plural(f['goals'], 'but')}).")
 
+    # the week's focus: the first "to work on" item, or an empty slot the analyst fills (hidden while empty)
+    worst = (recap or {}).get("worst") or []
+    if worst:
+        w = worst[0]
+        put("recap.focus", {"label": w["label_fr"]}, f"Cette semaine : {w['label_fr'].lower()}.")
+    else:
+        put("recap.focus", {}, "")
     for side, items in (("best", (recap or {}).get("best") or []), ("worst", (recap or {}).get("worst") or [])):
         for it in items:
             us_v, them_v = it["value"], it["compare"]["value"]

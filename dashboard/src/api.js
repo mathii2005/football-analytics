@@ -15,13 +15,14 @@ export async function fetchMatch(id) {
   const m = encodeURIComponent(id);
   const v1 = await get(`/matches/${m}/metrics`);
   // optional parts: if one fails, the pages that need it hide their tiles
-  const [seasonV1, recap, details, possessions] = await Promise.all([
+  const [seasonV1, recap, details, possessions, texts] = await Promise.all([
     get("/season/v1").catch(() => null),
     get(`/matches/${m}/recap`).catch(() => null),
     get(`/matches/${m}/details`).catch(() => null),
     get(`/matches/${m}/possessions`).catch(() => null),
+    get(`/matches/${m}/texts`).catch(() => null),
   ]);
-  return { v1, seasonV1, recap, details, possessions };
+  return { v1, seasonV1, recap, details, possessions, texts };
 }
 
 // v1 filters: one half of a match, or the season against one tier / at one venue
@@ -30,3 +31,11 @@ export const fetchSeasonV1 = ({ tier, venue } = {}) => {
   const q = new URLSearchParams(Object.entries({ tier, venue }).filter(([, v]) => v));
   return get(`/season/v1${q.toString() ? `?${q}` : ""}`);
 };
+
+// the sentences of the dashboard: the analyst's own version of one (empty = back to the generated one)
+export async function saveText(id, key, text) {
+  const res = await fetch(`/api/matches/${encodeURIComponent(id)}/texts/${encodeURIComponent(key)}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return get(`/matches/${encodeURIComponent(id)}/texts`);
+}

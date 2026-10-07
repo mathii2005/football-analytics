@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AlertTriangle, Loader2 } from "lucide-react";
-import { fetchMatch, fetchMatches, fetchMetrics, fetchSeasonV1 } from "./api.js";
+import { fetchMatch, fetchMatches, fetchMetrics, fetchSeasonV1, saveText } from "./api.js";
+import { TextsContext } from "./v1ui/story.jsx";
 import FilterBar from "./v1ui/FilterBar.jsx";
 import { pct, matchDate, VENUE } from "./format.js";
 import Scoreboard from "./components/Scoreboard.jsx";
@@ -14,10 +15,11 @@ import * as V1 from "./v1ui/pages/Pages.jsx";
 const V1_TABS = [
   { id: "recap", label: "Récap", Page: V1.Recap },
   { id: "attaque", label: "Attaque", Page: V1.Attaque },
-  { id: "couloirs", label: "Couloirs & zone rouge", Page: V1.Couloirs },
-  { id: "intensite", label: "Intensité", Page: V1.Intensite },
-  { id: "defense", label: "Défense", Page: V1.Defense },
+  { id: "couloirs", label: "Zone rouge & couloirs", Page: V1.Couloirs },
+  { id: "intensite", label: "Pressing & transitions", Page: V1.Intensite },
   { id: "cpa", label: "CPA", Page: V1.Cpa },
+  { id: "defense", label: "Défense", Page: V1.Defense },
+  { id: "joueurs", label: "Joueurs", Page: V1.Joueurs },
   { id: "saison", label: "Saison", Page: V1.Saison },
 ];
 const ANALYST = { id: "analyste", label: "Analyste", Page: V1.Analyste };
@@ -32,6 +34,7 @@ const V1_KPIS = {
   defense: ["goals_against", "shots_against", "xg_against", "chances_against", "buildup_progression_against"],
   cpa: ["setpiece_shot_rate", "setpiece_xg", "setpiece_shot_rate_against", "first_contact_won", "xg_rate_SET_PIECE"],
   saison: ["chance_share", "xgd", "buildup_progression", "hs_entry_share", "counterpress_5s"],
+  joueurs: ["goals_for", "shots_for", "redzone_entries", "counterpress_5s", "closing_3s_mean"],
   analyste: ["shots_for", "box_entries", "hs_entry_share", "counterpress_5s", "xg_for"],
 };
 function v1Figures(tab, d) {
@@ -108,6 +111,10 @@ export default function App() {
       .finally(() => setLoading(false));
   }, [selected]);
 
+  // the analyst's own sentence for one key (empty = back to the generated one)
+  const editText = async (key, text) => {
+    try { const texts = await saveText(selected, key, text); setData((d) => (d ? { ...d, texts } : d)); } catch (e) { setError(e.message); }
+  };
   const isV1 = !!data?.v1?.available;
   const tabs = V1_TABS;
   // a tab that does not exist for this kind of match falls back to the first one
@@ -186,8 +193,12 @@ export default function App() {
           <p className="flex items-center gap-2 text-sm text-ink-3"><Loader2 size={16} className="animate-spin" aria-hidden="true" /> Chargement du match…</p>
         )}
         {data && !isV1 && <p className="text-sm text-ink-3">Ce match n'a pas été tagué avec le tagger v1.</p>}
-        {data && isV1 && page?.Page && <page.Page d={data} v1={data.v1} openClips={setDrawer} present={() => setPresenting(true)} />}
-        {presenting && data?.recap?.available && <Presentation recap={data.recap} info={data.v1.match} matchId={selected} onClose={() => setPresenting(false)} />}
+        {data && isV1 && page?.Page && (
+          <TextsContext.Provider value={{ texts: data.texts?.texts || {}, edit: editText }}>
+            <page.Page d={data} v1={data.v1} openClips={setDrawer} present={() => setPresenting(true)} />
+          </TextsContext.Provider>
+        )}
+        {presenting && data?.recap?.available && <Presentation recap={data.recap} texts={data.texts?.texts || {}} info={data.v1.match} matchId={selected} onClose={() => setPresenting(false)} />}
         <ClipDrawer metric={drawer} onClose={() => setDrawer(null)} />
       </main>
     </div>

@@ -27,11 +27,11 @@ function ClipLinks({ clips }) {
   );
 }
 
-function Item({ it }) {
+function Item({ it, sentence }) {
   const fmt = (v) => fmtValue({ value: v, unit: it.unit });
   return (
     <div className="rounded-sm border border-band-rule bg-band-2 p-6">
-      <div className="text-xl text-band-ink-2">{it.label_fr}</div>
+      <div className="text-2xl leading-snug text-paper">{sentence || it.label_fr}</div>
       <div className="mt-2 flex items-baseline gap-6">
         <span className="display text-6xl font-bold text-gold tabular">{fmt(it.value)}</span>
         <span className="text-2xl text-band-ink-2">vs {it.compare.label} <span className="font-semibold text-paper tabular">{fmt(it.compare.value)}</span></span>
@@ -42,7 +42,7 @@ function Item({ it }) {
   );
 }
 
-export default function Presentation({ recap, info, matchId, onClose }) {
+export default function Presentation({ recap, texts = {}, info, matchId, onClose }) {
   const [i, setI] = useState(0);
   const [left, setLeft] = useState(TEN_MIN);
   const [note, setNote] = useState(() => readNote(matchId));
@@ -50,19 +50,22 @@ export default function Presentation({ recap, info, matchId, onClose }) {
   const modeNote = recap.mode === "vs_season" ? `Comparé à la moyenne de nos ${recap.n_other_matches} autres matchs.` : `Comparé à ${info.opponent}.`;
   const slides = [
     { title: "Le match en bref", body: (
+      <div>
+      {texts["recap.headline"] && <p className="mb-6 max-w-5xl text-3xl leading-snug text-paper [text-wrap:balance]">{texts["recap.headline"]}</p>}
       <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
         {[["Score", `${B.goals_for?.value ?? "–"}–${B.goals_against?.value ?? "–"}`], ["xG pour", fmtValue(B.xg_for)], ["xG contre", fmtValue(B.xg_against)],
           ["Occasions", fmtValue(B.chances_for)], ["Territoire (temps)", fmtValue(B.field_tilt_time)]].map(([l, v]) => (
           <div key={l} className="rounded-sm border border-band-rule bg-band-2 p-6"><div className="text-xl text-band-ink-2">{l}</div><div className="display mt-2 text-6xl font-bold text-gold tabular">{v}</div></div>
         ))}
-      </div>) },
-    recap.best.length > 0 && { title: "Ce qui a bien marché", body: <div className="space-y-5">{recap.best.map((it) => <Item key={it.id} it={it} />)}</div> },
-    recap.worst.length > 0 && { title: "À travailler", body: <div className="space-y-5">{recap.worst.map((it) => <Item key={it.id} it={it} />)}</div> },
+      </div></div>) },
+    recap.best.length > 0 && { title: "Ce qui a bien marché", body: <div className="space-y-5">{recap.best.map((it) => <Item key={it.id} it={it} sentence={texts[`recap.best.${it.id}`]} />)}</div> },
+    recap.worst.length > 0 && { title: "À travailler", body: <div className="space-y-5">{recap.worst.map((it) => <Item key={it.id} it={it} sentence={texts[`recap.worst.${it.id}`]} />)}</div> },
     recap.trend && recap.trend.status !== "TROP TÔT" && { title: "La tendance", body: (
       <div className="rounded-sm border border-band-rule bg-band-2 p-6">
         <div className="text-2xl">{recap.trend.label_fr}</div>
         <div className="mt-3"><StatusChip status={recap.trend.status} /></div>
       </div>) },
+    texts["recap.focus"] && { title: "À travailler cette semaine", body: <p className="max-w-5xl text-4xl font-semibold leading-snug text-paper [text-wrap:balance]">{texts["recap.focus"]}</p> },
     { title: "À surveiller", body: (
       <textarea value={note} onChange={(e) => { setNote(e.target.value); saveNote(matchId, e.target.value); }}
         aria-label="À surveiller"

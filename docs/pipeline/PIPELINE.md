@@ -392,19 +392,23 @@ Built: the v1 pages above (Récap, Saison, Attaque, Couloirs & zone rouge, Posse
 
 Filters (P6, done): **Mi-temps** (Tout / MT1 / MT2) recomputes every metric on that half (`GET /matches/{id}/metrics?half=`; the classic field tilt, a whole-match formula, is not shown per half); **Adversaire** (haut / milieu / bas) and **Lieu** (domicile / extérieur) filter the season view and the reference statuses (`GET /season/v1?tier=&venue=`). **Click a bar → its clips**: xG by phase (ours and theirs), xT by lane and by phase open the drawer on the moments of that bar. **Phase is a breakdown, not a global filter**: filtering every metric by phase would mix definitions (possession minutes, entries, losses) — the phase splits live in the tiles that need them. Phone (390 px): tabs scroll, KPIs two per row, tiles in one column, the drawer full width; the filter bar is sticky only from tablet width up. Esc closes the drawer.
 
-Hierarchy (2026-10-06): the dashboard shows **only the v1 engine** (old-engine views removed; old-tagger matches are not listed, retagging is mandatory) and **few visuals per page**, in order of staff priority:
+Dashboard v2 (2026-10-07): storytelling first. Built from the council on data storytelling (Flourish's five skills, one message per visual, plain sentences, 10-second test) and only from the v1 engine.
+
+- **Every staff tile is titled with a finding** written from the data ("14 de nos 26 entrées passent par la gauche"); the question it answers is the grey line underneath. Sentences come from `GET /matches/{id}/texts`: templates always, rewritten by Claude (`claude-opus-5-5`, one structured call) when `ANTHROPIC_API_KEY` is set on the API; a sentence is kept only if every number in it comes from the engine's facts. The analyst rewrites any sentence in place (pencil on hover, `PUT /matches/{id}/texts/{key}`); edits win; texts are cached in `data/texts/` (git-ignored) and regenerated when the numbers change.
+- **Our own pitch drawings** on the tagger's grid (6 bands x 5 lanes): entries by lane and depth, losses by zone, shot zones (count, xG, goals), set-piece deliveries. Open-source pitch kits assume x/y events; our data is zonal.
 
 | Tab | Visuals |
 |---|---|
-| Récap | KPIs (score, possession, xG for / against, chances) · the match in xG (cumulative, goals) · our priorities · what worked / to work on · « Récap » button (slides) |
-| Attaque | how our shots are created and where (vs them) · xG per phase · red zone → box → shot → goal |
-| Couloirs & zone rouge | lane × depth grid · entry methods · half-space and box metrics |
-| Intensité | players closing within 3 s · where and why we lose the ball · what we were trying · our losses followed by their shot |
-| Défense | how their shots are created and where · their xG per phase · their entries into our box (when that review theme came up) |
-| CPA | our / their set pieces by type and zone with shots within 20 s · set-piece metrics |
-| Saison | our priorities match after match (value, trend, status) |
+| Récap | the headline (editable) · KPIs · the match in xG with scorers' names · the match in 15-minute blocks (xG each side, possession, our entries) · our priorities · what worked / what cost us (sentence + us vs them) · the week's focus · « Récap » slides using the same sentences |
+| Attaque | our shot zones on the pitch · how our shots are created vs theirs · red zone → box → shot → goal · xG per phase |
+| Zone rouge & couloirs | entries on the pitch by lane and depth · what happens after an entry (100 % bar) · entry methods · half-space and box metrics |
+| Pressing & transitions | players closing within 3 s · losses on the pitch by zone with their causes · what we were trying · our losses followed by their shot |
+| CPA | our set pieces by type and zone with shots within 20 s · delivery map · theirs · set-piece metrics |
+| Défense | their shot zones · how their shots are created · their xG per phase · their entries into our box (when reviewed) |
+| Joueurs | « Création vs prise de risque » scatter · duos passer → shooter · one card per player (creation xG + xA, entries and how many led to danger, losses, first presses and reaction to own loss) · full sortable table; minutes played from the lineup in the tagger's match sheet |
+| Saison | our priorities match after match (trend and status once there are enough matches) |
 
-**Analyst page** (`#analyste`, no tab, for the analyst only): what was not measured and why, integrity gates, typed time, review coverage, tagging load, all shots, xT by lane and phase, every possession, the full catalogue, and « Exporter tout (CSV) ». Text about missing data appears only here. Veo links are off (`dashboard/src/veo.js`) until the second-half offsets are set.
+**Analyst page** (`#analyste`, no tab): what was not measured, gates, coverage, tagging load, shots table, xT, possessions, full catalogue, CSV export. Player names are shown (agreed with the coach). Veo links stay off (`dashboard/src/veo.js`) until the second-half offsets are checked.
 
 ### 7.3 Presentation mode (from Récap)
 
