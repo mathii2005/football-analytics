@@ -1,7 +1,7 @@
-// Veo links on / off. Off since 2026-10-06: the second half of Ahuntsic was not
-// tagged in sync with Veo, so links would land on the wrong moment. Turn back
-// on once the Veo offsets are set in the tagger.
-export const SHOW_VEO = false;
+// Veo links on / off. Off from 2026-10-06 to 2026-10-07 while the second-half
+// offsets of Ahuntsic were unknown; back on once both kick-offs are entered
+// (MT1 23:14, MT2 83:36). Switch to false if a match's clips land off.
+export const SHOW_VEO = true;
 
 const LINK_KEYS = new Set(["url", "video_url", "veo_url"]);
 
