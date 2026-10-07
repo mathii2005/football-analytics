@@ -12,14 +12,14 @@ export function useSaid(key, fallback = "") {
   return (texts && texts[key]) || fallback;
 }
 
-export function EditableText({ k, fallback = "", className = "", as: Tag = "span" }) {
+export function EditableText({ k, fallback = "", className = "", as: Tag = "span", showEmpty = false }) {
   const { texts, edit } = useContext(TextsContext);
   const text = (texts && texts[k]) || fallback;
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(text);
   const box = useRef(null);
   useEffect(() => { if (open) { setDraft(text); setTimeout(() => box.current?.focus(), 0); } }, [open]);   // eslint-disable-line react-hooks/exhaustive-deps
-  if (!text && !open) return null;
+  if (!text && !open && !showEmpty) return null;
   if (open) {
     const save = async () => { await edit?.(k, draft); setOpen(false); };
     return (
@@ -33,10 +33,10 @@ export function EditableText({ k, fallback = "", className = "", as: Tag = "span
   }
   return (
     <Tag className={`group/edit ${className}`}>
-      {text}
+      {text || <span className="text-ink-3">(vide : non affichée)</span>}
       {edit && (
         <button type="button" aria-label="Modifier la phrase" onClick={() => setOpen(true)}
-          className="ml-1.5 inline-flex align-middle text-ink-3 opacity-0 transition-opacity hover:text-ink focus:opacity-100 group-hover/edit:opacity-100">
+          className={`ml-1.5 inline-flex align-middle text-ink-3 transition-opacity hover:text-ink focus:opacity-100 group-hover/edit:opacity-100 ${showEmpty ? "opacity-100" : "opacity-0"}`}>
           <Pencil size={12} />
         </button>
       )}

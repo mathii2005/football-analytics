@@ -324,6 +324,12 @@ export function Analyste({ v1, d, openClips }) {
         <p className="text-[13px] text-ink-2">Page analyste : tout le catalogue et les contrôles. Pas d'onglet ; adresse <span className="font-mono">#analyste</span>.</p>
         <button type="button" onClick={exportAll} className="rounded border border-rule bg-paper px-3 py-1.5 text-sm font-semibold text-ink hover:bg-paper-2">Exporter tout (CSV)</button>
       </div>
+      {d.texts?.texts && <Tile className="lg:col-span-12" title="Phrases du tableau de bord" note={`${d.texts.source === "llm" ? "Rédigées par Claude" : "Modèles automatiques"} ; crayon = réécrire, phrase vide = revenir à la version générée. Une phrase vide n'est pas affichée.`}>
+        <ul className="divide-y divide-rule text-[13px]">{Object.keys(d.texts.texts).sort().map((k) => (
+          <li key={k} className="grid grid-cols-[13rem_1fr] gap-3 py-1.5"><span className="font-mono text-[11px] text-ink-3">{k}{d.texts.edited?.includes(k) ? " · modifiée" : ""}</span>
+            <EditableText k={k} showEmpty className="text-ink" /></li>
+        ))}</ul>
+      </Tile>}
       <Tile className="lg:col-span-6" title="Non mesuré sur ce match" note="Statistiques sans valeur : cartes de revue absentes (thème tournant) ou échantillon vide.">
         <ul className="space-y-1 text-[13px]">{missing.map((m) => (
           <li key={m.id} className="flex justify-between gap-2"><span className="text-ink-2">{m.label_fr}</span><span className="text-ink-3">{m.coverage === 0 ? "aucune carte revue" : `n = ${m.n}`}</span></li>
